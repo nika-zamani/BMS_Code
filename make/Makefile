@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named MKELibrary.elf
+# Target rules for targets named bms.elf
 
 # Build rule for target.
-MKELibrary.elf: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 MKELibrary.elf
-.PHONY : MKELibrary.elf
+bms.elf: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 bms.elf
+.PHONY : bms.elf
 
 # fast build rule for target.
-MKELibrary.elf/fast:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/build
-.PHONY : MKELibrary.elf/fast
+bms.elf/fast:
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/build
+.PHONY : bms.elf/fast
 
 home/gray/formula/nxp/BMS/board/board.obj: home/gray/formula/nxp/BMS/board/board.c.obj
 
@@ -129,7 +129,7 @@ home/gray/formula/nxp/BMS/board/board.obj: home/gray/formula/nxp/BMS/board/board
 
 # target to build an object file
 home/gray/formula/nxp/BMS/board/board.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/BMS/board/board.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/board/board.c.obj
 .PHONY : home/gray/formula/nxp/BMS/board/board.c.obj
 
 home/gray/formula/nxp/BMS/board/board.i: home/gray/formula/nxp/BMS/board/board.c.i
@@ -138,7 +138,7 @@ home/gray/formula/nxp/BMS/board/board.i: home/gray/formula/nxp/BMS/board/board.c
 
 # target to preprocess a source file
 home/gray/formula/nxp/BMS/board/board.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/BMS/board/board.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/board/board.c.i
 .PHONY : home/gray/formula/nxp/BMS/board/board.c.i
 
 home/gray/formula/nxp/BMS/board/board.s: home/gray/formula/nxp/BMS/board/board.c.s
@@ -147,7 +147,7 @@ home/gray/formula/nxp/BMS/board/board.s: home/gray/formula/nxp/BMS/board/board.c
 
 # target to generate assembly for a file
 home/gray/formula/nxp/BMS/board/board.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/BMS/board/board.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/board/board.c.s
 .PHONY : home/gray/formula/nxp/BMS/board/board.c.s
 
 home/gray/formula/nxp/BMS/board/clock_config.obj: home/gray/formula/nxp/BMS/board/clock_config.c.obj
@@ -156,7 +156,7 @@ home/gray/formula/nxp/BMS/board/clock_config.obj: home/gray/formula/nxp/BMS/boar
 
 # target to build an object file
 home/gray/formula/nxp/BMS/board/clock_config.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/BMS/board/clock_config.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/board/clock_config.c.obj
 .PHONY : home/gray/formula/nxp/BMS/board/clock_config.c.obj
 
 home/gray/formula/nxp/BMS/board/clock_config.i: home/gray/formula/nxp/BMS/board/clock_config.c.i
@@ -165,7 +165,7 @@ home/gray/formula/nxp/BMS/board/clock_config.i: home/gray/formula/nxp/BMS/board/
 
 # target to preprocess a source file
 home/gray/formula/nxp/BMS/board/clock_config.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/BMS/board/clock_config.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/board/clock_config.c.i
 .PHONY : home/gray/formula/nxp/BMS/board/clock_config.c.i
 
 home/gray/formula/nxp/BMS/board/clock_config.s: home/gray/formula/nxp/BMS/board/clock_config.c.s
@@ -174,7 +174,7 @@ home/gray/formula/nxp/BMS/board/clock_config.s: home/gray/formula/nxp/BMS/board/
 
 # target to generate assembly for a file
 home/gray/formula/nxp/BMS/board/clock_config.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/BMS/board/clock_config.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/board/clock_config.c.s
 .PHONY : home/gray/formula/nxp/BMS/board/clock_config.c.s
 
 home/gray/formula/nxp/BMS/board/peripherals.obj: home/gray/formula/nxp/BMS/board/peripherals.c.obj
@@ -183,7 +183,7 @@ home/gray/formula/nxp/BMS/board/peripherals.obj: home/gray/formula/nxp/BMS/board
 
 # target to build an object file
 home/gray/formula/nxp/BMS/board/peripherals.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/BMS/board/peripherals.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/board/peripherals.c.obj
 .PHONY : home/gray/formula/nxp/BMS/board/peripherals.c.obj
 
 home/gray/formula/nxp/BMS/board/peripherals.i: home/gray/formula/nxp/BMS/board/peripherals.c.i
@@ -192,7 +192,7 @@ home/gray/formula/nxp/BMS/board/peripherals.i: home/gray/formula/nxp/BMS/board/p
 
 # target to preprocess a source file
 home/gray/formula/nxp/BMS/board/peripherals.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/BMS/board/peripherals.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/board/peripherals.c.i
 .PHONY : home/gray/formula/nxp/BMS/board/peripherals.c.i
 
 home/gray/formula/nxp/BMS/board/peripherals.s: home/gray/formula/nxp/BMS/board/peripherals.c.s
@@ -201,7 +201,7 @@ home/gray/formula/nxp/BMS/board/peripherals.s: home/gray/formula/nxp/BMS/board/p
 
 # target to generate assembly for a file
 home/gray/formula/nxp/BMS/board/peripherals.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/BMS/board/peripherals.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/board/peripherals.c.s
 .PHONY : home/gray/formula/nxp/BMS/board/peripherals.c.s
 
 home/gray/formula/nxp/BMS/board/pin_mux.obj: home/gray/formula/nxp/BMS/board/pin_mux.c.obj
@@ -210,7 +210,7 @@ home/gray/formula/nxp/BMS/board/pin_mux.obj: home/gray/formula/nxp/BMS/board/pin
 
 # target to build an object file
 home/gray/formula/nxp/BMS/board/pin_mux.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/BMS/board/pin_mux.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/board/pin_mux.c.obj
 .PHONY : home/gray/formula/nxp/BMS/board/pin_mux.c.obj
 
 home/gray/formula/nxp/BMS/board/pin_mux.i: home/gray/formula/nxp/BMS/board/pin_mux.c.i
@@ -219,7 +219,7 @@ home/gray/formula/nxp/BMS/board/pin_mux.i: home/gray/formula/nxp/BMS/board/pin_m
 
 # target to preprocess a source file
 home/gray/formula/nxp/BMS/board/pin_mux.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/BMS/board/pin_mux.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/board/pin_mux.c.i
 .PHONY : home/gray/formula/nxp/BMS/board/pin_mux.c.i
 
 home/gray/formula/nxp/BMS/board/pin_mux.s: home/gray/formula/nxp/BMS/board/pin_mux.c.s
@@ -228,35 +228,89 @@ home/gray/formula/nxp/BMS/board/pin_mux.s: home/gray/formula/nxp/BMS/board/pin_m
 
 # target to generate assembly for a file
 home/gray/formula/nxp/BMS/board/pin_mux.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/BMS/board/pin_mux.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/board/pin_mux.c.s
 .PHONY : home/gray/formula/nxp/BMS/board/pin_mux.c.s
 
-home/gray/formula/nxp/BMS/source/MKELibrary.obj: home/gray/formula/nxp/BMS/source/MKELibrary.cpp.obj
+home/gray/formula/nxp/BMS/source/bms.obj: home/gray/formula/nxp/BMS/source/bms.cpp.obj
 
-.PHONY : home/gray/formula/nxp/BMS/source/MKELibrary.obj
+.PHONY : home/gray/formula/nxp/BMS/source/bms.obj
 
 # target to build an object file
-home/gray/formula/nxp/BMS/source/MKELibrary.cpp.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/BMS/source/MKELibrary.cpp.obj
-.PHONY : home/gray/formula/nxp/BMS/source/MKELibrary.cpp.obj
+home/gray/formula/nxp/BMS/source/bms.cpp.obj:
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/source/bms.cpp.obj
+.PHONY : home/gray/formula/nxp/BMS/source/bms.cpp.obj
 
-home/gray/formula/nxp/BMS/source/MKELibrary.i: home/gray/formula/nxp/BMS/source/MKELibrary.cpp.i
+home/gray/formula/nxp/BMS/source/bms.i: home/gray/formula/nxp/BMS/source/bms.cpp.i
 
-.PHONY : home/gray/formula/nxp/BMS/source/MKELibrary.i
+.PHONY : home/gray/formula/nxp/BMS/source/bms.i
 
 # target to preprocess a source file
-home/gray/formula/nxp/BMS/source/MKELibrary.cpp.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/BMS/source/MKELibrary.cpp.i
-.PHONY : home/gray/formula/nxp/BMS/source/MKELibrary.cpp.i
+home/gray/formula/nxp/BMS/source/bms.cpp.i:
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/source/bms.cpp.i
+.PHONY : home/gray/formula/nxp/BMS/source/bms.cpp.i
 
-home/gray/formula/nxp/BMS/source/MKELibrary.s: home/gray/formula/nxp/BMS/source/MKELibrary.cpp.s
+home/gray/formula/nxp/BMS/source/bms.s: home/gray/formula/nxp/BMS/source/bms.cpp.s
 
-.PHONY : home/gray/formula/nxp/BMS/source/MKELibrary.s
+.PHONY : home/gray/formula/nxp/BMS/source/bms.s
 
 # target to generate assembly for a file
-home/gray/formula/nxp/BMS/source/MKELibrary.cpp.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/BMS/source/MKELibrary.cpp.s
-.PHONY : home/gray/formula/nxp/BMS/source/MKELibrary.cpp.s
+home/gray/formula/nxp/BMS/source/bms.cpp.s:
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/source/bms.cpp.s
+.PHONY : home/gray/formula/nxp/BMS/source/bms.cpp.s
+
+home/gray/formula/nxp/BMS/source/drivers.obj: home/gray/formula/nxp/BMS/source/drivers.cpp.obj
+
+.PHONY : home/gray/formula/nxp/BMS/source/drivers.obj
+
+# target to build an object file
+home/gray/formula/nxp/BMS/source/drivers.cpp.obj:
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/source/drivers.cpp.obj
+.PHONY : home/gray/formula/nxp/BMS/source/drivers.cpp.obj
+
+home/gray/formula/nxp/BMS/source/drivers.i: home/gray/formula/nxp/BMS/source/drivers.cpp.i
+
+.PHONY : home/gray/formula/nxp/BMS/source/drivers.i
+
+# target to preprocess a source file
+home/gray/formula/nxp/BMS/source/drivers.cpp.i:
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/source/drivers.cpp.i
+.PHONY : home/gray/formula/nxp/BMS/source/drivers.cpp.i
+
+home/gray/formula/nxp/BMS/source/drivers.s: home/gray/formula/nxp/BMS/source/drivers.cpp.s
+
+.PHONY : home/gray/formula/nxp/BMS/source/drivers.s
+
+# target to generate assembly for a file
+home/gray/formula/nxp/BMS/source/drivers.cpp.s:
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/source/drivers.cpp.s
+.PHONY : home/gray/formula/nxp/BMS/source/drivers.cpp.s
+
+home/gray/formula/nxp/BMS/source/ltcutility.obj: home/gray/formula/nxp/BMS/source/ltcutility.cpp.obj
+
+.PHONY : home/gray/formula/nxp/BMS/source/ltcutility.obj
+
+# target to build an object file
+home/gray/formula/nxp/BMS/source/ltcutility.cpp.obj:
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/source/ltcutility.cpp.obj
+.PHONY : home/gray/formula/nxp/BMS/source/ltcutility.cpp.obj
+
+home/gray/formula/nxp/BMS/source/ltcutility.i: home/gray/formula/nxp/BMS/source/ltcutility.cpp.i
+
+.PHONY : home/gray/formula/nxp/BMS/source/ltcutility.i
+
+# target to preprocess a source file
+home/gray/formula/nxp/BMS/source/ltcutility.cpp.i:
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/source/ltcutility.cpp.i
+.PHONY : home/gray/formula/nxp/BMS/source/ltcutility.cpp.i
+
+home/gray/formula/nxp/BMS/source/ltcutility.s: home/gray/formula/nxp/BMS/source/ltcutility.cpp.s
+
+.PHONY : home/gray/formula/nxp/BMS/source/ltcutility.s
+
+# target to generate assembly for a file
+home/gray/formula/nxp/BMS/source/ltcutility.cpp.s:
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/BMS/source/ltcutility.cpp.s
+.PHONY : home/gray/formula/nxp/BMS/source/ltcutility.cpp.s
 
 home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.obj: home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.c.obj
 
@@ -264,7 +318,7 @@ home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.obj: home/gray/formula/nx
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.c.obj
 
 home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.i: home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.c.i
@@ -273,7 +327,7 @@ home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.i: home/gray/formula/nxp/
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.c.i
 
 home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.s: home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.c.s
@@ -282,7 +336,7 @@ home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.s: home/gray/formula/nxp/
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.c.s
 
 home/gray/formula/nxp/MKELibrary/asm/startup_MKE18F16.obj: home/gray/formula/nxp/MKELibrary/asm/startup_MKE18F16.S.obj
@@ -291,7 +345,7 @@ home/gray/formula/nxp/MKELibrary/asm/startup_MKE18F16.obj: home/gray/formula/nxp
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/asm/startup_MKE18F16.S.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/asm/startup_MKE18F16.S.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/asm/startup_MKE18F16.S.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/asm/startup_MKE18F16.S.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.c.obj
@@ -300,7 +354,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.obj: home/gray/formula/nxp/MKE
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.c.i
@@ -309,7 +363,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.i: home/gray/formula/nxp/MKELi
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.c.s
@@ -318,7 +372,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.s: home/gray/formula/nxp/MKELi
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_acmp.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.c.obj
@@ -327,7 +381,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.obj: home/gray/formula/nxp/MK
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.c.i
@@ -336,7 +390,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.i: home/gray/formula/nxp/MKEL
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.c.s
@@ -345,7 +399,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.s: home/gray/formula/nxp/MKEL
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_adc12.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.c.obj
@@ -354,7 +408,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.obj: home/gray/formula/nxp/MK
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.c.i
@@ -363,7 +417,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.i: home/gray/formula/nxp/MKEL
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.c.s
@@ -372,7 +426,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.s: home/gray/formula/nxp/MKEL
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_cache.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.c.obj
@@ -381,7 +435,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.obj: home/gray/formula/nxp/MK
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.c.i
@@ -390,7 +444,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.i: home/gray/formula/nxp/MKEL
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.c.s
@@ -399,7 +453,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.s: home/gray/formula/nxp/MKEL
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_clock.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_common.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_common.c.obj
@@ -408,7 +462,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_common.obj: home/gray/formula/nxp/M
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_common.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_common.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_common.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_common.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_common.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_common.c.i
@@ -417,7 +471,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_common.i: home/gray/formula/nxp/MKE
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_common.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_common.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_common.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_common.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_common.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_common.c.s
@@ -426,7 +480,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_common.s: home/gray/formula/nxp/MKE
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_common.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_common.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_common.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_common.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.c.obj
@@ -435,7 +489,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.obj: home/gray/formula/nxp/MKEL
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.c.i
@@ -444,7 +498,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.i: home/gray/formula/nxp/MKELib
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.c.s
@@ -453,7 +507,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.s: home/gray/formula/nxp/MKELib
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_crc.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.c.obj
@@ -462,7 +516,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.obj: home/gray/formula/nxp/MK
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.c.i
@@ -471,7 +525,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.i: home/gray/formula/nxp/MKEL
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.c.s
@@ -480,7 +534,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.s: home/gray/formula/nxp/MKEL
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_dac32.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.c.obj
@@ -489,7 +543,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.obj: home/gray/formula/nxp/M
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.c.i
@@ -498,7 +552,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.i: home/gray/formula/nxp/MKE
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.c.s
@@ -507,7 +561,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.s: home/gray/formula/nxp/MKE
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_dmamux.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.c.obj
@@ -516,7 +570,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.obj: home/gray/formula/nxp/MKE
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.c.i
@@ -525,7 +579,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.i: home/gray/formula/nxp/MKELi
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.c.s
@@ -534,7 +588,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.s: home/gray/formula/nxp/MKELi
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_edma.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.c.obj
@@ -543,7 +597,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.obj: home/gray/formula/nxp/MKEL
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.c.i
@@ -552,7 +606,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.i: home/gray/formula/nxp/MKELib
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.c.s
@@ -561,7 +615,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.s: home/gray/formula/nxp/MKELib
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_ewm.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.c.obj
@@ -570,7 +624,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.obj: home/gray/formula/nxp/
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.c.i
@@ -579,7 +633,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.i: home/gray/formula/nxp/MK
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.c.s
@@ -588,7 +642,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.s: home/gray/formula/nxp/MK
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.c.obj
@@ -597,7 +651,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.obj: home/gray/formula
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.c.i
@@ -606,7 +660,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.i: home/gray/formula/n
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.c.s
@@ -615,7 +669,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.s: home/gray/formula/n
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexcan_edma.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.c.obj
@@ -624,7 +678,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.obj: home/gray/formula/nxp/M
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.c.i
@@ -633,7 +687,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.i: home/gray/formula/nxp/MKE
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.c.s
@@ -642,7 +696,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.s: home/gray/formula/nxp/MKE
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.c.obj
@@ -651,7 +705,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.obj: home/gray/fo
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.c.i
@@ -660,7 +714,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.i: home/gray/form
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.c.s
@@ -669,7 +723,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.s: home/gray/form
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_i2c_master.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.c.obj
@@ -678,7 +732,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.obj: home/gray/formula/n
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.c.i
@@ -687,7 +741,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.i: home/gray/formula/nxp
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.c.s
@@ -696,7 +750,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.s: home/gray/formula/nxp
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.c.obj
@@ -705,7 +759,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.obj: home/gray/form
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.c.i
@@ -714,7 +768,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.i: home/gray/formul
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.c.s
@@ -723,7 +777,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.s: home/gray/formul
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_spi_edma.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.c.obj
@@ -732,7 +786,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.obj: home/gray/formula/
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.c.i
@@ -741,7 +795,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.i: home/gray/formula/nx
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.c.s
@@ -750,7 +804,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.s: home/gray/formula/nx
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.c.obj
@@ -759,7 +813,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.obj: home/gray/for
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.c.i
@@ -768,7 +822,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.i: home/gray/formu
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.c.s
@@ -777,7 +831,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.s: home/gray/formu
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_flexio_uart_edma.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.c.obj
@@ -786,7 +840,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.obj: home/gray/formula/n
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.c.i
@@ -795,7 +849,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.i: home/gray/formula/nxp
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.c.s
@@ -804,7 +858,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.s: home/gray/formula/nxp
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_cache.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.c.obj
@@ -813,7 +867,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.obj: home/gray/form
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.c.i
@@ -822,7 +876,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.i: home/gray/formul
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.c.s
@@ -831,7 +885,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.s: home/gray/formul
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_controller.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.c.obj
@@ -840,7 +894,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.obj: home/gray/formula/n
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.c.i
@@ -849,7 +903,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.i: home/gray/formula/nxp
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.c.s
@@ -858,7 +912,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.s: home/gray/formula/nxp
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flash.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.c.obj
@@ -867,7 +921,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.obj: home/gray/formula
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.c.i
@@ -876,7 +930,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.i: home/gray/formula/n
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.c.s
@@ -885,7 +939,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.s: home/gray/formula/n
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_ftfx_flexnvm.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.c.obj
@@ -894,7 +948,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.obj: home/gray/formula/nxp/MKEL
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.c.i
@@ -903,7 +957,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.i: home/gray/formula/nxp/MKELib
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.c.s
@@ -912,7 +966,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.s: home/gray/formula/nxp/MKELib
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_ftm.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.c.obj
@@ -921,7 +975,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.obj: home/gray/formula/nxp/MKE
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.c.i
@@ -930,7 +984,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.i: home/gray/formula/nxp/MKELi
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.c.s
@@ -939,7 +993,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.s: home/gray/formula/nxp/MKELi
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_gpio.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.c.obj
@@ -948,7 +1002,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.obj: home/gray/formula/n
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.c.i
@@ -957,7 +1011,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.i: home/gray/formula/nxp
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.c.s
@@ -966,7 +1020,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.s: home/gray/formula/nxp
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lmem_cache.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.c.obj
@@ -975,7 +1029,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.obj: home/gray/formula/nxp/MK
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.c.i
@@ -984,7 +1038,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.i: home/gray/formula/nxp/MKEL
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.c.s
@@ -993,7 +1047,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.s: home/gray/formula/nxp/MKEL
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.c.obj
@@ -1002,7 +1056,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.obj: home/gray/formula/n
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.c.i
@@ -1011,7 +1065,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.i: home/gray/formula/nxp
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.c.s
@@ -1020,7 +1074,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.s: home/gray/formula/nxp
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpi2c_edma.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.c.obj
@@ -1029,7 +1083,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.obj: home/gray/formula/nxp/MKE
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.c.i
@@ -1038,7 +1092,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.i: home/gray/formula/nxp/MKELi
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.c.s
@@ -1047,7 +1101,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.s: home/gray/formula/nxp/MKELi
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpit.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.c.obj
@@ -1056,7 +1110,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.obj: home/gray/formula/nxp/MK
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.c.i
@@ -1065,7 +1119,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.i: home/gray/formula/nxp/MKEL
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.c.s
@@ -1074,7 +1128,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.s: home/gray/formula/nxp/MKEL
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.c.obj
@@ -1083,7 +1137,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.obj: home/gray/formula/n
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.c.i
@@ -1092,7 +1146,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.i: home/gray/formula/nxp
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.c.s
@@ -1101,7 +1155,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.s: home/gray/formula/nxp
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpspi_edma.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.c.obj
@@ -1110,7 +1164,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.obj: home/gray/formula/nxp/MK
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.c.i
@@ -1119,7 +1173,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.i: home/gray/formula/nxp/MKEL
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.c.s
@@ -1128,7 +1182,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.s: home/gray/formula/nxp/MKEL
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lptmr.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.c.obj
@@ -1137,7 +1191,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.obj: home/gray/formula/nxp/M
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.c.i
@@ -1146,7 +1200,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.i: home/gray/formula/nxp/MKE
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.c.s
@@ -1155,7 +1209,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.s: home/gray/formula/nxp/MKE
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.c.obj
@@ -1164,7 +1218,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.obj: home/gray/formula/
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.c.i
@@ -1173,7 +1227,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.i: home/gray/formula/nx
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.c.s
@@ -1182,7 +1236,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.s: home/gray/formula/nx
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_lpuart_edma.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.c.obj
@@ -1191,7 +1245,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.obj: home/gray/formula/nxp/MKEL
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.c.i
@@ -1200,7 +1254,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.i: home/gray/formula/nxp/MKELib
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.c.s
@@ -1209,7 +1263,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.s: home/gray/formula/nxp/MKELib
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_pdb.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.c.obj
@@ -1218,7 +1272,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.obj: home/gray/formula/nxp/MKEL
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.c.i
@@ -1227,7 +1281,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.i: home/gray/formula/nxp/MKELib
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.c.s
@@ -1236,7 +1290,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.s: home/gray/formula/nxp/MKELib
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_pmc.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.c.obj
@@ -1245,7 +1299,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.obj: home/gray/formula/nxp/MKEL
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.c.i
@@ -1254,7 +1308,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.i: home/gray/formula/nxp/MKELib
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.c.s
@@ -1263,7 +1317,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.s: home/gray/formula/nxp/MKELib
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_pwt.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.c.obj
@@ -1272,7 +1326,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.obj: home/gray/formula/nxp/MKEL
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.c.i
@@ -1281,7 +1335,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.i: home/gray/formula/nxp/MKELib
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.c.s
@@ -1290,7 +1344,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.s: home/gray/formula/nxp/MKELib
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_rcm.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.c.obj
@@ -1299,7 +1353,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.obj: home/gray/formula/nxp/MKEL
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.c.i
@@ -1308,7 +1362,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.i: home/gray/formula/nxp/MKELib
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.c.s
@@ -1317,7 +1371,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.s: home/gray/formula/nxp/MKELib
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_rtc.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.c.obj
@@ -1326,7 +1380,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.obj: home/gray/formula/nxp/MKEL
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.c.i
@@ -1335,7 +1389,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.i: home/gray/formula/nxp/MKELib
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.c.s
@@ -1344,7 +1398,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.s: home/gray/formula/nxp/MKELib
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_sim.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.c.obj
@@ -1353,7 +1407,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.obj: home/gray/formula/nxp/MKEL
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.c.i
@@ -1362,7 +1416,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.i: home/gray/formula/nxp/MKELib
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.c.s
@@ -1371,7 +1425,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.s: home/gray/formula/nxp/MKELib
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_smc.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.c.obj
@@ -1380,7 +1434,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.obj: home/gray/formula/nxp/M
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.c.i
@@ -1389,7 +1443,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.i: home/gray/formula/nxp/MKE
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.c.s
@@ -1398,7 +1452,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.s: home/gray/formula/nxp/MKE
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_sysmpu.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.c.obj
@@ -1407,7 +1461,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.obj: home/gray/formula/nxp/M
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.c.i
@@ -1416,7 +1470,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.i: home/gray/formula/nxp/MKE
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.c.s
@@ -1425,7 +1479,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.s: home/gray/formula/nxp/MKE
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_trgmux.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.obj: home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.c.obj
@@ -1434,7 +1488,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.obj: home/gray/formula/nxp/M
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.i: home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.c.i
@@ -1443,7 +1497,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.i: home/gray/formula/nxp/MKE
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.s: home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.c.s
@@ -1452,7 +1506,7 @@ home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.s: home/gray/formula/nxp/MKE
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/fsl_wdog32.c.s
 
 home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.obj: home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.c.obj
@@ -1461,7 +1515,7 @@ home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.obj: home/gray/formu
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.c.obj
 
 home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.i: home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.c.i
@@ -1470,7 +1524,7 @@ home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.i: home/gray/formula
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.c.i
 
 home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.s: home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.c.s
@@ -1479,7 +1533,7 @@ home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.s: home/gray/formula
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.c.s
 
 home/gray/formula/nxp/MKELibrary/lib/adc.obj: home/gray/formula/nxp/MKELibrary/lib/adc.cpp.obj
@@ -1488,7 +1542,7 @@ home/gray/formula/nxp/MKELibrary/lib/adc.obj: home/gray/formula/nxp/MKELibrary/l
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/lib/adc.cpp.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/lib/adc.cpp.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/lib/adc.cpp.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/lib/adc.cpp.obj
 
 home/gray/formula/nxp/MKELibrary/lib/adc.i: home/gray/formula/nxp/MKELibrary/lib/adc.cpp.i
@@ -1497,7 +1551,7 @@ home/gray/formula/nxp/MKELibrary/lib/adc.i: home/gray/formula/nxp/MKELibrary/lib
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/lib/adc.cpp.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/lib/adc.cpp.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/lib/adc.cpp.i
 .PHONY : home/gray/formula/nxp/MKELibrary/lib/adc.cpp.i
 
 home/gray/formula/nxp/MKELibrary/lib/adc.s: home/gray/formula/nxp/MKELibrary/lib/adc.cpp.s
@@ -1506,7 +1560,7 @@ home/gray/formula/nxp/MKELibrary/lib/adc.s: home/gray/formula/nxp/MKELibrary/lib
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/lib/adc.cpp.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/lib/adc.cpp.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/lib/adc.cpp.s
 .PHONY : home/gray/formula/nxp/MKELibrary/lib/adc.cpp.s
 
 home/gray/formula/nxp/MKELibrary/lib/candrv.obj: home/gray/formula/nxp/MKELibrary/lib/candrv.cpp.obj
@@ -1515,7 +1569,7 @@ home/gray/formula/nxp/MKELibrary/lib/candrv.obj: home/gray/formula/nxp/MKELibrar
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/lib/candrv.cpp.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/lib/candrv.cpp.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/lib/candrv.cpp.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/lib/candrv.cpp.obj
 
 home/gray/formula/nxp/MKELibrary/lib/candrv.i: home/gray/formula/nxp/MKELibrary/lib/candrv.cpp.i
@@ -1524,7 +1578,7 @@ home/gray/formula/nxp/MKELibrary/lib/candrv.i: home/gray/formula/nxp/MKELibrary/
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/lib/candrv.cpp.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/lib/candrv.cpp.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/lib/candrv.cpp.i
 .PHONY : home/gray/formula/nxp/MKELibrary/lib/candrv.cpp.i
 
 home/gray/formula/nxp/MKELibrary/lib/candrv.s: home/gray/formula/nxp/MKELibrary/lib/candrv.cpp.s
@@ -1533,7 +1587,7 @@ home/gray/formula/nxp/MKELibrary/lib/candrv.s: home/gray/formula/nxp/MKELibrary/
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/lib/candrv.cpp.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/lib/candrv.cpp.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/lib/candrv.cpp.s
 .PHONY : home/gray/formula/nxp/MKELibrary/lib/candrv.cpp.s
 
 home/gray/formula/nxp/MKELibrary/lib/canlight.obj: home/gray/formula/nxp/MKELibrary/lib/canlight.cpp.obj
@@ -1542,7 +1596,7 @@ home/gray/formula/nxp/MKELibrary/lib/canlight.obj: home/gray/formula/nxp/MKELibr
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/lib/canlight.cpp.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/lib/canlight.cpp.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/lib/canlight.cpp.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/lib/canlight.cpp.obj
 
 home/gray/formula/nxp/MKELibrary/lib/canlight.i: home/gray/formula/nxp/MKELibrary/lib/canlight.cpp.i
@@ -1551,7 +1605,7 @@ home/gray/formula/nxp/MKELibrary/lib/canlight.i: home/gray/formula/nxp/MKELibrar
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/lib/canlight.cpp.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/lib/canlight.cpp.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/lib/canlight.cpp.i
 .PHONY : home/gray/formula/nxp/MKELibrary/lib/canlight.cpp.i
 
 home/gray/formula/nxp/MKELibrary/lib/canlight.s: home/gray/formula/nxp/MKELibrary/lib/canlight.cpp.s
@@ -1560,7 +1614,7 @@ home/gray/formula/nxp/MKELibrary/lib/canlight.s: home/gray/formula/nxp/MKELibrar
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/lib/canlight.cpp.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/lib/canlight.cpp.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/lib/canlight.cpp.s
 .PHONY : home/gray/formula/nxp/MKELibrary/lib/canlight.cpp.s
 
 home/gray/formula/nxp/MKELibrary/lib/gpio.obj: home/gray/formula/nxp/MKELibrary/lib/gpio.cpp.obj
@@ -1569,7 +1623,7 @@ home/gray/formula/nxp/MKELibrary/lib/gpio.obj: home/gray/formula/nxp/MKELibrary/
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/lib/gpio.cpp.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/lib/gpio.cpp.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/lib/gpio.cpp.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/lib/gpio.cpp.obj
 
 home/gray/formula/nxp/MKELibrary/lib/gpio.i: home/gray/formula/nxp/MKELibrary/lib/gpio.cpp.i
@@ -1578,7 +1632,7 @@ home/gray/formula/nxp/MKELibrary/lib/gpio.i: home/gray/formula/nxp/MKELibrary/li
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/lib/gpio.cpp.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/lib/gpio.cpp.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/lib/gpio.cpp.i
 .PHONY : home/gray/formula/nxp/MKELibrary/lib/gpio.cpp.i
 
 home/gray/formula/nxp/MKELibrary/lib/gpio.s: home/gray/formula/nxp/MKELibrary/lib/gpio.cpp.s
@@ -1587,7 +1641,7 @@ home/gray/formula/nxp/MKELibrary/lib/gpio.s: home/gray/formula/nxp/MKELibrary/li
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/lib/gpio.cpp.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/lib/gpio.cpp.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/lib/gpio.cpp.s
 .PHONY : home/gray/formula/nxp/MKELibrary/lib/gpio.cpp.s
 
 home/gray/formula/nxp/MKELibrary/lib/lpit.obj: home/gray/formula/nxp/MKELibrary/lib/lpit.cpp.obj
@@ -1596,7 +1650,7 @@ home/gray/formula/nxp/MKELibrary/lib/lpit.obj: home/gray/formula/nxp/MKELibrary/
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/lib/lpit.cpp.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/lib/lpit.cpp.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/lib/lpit.cpp.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/lib/lpit.cpp.obj
 
 home/gray/formula/nxp/MKELibrary/lib/lpit.i: home/gray/formula/nxp/MKELibrary/lib/lpit.cpp.i
@@ -1605,7 +1659,7 @@ home/gray/formula/nxp/MKELibrary/lib/lpit.i: home/gray/formula/nxp/MKELibrary/li
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/lib/lpit.cpp.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/lib/lpit.cpp.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/lib/lpit.cpp.i
 .PHONY : home/gray/formula/nxp/MKELibrary/lib/lpit.cpp.i
 
 home/gray/formula/nxp/MKELibrary/lib/lpit.s: home/gray/formula/nxp/MKELibrary/lib/lpit.cpp.s
@@ -1614,7 +1668,7 @@ home/gray/formula/nxp/MKELibrary/lib/lpit.s: home/gray/formula/nxp/MKELibrary/li
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/lib/lpit.cpp.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/lib/lpit.cpp.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/lib/lpit.cpp.s
 .PHONY : home/gray/formula/nxp/MKELibrary/lib/lpit.cpp.s
 
 home/gray/formula/nxp/MKELibrary/lib/spi.obj: home/gray/formula/nxp/MKELibrary/lib/spi.cpp.obj
@@ -1623,7 +1677,7 @@ home/gray/formula/nxp/MKELibrary/lib/spi.obj: home/gray/formula/nxp/MKELibrary/l
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/lib/spi.cpp.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/lib/spi.cpp.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/lib/spi.cpp.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/lib/spi.cpp.obj
 
 home/gray/formula/nxp/MKELibrary/lib/spi.i: home/gray/formula/nxp/MKELibrary/lib/spi.cpp.i
@@ -1632,7 +1686,7 @@ home/gray/formula/nxp/MKELibrary/lib/spi.i: home/gray/formula/nxp/MKELibrary/lib
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/lib/spi.cpp.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/lib/spi.cpp.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/lib/spi.cpp.i
 .PHONY : home/gray/formula/nxp/MKELibrary/lib/spi.cpp.i
 
 home/gray/formula/nxp/MKELibrary/lib/spi.s: home/gray/formula/nxp/MKELibrary/lib/spi.cpp.s
@@ -1641,7 +1695,7 @@ home/gray/formula/nxp/MKELibrary/lib/spi.s: home/gray/formula/nxp/MKELibrary/lib
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/lib/spi.cpp.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/lib/spi.cpp.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/lib/spi.cpp.s
 .PHONY : home/gray/formula/nxp/MKELibrary/lib/spi.cpp.s
 
 home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.obj: home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.c.obj
@@ -1650,7 +1704,7 @@ home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.obj: home/gray/formula/nxp
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.c.obj
 
 home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.i: home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.c.i
@@ -1659,7 +1713,7 @@ home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.i: home/gray/formula/nxp/M
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.c.i
 
 home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.s: home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.c.s
@@ -1668,7 +1722,7 @@ home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.s: home/gray/formula/nxp/M
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/utilities/fsl_assert.c.s
 
 home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.obj: home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.c.obj
@@ -1677,7 +1731,7 @@ home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.obj: home/gray/form
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.c.obj
 
 home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.i: home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.c.i
@@ -1686,7 +1740,7 @@ home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.i: home/gray/formul
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.c.i
 
 home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.s: home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.c.s
@@ -1695,7 +1749,7 @@ home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.s: home/gray/formul
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/utilities/fsl_debug_console.c.s
 
 home/gray/formula/nxp/MKELibrary/utilities/fsl_io.obj: home/gray/formula/nxp/MKELibrary/utilities/fsl_io.c.obj
@@ -1704,7 +1758,7 @@ home/gray/formula/nxp/MKELibrary/utilities/fsl_io.obj: home/gray/formula/nxp/MKE
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/utilities/fsl_io.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_io.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_io.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/utilities/fsl_io.c.obj
 
 home/gray/formula/nxp/MKELibrary/utilities/fsl_io.i: home/gray/formula/nxp/MKELibrary/utilities/fsl_io.c.i
@@ -1713,7 +1767,7 @@ home/gray/formula/nxp/MKELibrary/utilities/fsl_io.i: home/gray/formula/nxp/MKELi
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/utilities/fsl_io.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_io.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_io.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/utilities/fsl_io.c.i
 
 home/gray/formula/nxp/MKELibrary/utilities/fsl_io.s: home/gray/formula/nxp/MKELibrary/utilities/fsl_io.c.s
@@ -1722,7 +1776,7 @@ home/gray/formula/nxp/MKELibrary/utilities/fsl_io.s: home/gray/formula/nxp/MKELi
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/utilities/fsl_io.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_io.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_io.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/utilities/fsl_io.c.s
 
 home/gray/formula/nxp/MKELibrary/utilities/fsl_log.obj: home/gray/formula/nxp/MKELibrary/utilities/fsl_log.c.obj
@@ -1731,7 +1785,7 @@ home/gray/formula/nxp/MKELibrary/utilities/fsl_log.obj: home/gray/formula/nxp/MK
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/utilities/fsl_log.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_log.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_log.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/utilities/fsl_log.c.obj
 
 home/gray/formula/nxp/MKELibrary/utilities/fsl_log.i: home/gray/formula/nxp/MKELibrary/utilities/fsl_log.c.i
@@ -1740,7 +1794,7 @@ home/gray/formula/nxp/MKELibrary/utilities/fsl_log.i: home/gray/formula/nxp/MKEL
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/utilities/fsl_log.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_log.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_log.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/utilities/fsl_log.c.i
 
 home/gray/formula/nxp/MKELibrary/utilities/fsl_log.s: home/gray/formula/nxp/MKELibrary/utilities/fsl_log.c.s
@@ -1749,7 +1803,7 @@ home/gray/formula/nxp/MKELibrary/utilities/fsl_log.s: home/gray/formula/nxp/MKEL
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/utilities/fsl_log.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_log.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_log.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/utilities/fsl_log.c.s
 
 home/gray/formula/nxp/MKELibrary/utilities/fsl_str.obj: home/gray/formula/nxp/MKELibrary/utilities/fsl_str.c.obj
@@ -1758,7 +1812,7 @@ home/gray/formula/nxp/MKELibrary/utilities/fsl_str.obj: home/gray/formula/nxp/MK
 
 # target to build an object file
 home/gray/formula/nxp/MKELibrary/utilities/fsl_str.c.obj:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_str.c.obj
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_str.c.obj
 .PHONY : home/gray/formula/nxp/MKELibrary/utilities/fsl_str.c.obj
 
 home/gray/formula/nxp/MKELibrary/utilities/fsl_str.i: home/gray/formula/nxp/MKELibrary/utilities/fsl_str.c.i
@@ -1767,7 +1821,7 @@ home/gray/formula/nxp/MKELibrary/utilities/fsl_str.i: home/gray/formula/nxp/MKEL
 
 # target to preprocess a source file
 home/gray/formula/nxp/MKELibrary/utilities/fsl_str.c.i:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_str.c.i
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_str.c.i
 .PHONY : home/gray/formula/nxp/MKELibrary/utilities/fsl_str.c.i
 
 home/gray/formula/nxp/MKELibrary/utilities/fsl_str.s: home/gray/formula/nxp/MKELibrary/utilities/fsl_str.c.s
@@ -1776,7 +1830,7 @@ home/gray/formula/nxp/MKELibrary/utilities/fsl_str.s: home/gray/formula/nxp/MKEL
 
 # target to generate assembly for a file
 home/gray/formula/nxp/MKELibrary/utilities/fsl_str.c.s:
-	$(MAKE) -f CMakeFiles/MKELibrary.elf.dir/build.make CMakeFiles/MKELibrary.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_str.c.s
+	$(MAKE) -f CMakeFiles/bms.elf.dir/build.make CMakeFiles/bms.elf.dir/home/gray/formula/nxp/MKELibrary/utilities/fsl_str.c.s
 .PHONY : home/gray/formula/nxp/MKELibrary/utilities/fsl_str.c.s
 
 # Help Target
@@ -1787,7 +1841,7 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... MKELibrary.elf"
+	@echo "... bms.elf"
 	@echo "... home/gray/formula/nxp/BMS/board/board.obj"
 	@echo "... home/gray/formula/nxp/BMS/board/board.i"
 	@echo "... home/gray/formula/nxp/BMS/board/board.s"
@@ -1800,9 +1854,15 @@ help:
 	@echo "... home/gray/formula/nxp/BMS/board/pin_mux.obj"
 	@echo "... home/gray/formula/nxp/BMS/board/pin_mux.i"
 	@echo "... home/gray/formula/nxp/BMS/board/pin_mux.s"
-	@echo "... home/gray/formula/nxp/BMS/source/MKELibrary.obj"
-	@echo "... home/gray/formula/nxp/BMS/source/MKELibrary.i"
-	@echo "... home/gray/formula/nxp/BMS/source/MKELibrary.s"
+	@echo "... home/gray/formula/nxp/BMS/source/bms.obj"
+	@echo "... home/gray/formula/nxp/BMS/source/bms.i"
+	@echo "... home/gray/formula/nxp/BMS/source/bms.s"
+	@echo "... home/gray/formula/nxp/BMS/source/drivers.obj"
+	@echo "... home/gray/formula/nxp/BMS/source/drivers.i"
+	@echo "... home/gray/formula/nxp/BMS/source/drivers.s"
+	@echo "... home/gray/formula/nxp/BMS/source/ltcutility.obj"
+	@echo "... home/gray/formula/nxp/BMS/source/ltcutility.i"
+	@echo "... home/gray/formula/nxp/BMS/source/ltcutility.s"
 	@echo "... home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.obj"
 	@echo "... home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.i"
 	@echo "... home/gray/formula/nxp/MKELibrary/CMSIS/system_MKE18F16.s"

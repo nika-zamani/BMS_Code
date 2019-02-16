@@ -351,7 +351,7 @@ FILE(GLOB source_utilities ${BSPPath}/utilities/*.c)
 FILE(GLOB source_lib ${BSPPath}/lib/*.cpp)
 FILE(GLOB source_system ${BSPPath}/system/*.cpp)
 
-add_executable(MKELibrary.elf 
+add_executable(bms.elf 
   ${source_board}
   ${source_CMSIS}
   ${source_drivers}
@@ -364,75 +364,26 @@ add_executable(MKELibrary.elf
   ${source_system}
 )
 
-SET(old_files
-"${ProjDirPath}/../MKELibrary.c"
-"${ProjDirPath}/../pin_mux.c"
-"${ProjDirPath}/../pin_mux.h"
-"${ProjDirPath}/../board.c"
-"${ProjDirPath}/../board.h"
-"${ProjDirPath}/../clock_config.c"
-"${ProjDirPath}/../clock_config.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_clock.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_clock.c"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_ftfx_adapter.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_ftfx_utilities.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_ftfx_features.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_ftfx_controller.c"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_ftfx_controller.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_ftfx_flash.c"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_ftfx_flash.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_ftfx_cache.c"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_ftfx_cache.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_ftfx_flexnvm.c"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_ftfx_flexnvm.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_flash.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_common.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_common.c"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/system_MKE18F16.c"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/system_MKE18F16.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/gcc/startup_MKE18F16.S"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_lpuart.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_lpuart.c"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_port.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_smc.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_smc.c"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/utilities/io/fsl_io.c"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/utilities/io/fsl_io.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/utilities/log/fsl_log.c"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/utilities/log/fsl_log.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/utilities/str/fsl_str.c"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/utilities/str/fsl_str.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/utilities/fsl_debug_console.c"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/utilities/fsl_debug_console.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/utilities/fsl_debug_console_conf.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_gpio.h"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_gpio.c"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/utilities/fsl_assert.c"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_adc12.c"
-"${ProjDirPath}/../../../../../../devices/MKE18F16/drivers/fsl_adc12.h"
-)
-
-
 set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -T${ProjDirPath}/MKE18F512xxx16_flash.ld -static")
 
 set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -T${ProjDirPath}/MKE18F512xxx16_flash.ld -static")
 
-TARGET_LINK_LIBRARIES(MKELibrary.elf -Wl,--start-group)
-target_link_libraries(MKELibrary.elf debug m)
+TARGET_LINK_LIBRARIES(bms.elf -Wl,--start-group)
+target_link_libraries(bms.elf debug m)
 
-target_link_libraries(MKELibrary.elf debug c)
+target_link_libraries(bms.elf debug c)
 
-target_link_libraries(MKELibrary.elf debug gcc)
+target_link_libraries(bms.elf debug gcc)
 
-target_link_libraries(MKELibrary.elf debug nosys)
+target_link_libraries(bms.elf debug nosys)
 
-target_link_libraries(MKELibrary.elf optimized m)
+target_link_libraries(bms.elf optimized m)
 
-target_link_libraries(MKELibrary.elf optimized c)
+target_link_libraries(bms.elf optimized c)
 
-target_link_libraries(MKELibrary.elf optimized gcc)
+target_link_libraries(bms.elf optimized gcc)
 
-target_link_libraries(MKELibrary.elf optimized nosys)
+target_link_libraries(bms.elf optimized nosys)
 
-TARGET_LINK_LIBRARIES(MKELibrary.elf -Wl,--end-group)
+TARGET_LINK_LIBRARIES(bms.elf -Wl,--end-group)
 
