@@ -8,71 +8,157 @@ using namespace bms;
 
 extern gpio::GPIO_port ltccsport;
 extern uint8_t ltccspin;
-extern uint8_t slaves;
 
+static uint8_t bmsslaves;
 static bmsstate_t bmsstate;
 static bmscommands_t bmscommand;
+#ifndef slaves
+#define slaves 1
+#endif
+static uint8_t txdatabuf[4 + 8*slaves] = {0};
+static uint8_t rxdatabuf[4 + 8*slaves] = {0};
 static uint8_t bmstimer;
 static uint8_t bmson;
 static uint8_t bmsawake;
+static uint8_t bmscommandwaiting;
 
-static void bmsdriver(void){
-    
-    if(bmsstate == idle || bmsstate == wakeup){
-        bmsstate = wakedown;
-        gpio::GPIO::clear(ltccsport, ltccspin);
-        bmstimer = 4;
-    } else if(bmsstate == wakedown){
-        bmsstate = wakeup;
-        gpio::GPIO::set(ltccsport, ltccspin);
-        bmsawake++;
-        bmstimer = 1;
-        if(bmsawake == slaves){
-            bmsstate = ready;
-        }
-    } else if(bmsstate == ready){
-
-        bmson = 0;
-        spi::SPI& spi = spi::SPI::StaticClass();
-        uint8_t txdata[12] = {0x00,0x01,0x00,0x00,0xfc,0x00,0x00,0x00,0x02,0x00,0x00,0x00};
-        pec15_calc(2, txdata, txdata+2);
-        pec15_calc(6, txdata+4, txdata+10);
-        uint8_t rxdata[12];
-        spi.mastertx(0, txdata, rxdata, 12);
-        while(spi.xcvrs[0].transmitting);
-
+static void bmsspitransmit(){
+    spi::SPI& spi = spi::SPI::StaticClass();
+    if(!spi.xcvrs[0].transmitting){
+        spi.mastertx(0, txdatabuf, rxdatabuf, 4 + 8*slaves);
+        bmscommandwaiting = 0;
     }
-
 }
 
-static void bms::formcommand(bmscommands_t command){
+static void bmsdriver(void){
+
+    switch(bmsstate){
+
+        case idle:
+            if(bmson){
+                // Go to wakedown
+                gpio::GPIO::clear(ltccsport, ltccspin);
+                bmstimer = 4; // 400us
+                bmsstate = wakedown;
+            }
+            break;
+
+        case wakedown:
+            if(!bmstimer){
+                // Go to wakeup
+                gpio::GPIO::set(ltccsport, ltccspin);
+                bmstimer = 1;
+                bmsawake++;
+                bmsstate = wakeup;
+            }
+            break;
+
+        case wakeup:
+            if(!bmstimer){
+                if(bmsawake == bmsslaves){
+                    // Go to ready
+                    bmstimer = 50; // 5ms
+                    bmsstate = ready;
+                } else {
+                    // Go to wakedown
+                    gpio::GPIO::clear(ltccsport, ltccspin);
+                    bmstimer = 4;
+                    bmsstate = wakedown;
+                }
+            }
+            break;
+
+        case ready:
+            if(!bmstimer){
+                // Go to idle
+                bmson = 0;
+                bmsawake = 0;
+                bmsstate = idle;
+            } else {
+                if(bmscommandwaiting){
+                    bmsspitransmit();
+                }
+            }
+            break;
+
+        default:
+            break;
+
+    }
+}
+
+
+static void getcommand(bmscommands_t command, uint8_t* buf){
 
     switch(command) {
 
         case readConfig:
-            txdatabuf[0] = 0x00;
-            txdatabuf[1] = 0x02;
-            pec15_calc(2, txdatabuf, txdatabuf+2);
+            buf[0] = 0x00;
+            buf[1] = 0x02;
+            break;
 
+        case writeConfig:
+            buf[0] = 0x00;
+            buf[1] = 0x01;
+            break;
 
     }
 
-void bms::bmstick(void){
+}
+
+void bms::tick(void){
     if(bmstimer) bmstimer--;
-    if(!bmstimer && bmson) bmsdriver();
+    bmsdriver();
 }
 
+void bms::transmit(bmscommands_t command){
 
-void bms::bmstransmit(void){
+    uint8_t data[6*slaves];
+    memset(data, 0xff, 6*slaves);
+
+    transmit(command, data);
+
+}
+
+void bms::wait(){
+    spi::SPI& spi = spi::SPI::StaticClass();
+//    while(bmscommandwaiting || spi.xcvrs[0].transmitting);
+    uint8_t i;
+    do {
+    i = spi.xcvrs[0].transmitting;
+    }while(bmscommandwaiting || i);
+}
+
+void bms::transmit(bmscommands_t command, uint8_t* data){
+
+    // Clear command + PEC
+    // Intent is to send an invalid message should interrupt fire inside this function
+    memset(txdatabuf, 0, 4);
+    
+    bmscommand = command;
+
+    // Copy data into tx data buffer & calculate PECs
+    for(uint8_t i = 0; i < slaves; i++){
+        memcpy(txdatabuf + (8*i + 4), data + (6*i), 6);
+        pec15_calc(6, txdatabuf + (8*i + 4), txdatabuf + (8*(i+1) + 2));
+    }
+
+    getcommand(command, txdatabuf);
+    pec15_calc(2, txdatabuf, txdatabuf + 2);
+
+    bmscommandwaiting = 1;
     bmson = 1;
+
+    if(bmsstate == ready) bmsspitransmit();
 }
 
-uint8_t bms::bmsinit(){
+uint8_t bms::init(){
 
     bmsstate = idle;
     bmstimer = 0;
     bmson = 0;
     bmsawake = 0;
+    bmscommandwaiting = 0;
 
     return 0;
 

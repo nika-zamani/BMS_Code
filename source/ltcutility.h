@@ -20,11 +20,15 @@ enum bmscommands_t {
     writeConfig
 };
 
-uint8_t bmsinit();
+uint8_t init();
 
-void bmstransmit();
+void transmit(bmscommands_t command);
 
-void bmstick();
+void transmit(bmscommands_t command, uint8_t* data);
+
+void tick();
+
+void wait();
 
 void pec15_calc(uint8_t length, uint8_t* data, uint8_t* pec);
 
