@@ -19,6 +19,8 @@ using namespace BSP;
 gpio::GPIO_port ltccsport = gpio::PortE;
 uint8_t ltccspin = 6;
 
+volatile uint32_t ticks;
+
 void tick(void){
 }
 
@@ -35,6 +37,7 @@ int main(void) {
     BOARD_InitBootPeripherals();
     SysTick_Config(SYSTICK);
 
+    ticks = 0;
 
     bms::init();
     initspi();
@@ -42,6 +45,13 @@ int main(void) {
     for(uint32_t i = 0; i < 100000; i++);
 
     uint8_t data[6] = {0xfc, 0x00, 0x00, 0x00, 0x01, 0x00};
+
+    bms::transmit(bms::ADCVSC);
+    ticks = 2000;
+    while(ticks);
+    bms::transmit(bms::RDCVA);
+
+    while(1);
     bms::transmit(bms::writeConfig, data);
     bms::wait();
     bms::transmit(bms::readConfig);
@@ -61,6 +71,7 @@ int main(void) {
 
 extern "C" {
 void SysTick_Handler(void){
+    if(ticks) ticks--;
     bms::tick();
 }
 }

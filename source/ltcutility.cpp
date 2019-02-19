@@ -102,6 +102,16 @@ static void getcommand(bmscommands_t command, uint8_t* buf){
             buf[1] = 0x01;
             break;
 
+        case ADCVSC:
+            buf[0] = 0x05;
+            buf[1] = 0x67;
+            break;
+
+        case RDCVA:
+            buf[0] = 0x00;
+            buf[1] = 0x04;
+            break;
+
     }
 
 }

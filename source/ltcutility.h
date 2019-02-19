@@ -17,7 +17,9 @@ enum bmsstate_t {
 
 enum bmscommands_t {
     readConfig,
-    writeConfig
+    writeConfig,
+    ADCVSC,
+    RDCVA
 };
 
 uint8_t init();
