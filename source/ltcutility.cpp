@@ -96,20 +96,175 @@ static void getcommand(bmscommands_t command, uint8_t* buf){
             buf[0] = 0x00;
             buf[1] = 0x02;
             break;
-
+	
         case writeConfig:
             buf[0] = 0x00;
             buf[1] = 0x01;
             break;
 
-        case ADCVSC:
+        case ADCVSC: //(DCP = 0)
             buf[0] = 0x05;
             buf[1] = 0x67;
             break;
 
-        case RDCVA:
+        case RDCVA:		//Read Voltage Group A
             buf[0] = 0x00;
             buf[1] = 0x04;
+            break;
+			
+		case RDCVB:		//Read Voltage Group B
+            buf[0] = 0x00;
+            buf[1] = 0x06;
+            break;
+			
+		case RDCVC:		//Read Voltage Group C
+            buf[0] = 0x00;
+            buf[1] = 0x08;
+            break;
+			
+		case RDCVD:		//Read Voltage Group D
+            buf[0] = 0x00;
+            buf[1] = 0x0a;
+            break;
+			
+		case RDAUXA:	//Read Auxillary Register Group A
+            buf[0] = 0x00;
+            buf[1] = 0x0c;
+            break;
+			
+		case RDAUXB:	//Read Auxillary Register Group B
+            buf[0] = 0x00;
+            buf[1] = 0x0e;
+            break;
+			
+		case RDSTATA:	//Read Status Register Group B
+            buf[0] = 0x00;
+            buf[1] = 0x10;
+            break;
+			
+		case RDSTATB:	//Read Status Register Group B
+            buf[0] = 0x00;
+            buf[1] = 0x12;
+            break;
+			
+		case WRSCTRL:	//Write S Control Register Group
+            buf[0] = 0x00;
+            buf[1] = 0x14;
+            break;
+			
+		case WRPWM:	//Write PWM Register Group
+            buf[0] = 0x00;
+            buf[1] = 0x20;
+            break;
+			
+		case RDSCTRL:	//Read S Control Register Group
+            buf[0] = 0x00;
+            buf[1] = 0x16;
+            break;
+			
+		case RDPWM:	//Read PWM Register Group
+            buf[0] = 0x00;
+            buf[1] = 0x22;
+            break;
+			
+		case STSCTRL:	//Start S Control Pulsing and Poll Status
+            buf[0] = 0x00;
+            buf[1] = 0x19;
+            break;
+			
+		case CLRSCTRL:	//Clear S Control Register Group
+            buf[0] = 0x00;
+            buf[1] = 0x18;
+            break;
+			
+		case ADCV:	//Start Cell Voltage ADC Conversion and Poll Status (DCP = 0)
+            buf[0] = 0x03;
+            buf[1] = 0x60;
+            break;
+			
+		case ADOW:	//Start Open Wire ADC Conversion and Poll Status (PUP = 0)(DCP = 0)
+            buf[0] = 0x03;
+            buf[1] = 0x28;
+            break;
+			
+		case CVST:	//Start Self Test Cell Voltage Conversion and Poll Status (ST[0] = ST[1] = 0)
+            buf[0] = 0x03;
+            buf[1] = 0x07;
+            break;
+			
+		case ADOL:	//Start Overlap Measurement of Cell 7 Voltage (DCP = 0)
+            buf[0] = 0x03;
+            buf[1] = 0x00;
+            break;
+			
+		case ADAX:	//Start GPIOs ADC Conversion and Poll Status (CHG[0:2] = 0)
+            buf[0] = 0x05;
+            buf[1] = 0x60;
+            break;
+			
+		case ADAXD:	//Start GPIOs ADC Conversion With Digital Redundancy and Poll Status (CHG[0:2] = 0)
+            buf[0] = 0x05;
+            buf[1] = 0x00;
+            break;
+		
+		case AXST:	//Start Self Test GPIOs Conversion and Poll Status (ST[0] = ST[1] = 0)
+            buf[0] = 0x05;
+            buf[1] = 0x07;
+            break;
+		
+		case ADSTAT:	//Start Status Group ADC Conversion and Poll Status (CHST[0:2] = 0)
+            buf[0] = 0x05;
+            buf[1] = 0x68;
+            break;
+		
+		case ADSTATD:	//Start Status Group ADC Conversion With Digital Redundancy and Poll Status (CHST[0:2] = 0)
+            buf[0] = 0x05;
+            buf[1] = 0x08;
+            break;
+		
+		case STATST:	//Start Self Test Status Group Conversion and Poll Status (ST[0] = ST[1] = 0)
+            buf[0] = 0x05;
+            buf[1] = 0x0f;
+            break;
+			
+		case ADCVAX:	//Start Combined Cell Voltage and GPIO1, GPIO2 Conversion and Poll Status (DCP = 0)
+            buf[0] = 0x05;
+            buf[1] = 0x6f;
+            break;
+			
+		case CLRCELL:	//Clear Cell Voltage Register Groups
+            buf[0] = 0x07;
+            buf[1] = 0x11;
+            break;
+			
+		case  CLRSTAT:	//Clear Status Register Groups
+            buf[0] = 0x07;
+            buf[1] = 0x13;
+            break;
+			
+		case PLADC:	//Poll ADC Conversion Status
+            buf[0] = 0x07;
+            buf[1] = 0x14;
+            break;
+			
+		case DIAGN:	//Diagnose MUX and Poll Status
+            buf[0] = 0x07;
+            buf[1] = 0x15;
+            break;
+			
+		case WRCOMM:	//Write COMM Register Group
+            buf[0] = 0x07;
+            buf[1] = 0x21;
+            break;
+			
+		case RDCOMM:	//Read COMM Register Group
+            buf[0] = 0x07;
+            buf[1] = 0x22;
+            break;
+			
+		case STCOMM:	//Start I2C /SPI Communication 
+            buf[0] = 0x07;
+            buf[1] = 0x23;
             break;
 
     }
