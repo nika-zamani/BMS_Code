@@ -1,3 +1,5 @@
+#define slaves 2
+
 #include <stdint.h>
 #include "ltcutility.h"
 #include "gpio.h"
@@ -11,11 +13,9 @@ extern uint8_t ltccspin;
 
 static uint8_t bmsslaves;
 static bmsstate_t bmsstate;
-static bmscommands_t bmscommand;
-#define slaves 2
-#ifndef slaves
-#define slaves 1
-#endif
+static bmscommands_t lastcommand;
+static bmscommands_t nextcommand;
+static uint8_t commandOnly;
 static uint8_t txdatabuf[4 + 8*slaves] = {0};
 static uint8_t rxdatabuf[4 + 8*slaves] = {0};
 static uint8_t bmstimer;
@@ -23,10 +23,19 @@ static uint8_t bmson;
 static uint8_t bmsawake;
 static uint8_t bmscommandwaiting;
 
+void bmsspicb(){
+
+    static uint8_t i;
+    i++;
+
+}
+
 static void bmsspitransmit(){
     spi::SPI& spi = spi::SPI::StaticClass();
     if(!spi.xcvrs[0].transmitting){
-        spi.mastertx(0, txdatabuf, rxdatabuf, 4 + 8*slaves);
+        lastcommand = nextcommand;
+        if(commandOnly) spi.mastertx(0, txdatabuf, rxdatabuf, 4);
+        else spi.mastertx(0, txdatabuf, rxdatabuf, 4 + 8*slaves);
         bmscommandwaiting = 0;
     }
 }
@@ -93,19 +102,24 @@ static void getcommand(bmscommands_t command, uint8_t* buf){
 
     switch(command) {
 
-        case readConfig:
-            buf[0] = 0x00;
-            buf[1] = 0x02;
-            break;
-	
-        case writeConfig:
+        case WRCFGA:
             buf[0] = 0x00;
             buf[1] = 0x01;
             break;
+	
+        case WRCFGB:
+            buf[0] = 0x00;
+            buf[1] = 0x24;
+            break;
 
-        case ADCVSC: //(DCP = 0)
-            buf[0] = 0x05;
-            buf[1] = 0x67;
+        case RDCFGA:
+            buf[0] = 0x00;
+            buf[1] = 0x02;
+            break;
+
+        case RDCFGB:
+            buf[0] = 0x00;
+            buf[1] = 0x26;
             break;
 
         case RDCVA:		//Read Voltage Group A
@@ -127,6 +141,15 @@ static void getcommand(bmscommands_t command, uint8_t* buf){
             buf[0] = 0x00;
             buf[1] = 0x0a;
             break;
+
+        case RDCVE:
+            buf[0] = 0x00;
+            buf[1] = 0x09;
+            break;
+
+        case RDCVF:
+            buf[0] = 0x00;
+            buf[1] = 0x0b;
 			
 		case RDAUXA:	//Read Auxillary Register Group A
             buf[0] = 0x00;
@@ -136,6 +159,16 @@ static void getcommand(bmscommands_t command, uint8_t* buf){
 		case RDAUXB:	//Read Auxillary Register Group B
             buf[0] = 0x00;
             buf[1] = 0x0e;
+            break;
+
+        case RDAUXC:
+            buf[0] = 0x00;
+            buf[1] = 0x0d;
+            break;
+
+        case RDAUXD:
+            buf[0] = 0x00;
+            buf[1] = 0x0f;
             break;
 			
 		case RDSTATA:	//Read Status Register Group B
@@ -157,6 +190,11 @@ static void getcommand(bmscommands_t command, uint8_t* buf){
             buf[0] = 0x00;
             buf[1] = 0x20;
             break;
+
+        case WRPSB:
+            buf[0] = 0x00;
+            buf[1] = 0x1c;
+            break;
 			
 		case RDSCTRL:	//Read S Control Register Group
             buf[0] = 0x00;
@@ -166,6 +204,11 @@ static void getcommand(bmscommands_t command, uint8_t* buf){
 		case RDPWM:	//Read PWM Register Group
             buf[0] = 0x00;
             buf[1] = 0x22;
+            break;
+
+        case RDPSB:
+            buf[0] = 0x00;
+            buf[1] = 0x1e;
             break;
 			
 		case STSCTRL:	//Start S Control Pulsing and Poll Status
@@ -232,10 +275,20 @@ static void getcommand(bmscommands_t command, uint8_t* buf){
             buf[0] = 0x05;
             buf[1] = 0x6f;
             break;
+
+        case ADCVSC:
+            buf[0] = 0x04;
+            buf[1] = 0x67;
+            break;
 			
 		case CLRCELL:	//Clear Cell Voltage Register Groups
             buf[0] = 0x07;
             buf[1] = 0x11;
+            break;
+
+        case CLRAUX:
+            buf[0] = 0x07;
+            buf[1] = 0x12;
             break;
 			
 		case  CLRSTAT:	//Clear Status Register Groups
@@ -277,13 +330,12 @@ void bms::tick(void){
     bmsdriver();
 }
 
-void bms::transmit(bmscommands_t command){
+void bms::transmit(){
 
     uint8_t data[6*slaves];
     memset(data, 0xff, 6*slaves);
 
-    transmit(command, data);
-
+    transmit(data);
 }
 
 void bms::wait(){
@@ -295,27 +347,50 @@ void bms::wait(){
     }while(bmscommandwaiting || i);
 }
 
-void bms::transmit(bmscommands_t command, uint8_t* data){
+void bms::transmit(uint8_t* data){
 
     // Clear command + PEC
     // Intent is to send an invalid message should interrupt fire inside this function
+    uint8_t tempcommand[2] = {txdatabuf[0], txdatabuf[1]};
     memset(txdatabuf, 0, 4);
-    
-    bmscommand = command;
 
+    
     // Copy data into tx data buffer & calculate PECs
     for(uint8_t i = 0; i < slaves; i++){
         memcpy(txdatabuf + (8*i + 4), data + (6*i), 6);
         pec15_calc(6, txdatabuf + (8*i + 4), txdatabuf + (8*(i+1) + 2));
     }
 
-    getcommand(command, txdatabuf);
+    memcpy(txdatabuf, tempcommand, 2);
     pec15_calc(2, txdatabuf, txdatabuf + 2);
 
     bmscommandwaiting = 1;
     bmson = 1;
 
     if(bmsstate == ready) bmsspitransmit();
+}
+
+void bms::adcvsc(uint8_t MD, uint8_t DCP){
+
+    nextcommand = ADCVSC;
+    commandOnly = 1;
+
+    getcommand(ADCVSC, txdatabuf);
+    txdatabuf[0] |= (MD&0b10)>>1;
+    txdatabuf[1] |= (MD&0b01)<<7;
+    txdatabuf[1] |= (DCP&0b1)<<4;
+    transmit();
+
+}
+
+void bms::rdcva(){
+
+    nextcommand = RDCVA;
+    commandOnly = 0;
+
+    getcommand(RDCVA, txdatabuf);
+    transmit();
+
 }
 
 uint8_t bms::init(){

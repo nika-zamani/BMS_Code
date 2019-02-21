@@ -1,3 +1,11 @@
+#define slaves 2
+// System ticks: handler called at .1ms
+// Smallest quantum is 100us
+#define CLOCKHZ 60000000U
+#define SYSTICK 6000U
+#define us(x) 100/x
+#define ms(x) 10*x
+
 #include "board.h"
 #include "peripherals.h"
 #include "pin_mux.h"
@@ -11,31 +19,44 @@
 
 #include "ltcutility.h"
 #include "drivers.h"
-
-#define slaves 2
+#include "cache.h"
 
 using namespace BSP;
 
 gpio::GPIO_port ltccsport = gpio::PortE;
 uint8_t ltccspin = 6;
 
+static cache_t cache = {0};
+
 volatile uint32_t ticks;
 
 void tick(void){
 }
 
-// System ticks: handler called at .1ms
-// Smallest quanta is 100us
-#define CLOCKHZ 60000000U
-#define SYSTICK 6000U
-#define us(x) 100/x
-#define ms(x) 10*x
+void manage(void){
+
+    // read volts
+    
+    bms::adcvsc();
+    
+    bms::wait();
+   
+    bms::rdcva();
+
+    // read temps
+    
+}
+
+
 
 int main(void) {
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
     SysTick_Config(SYSTICK);
+
+    cache.allok = 1;
+
 
     ticks = 0;
 
@@ -44,6 +65,9 @@ int main(void) {
 
     for(uint32_t i = 0; i < 100000; i++);
 
+    manage();
+
+    while(1);
     uint8_t data[12] = {0xfc, 0x00, 0x00, 0x00, 0x01, 0x00, 0xfc, 0x00, 0x00, 0x00, 0x01, 0x00};
     /*
     bms::transmit(bms::ADCVSC);
@@ -62,7 +86,7 @@ int main(void) {
         i = i % 8;
         data[4] = 1<<i;
         data[10] = 1<<i;
-        bms::transmit(bms::writeConfig, data);
+        //bms::transmit(bms::WRCFGA, data);
         for(uint32_t j = 0; j < 100000UL; j++);
         
     }
