@@ -1,25 +1,24 @@
-Breakpoint=bms.cpp:51, State=BP_STATE_DISABLED
+Breakpoint=bms.cpp:61, State=BP_STATE_DISABLED
+OpenDocument="bms.cpp", FilePath="/home/gray/formula/nxp/BMS/source/bms.cpp", Line=21
 OpenDocument="cmsis_gcc.h", FilePath="/home/gray/formula/nxp/BMS/make/../../MKELibrary/CMSIS/cmsis_gcc.h", Line=869
 OpenDocument="fsl_lpspi.h", FilePath="/home/gray/formula/nxp/BMS/make/../../MKELibrary/drivers/fsl_lpspi.h", Line=922
-OpenDocument="bms.cpp", FilePath="/home/gray/formula/nxp/BMS/source/bms.cpp", Line=19
 OpenDocument="Service.h", FilePath="/home/gray/formula/nxp/BMS/make/../../MKELibrary/System/Service.h", Line=0
 OpenDocument="spi.h", FilePath="/home/gray/formula/nxp/BMS/make/../../MKELibrary/lib/spi.h", Line=0
 OpenDocument="semihost_hardfault.c", FilePath="/home/gray/formula/nxp/MKELibrary/drivers/semihost_hardfault.c", Line=58
 OpenDocument="Scheduler.h", FilePath="/home/gray/formula/nxp/BMS/make/../../MKELibrary/System/Scheduler.h", Line=70
-OpenDocument="ltcutility.cpp", FilePath="/home/gray/formula/nxp/BMS/source/ltcutility.cpp", Line=154
+OpenDocument="ltcutility.cpp", FilePath="/home/gray/formula/nxp/BMS/source/ltcutility.cpp", Line=0
 OpenDocument="startup_MKE18F16.S", FilePath="/home/gray/formula/nxp/MKELibrary/asm/startup_MKE18F16.S", Line=319
 OpenToolbar="Debug", Floating=0, x=0, y=0
-OpenWindow="Registers 1", DockArea=RIGHT, x=0, y=1, w=402, h=359, FilterBarShown=0, FilteredItems=[]
-OpenWindow="Disassembly", DockArea=LEFT, x=0, y=0, w=400, h=474, FilterBarShown=0, ExecCountersShown=0
+OpenWindow="Registers 1", DockArea=RIGHT, x=0, y=1, w=383, h=359, FilterBarShown=0, FilteredItems=[]
+OpenWindow="Disassembly", DockArea=LEFT, x=0, y=0, w=240, h=453, FilterBarShown=0, ExecCountersShown=0
 OpenWindow="Source", x=0, y=0, w=0, h=0, FilterBarShown=0, ExecCountersShown=0
-OpenWindow="Break & Tracepoints", DockArea=LEFT, x=0, y=1, w=400, h=263, FilterBarShown=0
-OpenWindow="Memory 1", DockArea=BOTTOM, x=1, y=0, w=966, h=244, FilterBarShown=0, EditorAddress=0x0
-OpenWindow="Watched Data", DockArea=RIGHT, x=0, y=0, w=402, h=378, FilterBarShown=0
-OpenWindow="Console", DockArea=BOTTOM, x=0, y=0, w=948, h=244, FilterBarShown=0
+OpenWindow="Break & Tracepoints", DockArea=LEFT, x=0, y=1, w=240, h=284, FilterBarShown=0
+OpenWindow="Memory 1", DockArea=BOTTOM, x=1, y=0, w=967, h=244, FilterBarShown=0, EditorAddress=0x0
+OpenWindow="Watched Data", DockArea=RIGHT, x=0, y=0, w=383, h=378, FilterBarShown=0
+OpenWindow="Console", DockArea=BOTTOM, x=0, y=0, w=947, h=244, FilterBarShown=0
 TableHeader="Watched Data", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Value";"Location";"Refresh";"Access"], ColWidths=[98;130;96;56;52]
 TableHeader="Break & Tracepoints", SortCol="Location", SortOrder="ASCENDING", VisibleCols=["";"Type";"Location";"Extras"], ColWidths=[55;60;91;194]
 TableHeader="tableWidgetSamples", SortCol="Index", SortOrder="ASCENDING", VisibleCols=["Index";"Time";"Channel 0"], ColWidths=[84;119;126]
 TableHeader="Registers 1", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Value";"Description"], ColWidths=[123;132;259]
 WatchedExpression="rxdatabuf"
-WatchedExpression="spi.xcvrs[0].transmitting"
-WatchedExpression="transmitting"
+WatchedExpression="txdatabuf"

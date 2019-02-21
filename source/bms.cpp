@@ -12,7 +12,7 @@
 #include "ltcutility.h"
 #include "drivers.h"
 
-#define slaves 1
+#define slaves 2
 
 using namespace BSP;
 
@@ -44,8 +44,8 @@ int main(void) {
 
     for(uint32_t i = 0; i < 100000; i++);
 
-    uint8_t data[6] = {0xfc, 0x00, 0x00, 0x00, 0x01, 0x00};
-
+    uint8_t data[12] = {0xfc, 0x00, 0x00, 0x00, 0x01, 0x00, 0xfc, 0x00, 0x00, 0x00, 0x01, 0x00};
+    /*
     bms::transmit(bms::ADCVSC);
     ticks = 2000;
     while(ticks);
@@ -55,12 +55,13 @@ int main(void) {
     bms::transmit(bms::writeConfig, data);
     bms::wait();
     bms::transmit(bms::readConfig);
-
+    */
     uint16_t i;
     while(1){
         i++;
         i = i % 8;
         data[4] = 1<<i;
+        data[10] = 1<<i;
         bms::transmit(bms::writeConfig, data);
         for(uint32_t j = 0; j < 100000UL; j++);
         

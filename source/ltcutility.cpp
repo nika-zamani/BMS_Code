@@ -12,6 +12,7 @@ extern uint8_t ltccspin;
 static uint8_t bmsslaves;
 static bmsstate_t bmsstate;
 static bmscommands_t bmscommand;
+#define slaves 2
 #ifndef slaves
 #define slaves 1
 #endif
