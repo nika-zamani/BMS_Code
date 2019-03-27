@@ -1,9 +1,10 @@
-#define slaves 2
 
 #include <stdint.h>
 #include "ltcutility.h"
 #include "gpio.h"
 #include "spi.h"
+#include "defines.h"
+#include "cache.h"
 
 using namespace BSP;
 using namespace bms;
@@ -14,6 +15,7 @@ extern uint8_t ltccspin;
 static uint8_t bmsslaves;
 static bmsstate_t bmsstate;
 static bmscommands_t lastcommand;
+static uint8_t lastCommandOnly;
 static bmscommands_t nextcommand;
 static uint8_t commandOnly;
 static uint8_t txdatabuf[4 + 8*slaves] = {0};
@@ -22,11 +24,94 @@ static uint8_t bmstimer;
 static uint8_t bmson;
 static uint8_t bmsawake;
 static uint8_t bmscommandwaiting;
+static uint8_t pecError;
+static uint32_t pecErrorCount;
+extern cache_t cache;
 
 void bmsspicb(){
 
-    static uint8_t i;
-    i++;
+    if(!lastCommandOnly){
+
+        uint8_t pecrx[2];
+        uint8_t i;
+
+        // Check all incoming PEC
+        for(i = 0; i < slaves; i++){
+            pec15_calc(6, rxdatabuf+(8*i)+4, pecrx);
+            if(pecrx[0] != rxdatabuf[8*(i+1)+2] || pecrx[1] != rxdatabuf[8*(i+1)+3]){
+                pecError = 1;
+                pecErrorCount++;
+                return;
+            }
+        }
+
+        pecError = 0;
+
+        switch(lastcommand){
+
+            case RDCVA: // Read cells 0-2
+
+                for(i = 0; i < slaves; i++){
+
+                    cache.volts[(i*cells)+0] = (rxdatabuf[4+(8*i)+0]) | (rxdatabuf[4+(8*i)+1]<<8);
+                    cache.adcRxMask[i] |= 1<<0;
+                    cache.volts[(i*cells)+1] = (rxdatabuf[4+(8*i)+2]) | (rxdatabuf[4+(8*i)+3]<<8);
+                    cache.adcRxMask[i] |= 1<<1;
+                    cache.volts[(i*cells)+2] = (rxdatabuf[4+(8*i)+4]) | (rxdatabuf[4+(8*i)+5]<<8);
+                    cache.adcRxMask[i] |= 1<<2;
+
+                }
+                break;
+
+            case RDCVB: // Read cells 3-5
+
+                for(i = 0; i < slaves; i++){
+
+                    cache.volts[(i*cells)+3] = (rxdatabuf[4+(8*i)+0]) | (rxdatabuf[4+(8*i)+1]<<8);
+                    cache.adcRxMask[i] |= 1<<3;
+                    cache.volts[(i*cells)+4] = (rxdatabuf[4+(8*i)+2]) | (rxdatabuf[4+(8*i)+3]<<8);
+                    cache.adcRxMask[i] |= 1<<4;
+                    cache.volts[(i*cells)+5] = (rxdatabuf[4+(8*i)+4]) | (rxdatabuf[4+(8*i)+5]<<8);
+                    cache.adcRxMask[i] |= 1<<5;
+
+                }
+                break;
+
+            case RDCVC: // Read cells 3-5
+
+                for(i = 0; i < slaves; i++){
+
+                    cache.volts[(i*cells)+6] = (rxdatabuf[4+(8*i)+0]) | (rxdatabuf[4+(8*i)+1]<<8);
+                    cache.adcRxMask[i] |= 1<<6;
+                    cache.volts[(i*cells)+7] = (rxdatabuf[4+(8*i)+2]) | (rxdatabuf[4+(8*i)+3]<<8);
+                    cache.adcRxMask[i] |= 1<<7;
+                    cache.volts[(i*cells)+8] = (rxdatabuf[4+(8*i)+4]) | (rxdatabuf[4+(8*i)+5]<<8);
+                    cache.adcRxMask[i] |= 1<<8;
+
+                }
+                break;
+
+            case RDCVD: // Read cells 3-5
+
+                for(i = 0; i < slaves; i++){
+
+                    if(cells >= 10) cache.volts[(i*cells)+9] = (rxdatabuf[4+(8*i)+0]) | (rxdatabuf[4+(8*i)+1]<<8);
+                    cache.adcRxMask[i] |= 1<<9;
+                    if(cells >= 11) cache.volts[(i*cells)+10] = (rxdatabuf[4+(8*i)+2]) | (rxdatabuf[4+(8*i)+3]<<8);
+                    cache.adcRxMask[i] |= 1<<10;
+                    if(cells >= 12) cache.volts[(i*cells)+11] = (rxdatabuf[4+(8*i)+4]) | (rxdatabuf[4+(8*i)+5]<<8);
+                    cache.adcRxMask[i] |= 1<<11;
+
+                }
+                break;
+
+            default:
+                break;
+
+        }
+
+    }
+
 
 }
 
@@ -34,6 +119,7 @@ static void bmsspitransmit(){
     spi::SPI& spi = spi::SPI::StaticClass();
     if(!spi.xcvrs[0].transmitting){
         lastcommand = nextcommand;
+        lastCommandOnly = commandOnly;
         if(commandOnly) spi.mastertx(0, txdatabuf, rxdatabuf, 4);
         else spi.mastertx(0, txdatabuf, rxdatabuf, 4 + 8*slaves);
         bmscommandwaiting = 0;
@@ -65,7 +151,7 @@ static void bmsdriver(void){
 
         case wakeup:
             if(!bmstimer){
-                if(bmsawake == bmsslaves){
+                if(bmsawake == slaves){
                     // Go to ready
                     bmstimer = 50; // 5ms
                     bmsstate = ready;
@@ -87,6 +173,7 @@ static void bmsdriver(void){
             } else {
                 if(bmscommandwaiting){
                     bmsspitransmit();
+                    bmstimer = 50;
                 }
             }
             break;
@@ -341,10 +428,12 @@ void bms::transmit(){
 void bms::wait(){
     spi::SPI& spi = spi::SPI::StaticClass();
 //    while(bmscommandwaiting || spi.xcvrs[0].transmitting);
-    uint8_t i;
+    uint8_t i, j, k;
+    spi::SPI::transceiver* x = &spi.xcvrs[0];
     do {
     i = spi.xcvrs[0].transmitting;
-    }while(bmscommandwaiting || i);
+    j = spi.xcvrs[0].txcount < spi.xcvrs[0].txsize;
+    }while(bmscommandwaiting || (i&j));
 }
 
 void bms::transmit(uint8_t* data){
@@ -393,6 +482,36 @@ void bms::rdcva(){
 
 }
 
+void bms::rdcvb(){
+
+    nextcommand = RDCVB;
+    commandOnly = 0;
+
+    getcommand(RDCVB, txdatabuf);
+    transmit();
+
+}
+
+void bms::rdcvc(){
+
+    nextcommand = RDCVC;
+    commandOnly = 0;
+
+    getcommand(RDCVC, txdatabuf);
+    transmit();
+
+}
+
+void bms::rdcvd(){
+
+    nextcommand = RDCVD;
+    commandOnly = 0;
+
+    getcommand(RDCVD, txdatabuf);
+    transmit();
+
+}
+
 uint8_t bms::init(){
 
     bmsstate = idle;
@@ -433,9 +552,9 @@ const uint16_t crc15Table[256] = {0x0,0xc599, 0xceab, 0xb32, 0xd8cf, 0x1d56, 0x1
 /*
   Calculates  and returns the CRC15
   */
-void bms::pec15_calc(uint8_t len, //Number of bytes that will be used to calculate a PEC
-        uint8_t *data, //Array of data that will be used to calculate  a PEC
-        uint8_t *pec)
+void bms::pec15_calc(uint8_t len,   //Number of bytes that will be used to calculate a PEC
+        uint8_t *data,              //Array of data that will be used to calculate  a PEC
+        uint8_t *pec)               // Location of PEC
 {
     uint16_t remainder,addr;
 

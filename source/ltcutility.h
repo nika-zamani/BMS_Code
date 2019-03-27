@@ -72,8 +72,13 @@ void tick();
 
 void wait();
 
+/* Command Functions */
 void adcvsc(uint8_t MD= 0b10, uint8_t DCP = 0b1);
+// Read cell group registers
 void rdcva(void);
+void rdcvb(void);
+void rdcvc(void);
+void rdcvd(void);
 
 void pec15_calc(uint8_t length, uint8_t* data, uint8_t* pec);
 
