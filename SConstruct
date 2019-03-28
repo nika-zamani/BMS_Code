@@ -5,8 +5,7 @@ GNU_PATH = '/home/gray/embedded/gcc-arm-none-eabi/bin/'
 BSP_PATH = '../MKELibrary/'
 
 # Change the compiled name of the file below
-# ex. compileTarget = 'exampleProject'
-compileTarget = 'main'
+compileTarget = 'bms'
 
 # Create Communal build directory to store all the .o's
 VariantDir('build/board', 'board')
@@ -75,17 +74,12 @@ env['LINKFLAGS'] = '-O0 -g -DDEBUG -Wall \
 cppsource = Glob('build/board/*.cpp') +\
     Glob('build/source/*.cpp')
 
-# Make Static BSP Library
-
 # Run the compile command and create .elf
-# !! This is not necessary in the BSP !!
 env.Program(compileTarget, source=cppsource, LIBS=['bsp'], LIBPATH=[BSP_PATH])
 
 # Create .lst from .elf
-# !! This is not necessary in the BSP !!
 #env.Command(compileTarget+".lst", compileTarget+".elf", \
 #    OBJDUMP+" -D " + compileTarget+".elf" + " > " + compileTarget+".lst")
 
 # Print Memory Map -> .elf Headers
-# !! This is not necessary in the BSP !!
 #env.Command(compileTarget, compileTarget+".elf", READELF+" -e " + compileTarget+".elf")
