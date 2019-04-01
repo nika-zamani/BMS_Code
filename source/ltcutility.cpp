@@ -9,8 +9,8 @@
 using namespace BSP;
 using namespace bms;
 
-extern gpio::GPIO_port ltccsport;
-extern uint8_t ltccspin;
+//extern gpio::GPIO_port ltccsport;
+//extern uint8_t ltccspin;
 
 static uint8_t bmsslaves;
 static bmsstate_t bmsstate;

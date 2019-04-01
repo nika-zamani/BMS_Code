@@ -18,4 +18,7 @@
 #define us(x) 100/x
 #define ms(x) 10*x
 
+#define ltccsport gpio::PortA
+#define ltccspin 2
+
 #endif

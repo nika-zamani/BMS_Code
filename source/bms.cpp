@@ -1,6 +1,4 @@
 /* System */
-#include "board.h"
-#include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
 #include "MKE18F16.h"
@@ -20,8 +18,8 @@
 
 using namespace BSP;
 
-gpio::GPIO_port ltccsport = gpio::PortE;
-uint8_t ltccspin = 6;
+//gpio::GPIO_port ltccsport = gpio::PortE;
+//uint8_t ltccspin = 6;
 
 cache_t cache = {0};
 
@@ -101,7 +99,6 @@ void stateError(void){
 int main(void) {
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
-    BOARD_InitBootPeripherals();
     SysTick_Config(SYSTICK);
 
     cache.allok = 1;

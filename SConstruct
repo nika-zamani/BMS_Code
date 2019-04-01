@@ -71,11 +71,11 @@ env['LINKFLAGS'] = '-O0 -g -DDEBUG -Wall \
     -mcpu=cortex-m4 -mfloat-abi=hard \
     -mfpu=fpv4-sp-d16 -TMKE18F512xxx16_flash.ld -static'
 
-cppsource = Glob('build/board/*.cpp') +\
+src = Glob('build/board/*.c') +\
     Glob('build/source/*.cpp')
 
 # Run the compile command and create .elf
-env.Program(compileTarget, source=cppsource, LIBS=['bsp'], LIBPATH=[BSP_PATH])
+env.Program(compileTarget, source=src, LIBS=['bsp'], LIBPATH=[BSP_PATH])
 
 # Create .lst from .elf
 #env.Command(compileTarget+".lst", compileTarget+".elf", \

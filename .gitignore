@@ -11,3 +11,4 @@ build
 CMakeCache.txt
 cmake_install.cmake
 .sconsign.dblite
+*.bak

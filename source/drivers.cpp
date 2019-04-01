@@ -1,10 +1,12 @@
+#include "defines.h"
 #include "drivers.h"
 
 using namespace BSP;
 
 // CS pin defined in bms.cpp
-extern gpio::GPIO_port ltccsport;
-extern uint8_t ltccspin;
+//extern gpio::GPIO_port ltccsport;
+
+//extern uint8_t ltccspin;
 
 void bmsspicb(void);
 
