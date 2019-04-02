@@ -6,7 +6,7 @@
 #define thermistors 12  // Thermistors per slave
 
 #define voltageLimitUpper 42000
-#define voltageLimitLower 25000
+#define voltageLimitLower 28000
 
 #define tempLimitUpper 0
 #define tempLimitLower 0
