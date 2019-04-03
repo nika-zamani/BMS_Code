@@ -26,8 +26,9 @@ void tick();
 void wait();
 
 /* Command Functions */
-void adcvsc(uint8_t MD= 0b10, uint8_t DCP = 0b1);
-void adcvax(uint8_t MD = 0b10, uint8_t DCP = 0b1);
+// adc commands
+void adcvsc(uint8_t MD= 0b10, uint8_t DCP = 0b1); // cells + total
+void adcvax(uint8_t MD = 0b10, uint8_t DCP = 0b1); // cells + total + gpio1,2
 // Read cell group registers
 void rdcva(void);
 void rdcvb(void);
@@ -35,6 +36,9 @@ void rdcvc(void);
 void rdcvd(void);
 // Read aux registers
 void rdauxa(void);
+void rdcfga(void); // read config registers
+// Write to registers
+void wrcfga(uint8_t* data); // write configuration 
 // I2C control
 void wrcomm(uint8_t* data);
 void rdcomm(void);

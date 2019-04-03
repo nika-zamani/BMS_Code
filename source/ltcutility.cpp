@@ -140,6 +140,10 @@ void bmsspicb(){
 
                 break;
 
+            case RDCFGA:
+                __NOP();
+                break;
+
             default:
                 break;
 
@@ -352,6 +356,22 @@ void bms::rdauxa(){
 
     getcommand(RDAUXA, txdatabuf);
     transmit();
+}
+
+void bms::rdcfga(){
+    nextcommand = RDCFGA;
+    commandOnly = 0;
+    out = 0;
+    getcommand(RDCFGA, txdatabuf);
+    transmit();
+}
+
+void bms::wrcfga(uint8_t* data){
+    nextcommand = WRCFGA;
+    commandOnly = 0;
+    out = 1;
+    getcommand(WRCFGA, txdatabuf);
+    transmit(data);
 }
 
 void bms::wrcomm(uint8_t* data){

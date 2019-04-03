@@ -55,6 +55,10 @@ void stateNormal(void);
 void stateError(void);
 
 uint8_t manage(void){
+    uint8_t confdat[6] = {0};
+    confdat[0] = 0xfc;
+    bms::wrcfga(confdat);
+    bms::wait();
 
     // read volts
     
@@ -181,6 +185,30 @@ int main(void) {
     
     ticks = ms(500);
     minticks = 0;
+
+    delay(ms(100));
+
+    // setup: 
+    // - set refup to 1 to keep reference voltage on
+    // - start ADC conversion and wait for completion
+    uint8_t confdat[6] = {0, 0, 0, 0, 0, 0};
+    memset(confdat, 0x00, 6);
+    confdat[0] = 0xfc;
+    bms::wrcfga(confdat);
+    bms::wait();
+
+    bms::rdcfga();
+    bms::wait();
+    while(1){
+        delay(ms(500));
+
+        bms::wrcfga(confdat);
+        bms::wait();
+
+    }
+    bms::adcvax();
+    bms::wait();
+    delay(ms(2));
 
     while(1){
 
