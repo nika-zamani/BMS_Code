@@ -42,7 +42,7 @@ void bmsspicb(){
     if(!lastOut){
 
         uint8_t pecrx[2];
-        uint8_t i;
+        uint8_t i,j;
 
         // Check all incoming PEC
         for(i = 0; i < slaves; i++){
@@ -141,7 +141,9 @@ void bmsspicb(){
                 break;
 
             case RDCFGA:
-                __NOP();
+                for(i = 0; i < slaves; i++)
+                    for(j = 0; j < 6; j++)
+                        cache.configA[i][j] = rxdatabuf[4+(8*i)+j];
                 break;
 
             default:

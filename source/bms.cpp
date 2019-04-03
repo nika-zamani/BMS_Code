@@ -55,13 +55,12 @@ void stateNormal(void);
 void stateError(void);
 
 uint8_t manage(void){
-    uint8_t confdat[6] = {0};
-    confdat[0] = 0xfc;
-    bms::wrcfga(confdat);
-    bms::wait();
 
     // read volts
     
+    bms::rdauxa();
+    bms::wait();
+    delay(1);
     bms::rdcva();
     bms::wait();
     delay(1);
@@ -74,8 +73,6 @@ uint8_t manage(void){
     bms::rdcvd();
     bms::wait();
     delay(1);
-    bms::rdauxa();
-    bms::wait();
 
     // start adc conversion to be read on next cycle...
     // registers cleared when watchdog times out, approx 2s
@@ -104,11 +101,11 @@ uint8_t manage(void){
 
     // read temps
     
-    delay(ms(2));
+/*    delay(ms(2));
     //pin = (pin+1)%8;
-    pin = (pin+1)%10;
-    switchMux(1, (pin<5)?4:5);
-
+    pin = (pin+1)%8;
+    switchMux(1, pin);
+*/
     return 0;
     
 }
@@ -172,6 +169,8 @@ int main(void) {
     BOARD_InitBootClocks();
     SysTick_Config(SYSTICK);
 
+    memset(&cache, 0, sizeof(cache_t));
+
     cache.allok = 1;
     cache.voltok = 1;
     cache.tempok = 1;
@@ -185,35 +184,68 @@ int main(void) {
     
     ticks = ms(500);
     minticks = 0;
-
-    delay(ms(100));
+    pin = 0;
 
     // setup: 
     // - set refup to 1 to keep reference voltage on
     // - start ADC conversion and wait for completion
-    uint8_t confdat[6] = {0, 0, 0, 0, 0, 0};
-    memset(confdat, 0x00, 6);
+    uint8_t confdat[6];
+    memset(confdat, 0, 6);
     confdat[0] = 0xfc;
-    bms::wrcfga(confdat);
-    bms::wait();
-
-    bms::rdcfga();
-    bms::wait();
-    while(1){
-        delay(ms(500));
-
-        bms::wrcfga(confdat);
-        bms::wait();
-
-    }
     bms::adcvax();
     bms::wait();
     delay(ms(2));
 
     while(1){
 
-        state();
+        // repeat process at 2Hz
+        ticks = ms(500);
+        while(ticks);
 
+        bms::wrcfga(confdat);
+        bms::wait();
+        bms::rdcfga();
+        bms::wait();
+
+        pin = (pin+1)%8;
+        switchMux(1, pin);
+
+        // wait for mux to settle, then trigger conversion
+        delay(ms(50));
+        bms::adcvax();
+        // wait for conversion to finish, then read from auxa register
+        delay(ms(10));
+
+        bms::rdauxa();
+        bms::wait();
+        delay(1);
+        bms::rdcva();
+        bms::wait();
+        delay(1);
+        bms::rdcvb();
+        bms::wait();
+        delay(1);
+        bms::rdcvc();
+        bms::wait();
+        delay(1);
+        bms::rdcvd();
+        bms::wait();
+        delay(1);
+        uint16_t rxmask = {0};
+        for(uint8_t i = 0; i < cells; i++){
+            rxmask |= 1<<i;
+        }
+        uint8_t done = 0;
+        while(1){
+            done = 0;
+            for(uint8_t i = 0; i < slaves; i++)
+                if(cache.adcRxMask[i] == rxmask) done++;
+            if(done==slaves){ 
+                diagnoseVolts();
+                break;
+            }
+            if(ticks == 0) break;
+        }
     }
         
     return 0;

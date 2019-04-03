@@ -33,6 +33,8 @@ typedef struct cache_t {
     uint16_t tempMax;
     uint16_t tempMin;
 
+    // chip registers read from 6811
+    uint8_t configA[slaves][6];
 
 
 } cache_t;
