@@ -2,6 +2,7 @@
 #define DEFINES_H_
 
 #define slaves 1        // Total slaves
+#define commlen 4+8*slaves // length of most isospi transactions
 #define cells 11        // Cells per slave
 #define thermistors 12  // Thermistors per slave
 
@@ -18,7 +19,7 @@
 #define us(x) 100/x
 #define ms(x) 10*x
 
-#define ltccsport gpio::PortA
+#define ltccsport BSP::gpio::PortA
 #define ltccspin 2
 
 #endif

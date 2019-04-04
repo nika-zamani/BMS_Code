@@ -4,6 +4,6 @@
 #include "spi.h"
 #include "gpio.h"
 
-uint8_t initspi(void);
+uint8_t spiinit(void);
 
 #endif

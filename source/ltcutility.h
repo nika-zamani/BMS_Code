@@ -5,25 +5,16 @@
 #include "gpio.h"
 
 namespace bms{
+enum bmscommands_t : uint8_t; 
 
-enum bmsstate_t {
-    wakedown,
-    wakeup,
-    transmitting,
-    ready, 
-    error, 
-    idle
-};
-
-uint8_t init();
-
-void transmit();
-
-void transmit(uint8_t* data);
+void transmit(uint8_t* data, uint8_t len, bmscommands_t comm);
 
 void tick();
 
 void wait();
+
+// determine if message is outgoing
+uint8_t spistatus();
 
 /* Command Functions */
 // adc commands
@@ -46,7 +37,7 @@ void stcomm(uint8_t bytes);
 
 void pec15_calc(uint8_t length, uint8_t* data, uint8_t* pec);
 
-enum bmscommands_t {
+enum bmscommands_t : uint8_t {
     WRCFGA,
     WRCFGB,
     RDCFGA,
