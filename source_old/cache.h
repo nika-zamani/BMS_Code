@@ -1,14 +1,11 @@
+#include <stdint.h>
+#include "defines.h"
+
 /* cache_t */
 // defines a structure for holding persistent data:
 // - program flags 
 // - info received from slaves
 // - calculated values
-
-#ifndef CACHE_H_
-#define CACHE_H_
-
-#include <stdint.h>
-#include "defines.h"
 
 typedef struct cache_t {
 
@@ -30,7 +27,6 @@ typedef struct cache_t {
     uint16_t voltageMax;
     uint16_t voltageMin;
     uint16_t voltageMean;
-    uint32_t voltageTotal;
     
     // temperatures (calculated from gpio analog signal
     uint16_t temps[thermistors * slaves];
@@ -38,11 +34,8 @@ typedef struct cache_t {
     uint16_t tempMin;
 
     // chip registers read from 6811
-    uint8_t comm[slaves][6];
     uint8_t configA[slaves][6];
-    uint8_t statA[slaves][6];
 
 
 } cache_t;
 
-#endif

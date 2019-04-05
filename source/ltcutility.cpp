@@ -9,15 +9,18 @@
 using namespace BSP;
 using namespace bms;
 
+extern cache_t cache;
+
+/* bms status and control */
 static bmscommands_t lastcommand;
 static uint8_t txdatabuf[commlen] = {0};
 static uint8_t rxdatabuf[commlen] = {0};
-static uint8_t tmpbuf[commlen] = {0}; // for temporary use
+static uint8_t tmpbuf[commlen+1] = {0}; // for temporary use, extra byte for i2c
 static uint8_t pecError;
 static uint32_t pecErrorCount;
-extern cache_t cache;
-static uint8_t transmitting;
+static uint8_t bmstransmitting;
 
+// get the corresponding command bytes (thanks andrew!)
 static void getcommand(bmscommands_t command, uint8_t* buf);
 
 // move command and outgoing write data into buffer and calculate PECs
@@ -37,23 +40,44 @@ static void datafill(bmscommands_t c, uint8_t* dest, uint16_t len){
     memset(dest+4, 0xff, len);
 }
 
+// common setup function for writing commands
+static void spiwrite(bmscommands_t c, uint8_t* data){
+    if(actqcheck(2)) return;
+    dataload(c, data, tmpbuf);
+    actspitx(c, tmpbuf, commlen);
+    actspiwait();
+}
+
+// common setup function for reading commands
+static void spiread(bmscommands_t c){
+    if(actqcheck(2)) return;
+    datafill(c, tmpbuf, commlen);
+    actspitx(c, tmpbuf, commlen);
+    actspiwait();
+}
+
+// cell group register read
+void bms::rdcva(void){ spiread(RDCVA); }
+void bms::rdcvb(void){ spiread(RDCVB); }
+void bms::rdcvc(void){ spiread(RDCVC); }
+void bms::rdcvd(void){ spiread(RDCVD); }
+
+// aux register read
+void bms::rdauxa(void){ spiread(RDAUXA); }
+void bms::rdstata(void){ spiread(RDSTATA); }
+
 // write to conf registers
 void bms::wrcfga(uint8_t* data){
-    if(actqcheck(2)) return;
-    dataload(WRCFGA, data, tmpbuf);
-    actspitx(WRCFGA, tmpbuf, commlen);
-    actspiwait();
-    // need to wait?
+    spiwrite(WRCFGA, data);
+    // need to wait more?
 }
 
 // read conf registers
 void bms::rdcfga(void){
-    if(actqcheck(2)) return;
-    datafill(RDCFGA, tmpbuf, commlen);
-    actspitx(RDCFGA, tmpbuf, commlen);
-    actspiwait();
+    spiread(RDCFGA);
 }
 
+// adc cells + total + gpio1,2
 void bms::adcvax(uint8_t MD, uint8_t DCP){
     if(actqcheck(3)) return;
     getcommand(ADCVAX, tmpbuf);
@@ -64,6 +88,38 @@ void bms::adcvax(uint8_t MD, uint8_t DCP){
     actspitx(ADCVAX, tmpbuf, 4);
     actspiwait();
     actwait(ms(3));
+}
+
+// adc cells + total
+void bms::adcvsc(uint8_t MD, uint8_t DCP){
+    if(actqcheck(3)) return;
+    getcommand(ADCVSC, tmpbuf);
+    tmpbuf[0] |= (MD&0b10)>>1;
+    tmpbuf[1] |= (MD&0b01)<<7;
+    tmpbuf[1] |= (DCP&0b1)<<4;
+    pec15_calc(2, tmpbuf, tmpbuf+2);
+    actspitx(ADCVSC, tmpbuf, 4);
+    actspiwait();
+    actwait(ms(3));
+}
+
+void wrcomm(uint8_t* data){
+    spiwrite(WRCOMM, data);
+    actwait(1);
+}
+
+void rdcomm(){
+    spiread(RDCOMM);
+}
+
+void stcomm(uint8_t bytes){
+    if(actqcheck(2)) return;
+    getcommand(STCOMM, tmpbuf);
+    pec15_calc(2, tmpbuf, tmpbuf+2);
+    // for each i2c byte, add 3 bytes of 0xff for 24 clocks
+    memset(tmpbuf+4, 0xff, bytes*3);
+    actspitx(STCOMM, tmpbuf, 4+(bytes*3));
+    actspiwait();
 }
 
 static uint8_t peccheck(){
@@ -86,7 +142,7 @@ static uint8_t peccheck(){
 // a write command or dataless command, callback does nothing.
 void bmsspicb(){
 
-    transmitting = 0;
+    bmstransmitting = 0;
 
     uint8_t i,j;
 
@@ -170,8 +226,22 @@ void bmsspicb(){
             }
             break;
 
+        case RDSTATA:
+            if(peccheck()) return;
+            cache.voltageTotal = 0;
+            for(i = 0; i < slaves; i++){
+                for(j = 0; j < 6; j++)
+                    cache.statA[i][j] = rxdatabuf[4+(8*i)+j];
+                cache.voltageTotal += (cache.statA[i][1]<<8)+cache.statA[i][0];
+            }
+            cache.voltageTotal *= 20;
+            break;
+
         case RDCOMM:
             if(peccheck()) return;
+            for(i = 0; i < slaves; i++)
+                for(j = 0; j < 6; j++)
+                    cache.comm[i][j] = rxdatabuf[4+(8*i)+j];
             break;
 
         case RDCFGA:
@@ -197,14 +267,15 @@ static void bmsspitransmit(uint16_t len){
 }
 
 uint8_t bms::spistatus(){
-    spi::SPI& spi = spi::SPI::StaticClass();
-    if((spi.xcvrs[0].transmitting && spi.xcvrs[0].txcount < spi.xcvrs[0].txsize) ||
-        transmitting) return 1;
+    if(bmstransmitting) return 1;
+//    spi::SPI& spi = spi::SPI::StaticClass();
+//    if((spi.xcvrs[0].transmitting && spi.xcvrs[0].txcount < spi.xcvrs[0].txsize) ||
+//        bmstransmitting) return 1;
     return 0;
 }
 
 void bms::transmit(uint8_t* data, uint8_t len, bmscommands_t comm){
-    transmitting = 1;
+    bmstransmitting = 1;
     lastcommand = comm;
     memcpy(txdatabuf, data, len);
     bmsspitransmit(len);

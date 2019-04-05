@@ -5,23 +5,15 @@
 #include "ltcutility.h"
 #include "gpio.h"
 #include "defines.h"
-#define qsize 100
+#define qsize 10
 
 enum actions_t {
     wait,
     csdown,
     csup,
     spitx,
-    spiwait,
-    execute
+    spiwait
 };
-
-void actwait(uint32_t x);
-void actcsdown();
-void actcsup();
-void actspitx(bms::bmscommands_t comm, uint8_t* data, uint32_t len);
-void actspiwait();
-void actexecute(void (*)(void));
 
 struct action_t {
     actions_t a;
@@ -29,14 +21,16 @@ struct action_t {
     uint32_t len;
     uint8_t data[4+(8*slaves)];
     bms::bmscommands_t comm;
-    void (*f)(void);
 };
+
+struct action_t actions[qsize];
+volatile uint8_t qhead;
+volatile uint8_t qtail;
+volatile uint32_t qwait;
 
 void actinit(void);
 uint8_t actqcheck(uint8_t n);
-uint8_t actaddsimple(actions_t action);
 uint8_t actadd(action_t action);
-uint8_t actinsert(action_t action);
 uint8_t actexec(void);
 void acttick(void);
 

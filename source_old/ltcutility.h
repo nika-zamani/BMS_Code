@@ -6,7 +6,22 @@
 
 namespace bms{
 
-enum bmscommands_t : uint8_t; // predefined up here because it's looong
+enum bmsstate_t {
+    wakedown,
+    wakeup,
+    transmitting,
+    ready, 
+    error, 
+    idle
+};
+
+enum bmscommands_t : uint8_t; 
+
+uint8_t init();
+
+void transmit();
+
+void transmit(uint8_t* data);
 
 void transmit(uint8_t* data, uint8_t len, bmscommands_t comm);
 
@@ -18,20 +33,19 @@ void wait();
 uint8_t spistatus();
 
 /* Command Functions */
+// adc commands
+void adcvsc(uint8_t MD= 0b10, uint8_t DCP = 0b1); // cells + total
+void adcvax(uint8_t MD = 0b10, uint8_t DCP = 0b1); // cells + total + gpio1,2
 // Read cell group registers
 void rdcva(void);
 void rdcvb(void);
 void rdcvc(void);
 void rdcvd(void);
-// Read other registers
+// Read aux registers
 void rdauxa(void);
-void rdstata(void);
-// configuration registers
+void rdcfga(void); // read config registers
+// Write to registers
 void wrcfga(uint8_t* data); // write configuration 
-void rdcfga(void); // read configuration
-// adc commands
-void adcvax(uint8_t MD = 0b10, uint8_t DCP = 0b1); // cells + total + gpio1,2
-void adcvsc(uint8_t MD= 0b10, uint8_t DCP = 0b1); // cells + total
 // I2C control
 void wrcomm(uint8_t* data);
 void rdcomm(void);

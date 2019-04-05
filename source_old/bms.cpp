@@ -12,51 +12,32 @@
 /* Project */
 #include "defines.h"
 #include "ltcutility.h"
-#include "bmsutil.h"
 #include "utility.h"
 #include "drivers.h"
 #include "cache.h"
 #include "actions.h"
-#include "machines.h"
 
 using namespace BSP;
 
-cache_t cache;
-void cacheinit(){
-    memset(&cache, 0, sizeof(cache_t));
-    cache.allok = 1;
-    cache.voltok = 1;
-    cache.tempok = 1;
+//gpio::GPIO_port ltccsport = gpio::PortE;
+//uint8_t ltccspin = 6;
+
+cache_t cache = {0};
+
+volatile uint32_t ticks;
+volatile uint32_t delayticks;
+volatile uint8_t pin = 0;
+
+void delay(uint32_t x){
+    delayticks = x;
+    while(delayticks);
 }
 
-void masterdrive(void);
-void slavedrive(void);
+void tick(void){
+}
 
-machine<masterstates_t> master(normalOk, masterdrive);
-machine<slavestates_t> slave(off, slavedrive);
-
-int main(void) {
-    BOARD_InitBootPins();
-    BOARD_InitBootClocks();
-    SysTick_Config(SYSTICK);
-
-    cacheinit();
-    spiinit();
-    actinit();
-
-    master.setTimer(ms(1000));
-    master.start();
-
-    while(1){
-        actexec();
-        master.run();
-        slave.run();
-    }
-/*
 void switchMux(uint8_t mux, uint8_t pin){
-    actwait(ms(500));
     uint8_t addr = 0x90 | (mux<<1);
-    actwait(ms(500));
     uint8_t comm = 0x08 | pin;
     uint8_t data[6] = { 0x60, 0x08, 0x00, 0x09, 0x70, 0x09 };
     data[0] |= (addr>>4)&0x0f;
@@ -68,6 +49,11 @@ void switchMux(uint8_t mux, uint8_t pin){
     bms::stcomm(2);
     bms::wait();
 }
+
+typedef void (*state_t)(void);
+static state_t state;
+void stateNormal(void);
+void stateError(void);
 
 uint8_t manage(void){
 
@@ -116,17 +102,79 @@ uint8_t manage(void){
 
     // read temps
     
-    delay(ms(2));
+/*    delay(ms(2));
     //pin = (pin+1)%8;
     pin = (pin+1)%8;
     switchMux(1, pin);
-
+*/
     return 0;
     
 }
-*/
 
-/*
+
+void stateNormal(void){
+
+    while(ticks);
+    ticks = ms(1000);
+    if(manage()){
+       state = stateError;
+       return;
+    }
+
+}
+
+void bmsNotOk(void){
+    // turn off ok signal
+}
+
+void stateError(void){
+
+    bmsNotOk();
+
+    while(ticks);
+    ticks = ms(3000);
+
+    manage();
+
+}
+
+uint32_t minticks;
+
+void stateI2CTest(void){
+
+    ticks = ms(500);
+    while(ticks);
+    uint8_t data[6] = { 0x69, 0x28, 0x00, 0x89, 0x70, 0x09 };
+    bms::wrcomm(data);
+    bms::wait();
+    ticks = 3;
+    while(ticks);
+    bms::stcomm(2);
+    bms::wait();
+    bms::rdcomm();
+    bms::wait();
+
+}
+
+void stateI2CSwitchTest(void){
+
+    ticks = ms(500);
+    while(ticks);
+    pin = (pin+1)%8;
+    switchMux(1, pin);
+
+}
+
+int main(void) {
+    BOARD_InitBootPins();
+    BOARD_InitBootClocks();
+    SysTick_Config(SYSTICK);
+
+    gpio::GPIO::set(ltccsport, ltccspin);
+    bms::init();
+    initspi();
+    actinit();
+
     action_t a;
     a.a = wait;
     a.wait = ms(500);
@@ -147,6 +195,23 @@ uint8_t manage(void){
     while(1){
         actexec();
     }
+
+    memset(&cache, 0, sizeof(cache_t));
+
+    cache.allok = 1;
+    cache.voltok = 1;
+    cache.tempok = 1;
+
+    ticks = 0;
+
+    bms::init();
+    initspi();
+
+    state = stateNormal;
+    
+    ticks = ms(500);
+    minticks = 0;
+    pin = 0;
 
     // setup: 
     // - set refup to 1 to keep reference voltage on
@@ -211,44 +276,13 @@ uint8_t manage(void){
     }
         
     return 0;
-    */
-}
-
-void masterdrive(void){
-
-    switch(master.state){
-        
-        case normalOk:
-            if(!cache.allok){
-                master.setTimer(ms(4000));
-                master.state = normalError;
-                break;
-            }
-            wakeup();
-            readall();
-            break;
-
-        case normalError:
-            panic();
-            wakeup();
-            readall();
-            break;
-
-        default:
-            break;
-
-    }
-
-}
-
-void slavedrive(void){
-
 }
 
 extern "C" {
 void SysTick_Handler(void){
+//    if(ticks) ticks--;
+///    if(delayticks) delayticks--;
+//    bms::tick();
     acttick();
-    master.tick();
-    slave.tick();
 }
 }

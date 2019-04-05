@@ -1,57 +1,15 @@
 #include "actions.h"
 
-struct action_t actions[qsize];
-volatile uint8_t qhead;
-volatile uint8_t qtail;
-volatile uint32_t qwait;
-
 void actinit(void){
     qhead = 0;
     qtail = 0;
     qwait = 0;
-    memset(actions, 0, qsize*sizeof(action_t));
-}
-
-void actwait(uint32_t x){
-    action_t a;
-    a.a = wait;
-    a.wait = x;
-    actadd(a);
-}
-
-void actcsdown(void){ actaddsimple(csdown); }
-void actcsup(void){ actaddsimple(csup); }
-
-
-void actspitx(bms::bmscommands_t comm, uint8_t* data, uint32_t len){
-    action_t a;
-    a.a = spitx;
-    a.comm = comm;
-    memcpy(a.data, data, len);
-    a.len = len;
-    actadd(a);
-}
-
-void actspiwait(){ actaddsimple(spiwait); }
-
-void actexecute(void (*f)(void)){
-    action_t a;
-    a.a = execute;
-    a.f = f;
-    actadd(a);
 }
 
 uint8_t actqcheck(uint8_t n){
     // check to see if queue full
     uint8_t qct = qtail >= qhead ? qtail-qhead : (qsize-1)-qhead+qtail;
     if(qct+n > (qsize-1)) return 1;
-    return 0;
-}
-
-uint8_t actaddsimple(actions_t action){
-    action_t a;
-    a.a = action;
-    actadd(a);
     return 0;
 }
 
@@ -98,10 +56,6 @@ uint8_t actexec(void){
             // wait for spi transaction to finish
             case spiwait:
                 if(bms::spistatus()) return 0;
-                break;
-
-            case execute:
-                if(a.f) a.f();
                 break;
 
             default:
