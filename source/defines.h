@@ -1,7 +1,7 @@
 #ifndef DEFINES_H_
 #define DEFINES_H_
 
-#define slaves 1        // Total slaves
+#define slaves 4        // Total slaves
 #define commlen 4+8*slaves // length of most isospi transactions
 #define cells 11        // Cells per slave
 #define thermistors 12  // Thermistors per slave

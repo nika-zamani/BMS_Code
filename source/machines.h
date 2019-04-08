@@ -2,6 +2,8 @@
 #define MACHINES_H_
 
 #include <stdint.h>
+#include <cstddef>
+#include "defines.h"
 
 enum slavestates_t {
     off,
@@ -16,6 +18,12 @@ enum masterstates_t {
     discharge
 };
 
+
+uint32_t ledstates[][5] = {
+    { ms(500), ms(500), 0},
+    { ms(200), ms(200), ms(200), ms(800) }
+};
+
 template<typename T>
 class machine {
 private:
@@ -23,9 +31,10 @@ private:
     uint32_t resetval;
     uint8_t on;
 public:
-    machine(T s, void(*d)(void));
+    machine(T s, void(*d)(void), void(*dt)(machine*) = NULL);
     T state;
     void (*drive)(void);
+    void (*drivethis)(machine* m);
     void run(void);
 
     void setTimer(uint32_t x){

@@ -31,9 +31,12 @@ void cacheinit(){
 
 void masterdrive(void);
 void slavedrive(void);
+void leddrive(machine<uint32_t*>* m);
 
 machine<masterstates_t> master(normalOk, masterdrive);
 machine<slavestates_t> slave(off, slavedrive);
+machine<uint32_t*> ledok(ledstates[0], NULL, leddrive);
+machine<uint32_t*> ledstatus(ledstates[0], NULL, leddrive);
 
 int main(void) {
     BOARD_InitBootPins();
@@ -44,7 +47,7 @@ int main(void) {
     spiinit();
     actinit();
 
-    master.setTimer(ms(1000));
+    master.setTimer(ms(15));
     master.start();
 
     while(1){
@@ -242,6 +245,10 @@ void masterdrive(void){
 }
 
 void slavedrive(void){
+
+}
+
+void leddrive(machine<uint32_t*>* m){
 
 }
 
