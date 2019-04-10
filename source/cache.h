@@ -16,6 +16,7 @@ typedef struct cache_t {
     uint8_t allok : 1;
     uint8_t voltok : 1;
     uint8_t tempok : 1;
+    uint8_t commsok : 1;
     // Call to indicate an error has occurred 
     inline void voltError() { allok = 0; voltok = 0; }
     inline void tempError() { allok = 0; tempok = 0; }

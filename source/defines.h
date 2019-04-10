@@ -19,7 +19,7 @@
 #define us(x) x/100
 #define ms(x) x*10
 
-#define ltccsport BSP::gpio::PortA
-#define ltccspin 2
+#define ltccsport BSP::gpio::PortE
+#define ltccspin 6
 
 #endif

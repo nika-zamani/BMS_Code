@@ -1,10 +1,11 @@
 #include "machines.h"
 
 template<typename T>
-machine<T>::machine(T s, void (*d)(void), void(*dt)(machine*)){
+machine<T>::machine(T s, void (*d)(void), void(*dt)(machine*), void* userdata){
     state = s;
     drive = d;
     drivethis = dt;
+    data = userdata;
     on = 0;
     timer = 1; // so start() needs to be called
 }
@@ -12,7 +13,8 @@ machine<T>::machine(T s, void (*d)(void), void(*dt)(machine*)){
 template<typename T>
 void machine<T>::run(){
     if(!timer){
-        drive();
+        if(drive) drive();
+        if(drivethis) drivethis(this);
         timer = resetval;
     }
 }

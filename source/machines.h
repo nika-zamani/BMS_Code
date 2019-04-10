@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <cstddef>
 #include "defines.h"
+#include "gpio.h"
 
 enum slavestates_t {
     off,
@@ -12,6 +13,7 @@ enum slavestates_t {
 };
 
 enum masterstates_t {
+    startup,
     normalOk,
     normalError,
     charge,
@@ -20,9 +22,15 @@ enum masterstates_t {
 
 
 uint32_t ledstates[][5] = {
-    { ms(500), ms(500), 0},
-    { ms(200), ms(200), ms(200), ms(800) }
+    { ms(500), ms(500), 0, 0, 0},
+    { ms(200), ms(200), ms(200), ms(800), 0}
 };
+
+typedef struct leddata {
+    uint8_t counter = 0;
+    BSP::gpio::GPIO_port port;
+    uint8_t pin;
+} leddata;
 
 template<typename T>
 class machine {
@@ -31,7 +39,8 @@ private:
     uint32_t resetval;
     uint8_t on;
 public:
-    machine(T s, void(*d)(void), void(*dt)(machine*) = NULL);
+    void* data;
+    machine(T s, void(*d)(void), void(*dt)(machine*) = NULL, void* userdata = NULL);
     T state;
     void (*drive)(void);
     void (*drivethis)(machine* m);

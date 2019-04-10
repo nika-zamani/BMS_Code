@@ -129,9 +129,11 @@ static uint8_t peccheck(){
         if(pecrx[0] != rxdatabuf[8*(i+1)+2] || pecrx[1] != rxdatabuf[8*(i+1)+3]){
             pecError = 1;
             pecErrorCount++;
+            cache.commsok = 0;
             return 1;
         }
     }
+    cache.commsok = 1;
     return 0;
 }
 

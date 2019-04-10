@@ -27,16 +27,20 @@ void cacheinit(){
     cache.allok = 1;
     cache.voltok = 1;
     cache.tempok = 1;
+    cache.commsok = 0;
 }
 
 void masterdrive(void);
 void slavedrive(void);
 void leddrive(machine<uint32_t*>* m);
 
-machine<masterstates_t> master(normalOk, masterdrive);
+leddata led1 = {0, gpio::PortD, 2};
+leddata led2 = {0, gpio::PortA, 3};
+
+machine<masterstates_t> master(startup, masterdrive);
 machine<slavestates_t> slave(off, slavedrive);
-machine<uint32_t*> ledok(ledstates[0], NULL, leddrive);
-machine<uint32_t*> ledstatus(ledstates[0], NULL, leddrive);
+machine<uint32_t*> ledok(ledstates[1], NULL, leddrive, (void*)&led1);
+machine<uint32_t*> ledstatus(ledstates[0], NULL, leddrive, (void*)&led2);
 
 int main(void) {
     BOARD_InitBootPins();
@@ -47,13 +51,17 @@ int main(void) {
     spiinit();
     actinit();
 
-    master.setTimer(ms(15));
+    master.setTimer(ms(500));
     master.start();
+    ledok.start();
+    ledstatus.start();
 
     while(1){
         actexec();
         master.run();
-        slave.run();
+//        slave.run();
+        ledok.run();
+        ledstatus.run();
     }
 /*
 void switchMux(uint8_t mux, uint8_t pin){
@@ -220,6 +228,15 @@ uint8_t manage(void){
 void masterdrive(void){
 
     switch(master.state){
+
+        case startup:
+            if(cache.commsok){
+                master.state = normalOk;
+                break;
+            }
+            wakeup();
+            bms::rdcfga();
+            break;
         
         case normalOk:
             if(!cache.allok){
@@ -249,7 +266,15 @@ void slavedrive(void){
 }
 
 void leddrive(machine<uint32_t*>* m){
-
+    leddata* data = (leddata*)m->data;
+    if(m->state[data->counter] == 0){
+        data->counter = 0;
+        gpio::GPIO::set(data->port, data->pin);
+    } else {
+        gpio::GPIO::toggle(data->port, data->pin);
+    }
+    m->setTimer(m->state[data->counter]);
+    data->counter++;
 }
 
 extern "C" {
@@ -257,5 +282,7 @@ void SysTick_Handler(void){
     acttick();
     master.tick();
     slave.tick();
+    ledok.tick();
+    ledstatus.tick();
 }
 }

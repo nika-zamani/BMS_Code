@@ -37,21 +37,12 @@ void BOARD_InitBootPins(void)
 BOARD_InitPins:
 - options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
 - pin_list:
-  - {pin_num: '51', peripheral: ADC1, signal: 'SE, 5', pin_signal: ADC1_SE5/PTC7/LPUART1_TX/CAN1_TX/FTM3_CH3}
-  - {pin_num: '50', peripheral: ADC0, signal: 'SE, 0', pin_signal: ADC0_SE0/ACMP0_IN0/PTA0/FTM2_CH1/LPI2C0_SCLS/FXIO_D2/FTM2_QD_PHA/LPUART0_CTS/TRGMUX_OUT3}
-  - {pin_num: '49', peripheral: GPIOA, signal: 'GPIO, 1', pin_signal: ADC0_SE1/ACMP0_IN1/PTA1/FTM1_CH1/LPI2C0_SDAS/FXIO_D3/FTM1_QD_PHA/LPUART0_RTS/TRGMUX_OUT0}
-  - {pin_num: '47', peripheral: GPIOA, signal: 'GPIO, 3', pin_signal: ADC1_SE1/PTA3/FTM3_CH1/LPI2C0_SCL/EWM_IN/LPUART0_TX}
+  - {pin_num: '60', peripheral: LPSPI0, signal: SCK, pin_signal: ADC2_SE7/PTE0/LPSPI0_SCK/TCLK1/LPI2C1_SDA/FTM1_FLT2}
+  - {pin_num: '59', peripheral: LPSPI0, signal: SIN, pin_signal: ADC2_SE6/PTE1/LPSPI0_SIN/LPI2C0_HREQ/LPI2C1_SCL/FTM1_FLT1}
+  - {pin_num: '54', peripheral: LPSPI0, signal: SOUT, pin_signal: ADC1_SE10/PTE2/LPSPI0_SOUT/LPTMR0_ALT3/FTM3_CH6/PWT_IN3/LPUART1_CTS}
+  - {pin_num: '53', peripheral: GPIOE, signal: 'GPIO, 6', pin_signal: ADC1_SE11/ACMP0_IN6/PTE6/LPSPI0_PCS2/FTM3_CH7/LPUART1_RTS}
   - {pin_num: '46', peripheral: GPIOD, signal: 'GPIO, 2', pin_signal: ADC1_SE2/PTD2/FTM3_CH4/LPSPI1_SOUT/FXIO_D4/TRGMUX_IN5}
-  - {pin_num: '33', peripheral: LPSPI0, signal: SOUT, pin_signal: ADC0_SE5/ADC1_SE15/PTB1/LPUART0_TX/LPSPI0_SOUT/TCLK0}
-  - {pin_num: '48', peripheral: GPIOA, signal: 'GPIO, 2', pin_signal: ADC1_SE0/PTA2/FTM3_CH0/LPI2C0_SDA/EWM_OUT_b/LPUART0_RX}
-  - {pin_num: '32', peripheral: LPSPI0, signal: SCK, pin_signal: ADC0_SE6/PTB2/FTM1_CH0/LPSPI0_SCK/FTM1_QD_PHB/TRGMUX_IN3}
-  - {pin_num: '31', peripheral: LPSPI0, signal: SIN, pin_signal: ADC0_SE7/PTB3/FTM1_CH1/LPSPI0_SIN/FTM1_QD_PHA/TRGMUX_IN2}
-  - {pin_num: '20', peripheral: CAN0, signal: TX, pin_signal: ADC0_SE11/ACMP0_IN4/EXTAL32/PTC3/FTM0_CH3/CAN0_TX}
-  - {pin_num: '21', peripheral: CAN0, signal: RX, pin_signal: ADC0_SE10/ACMP0_IN5/XTAL32/PTC2/FTM0_CH2/CAN0_RX}
-  - {pin_num: '22', peripheral: LPUART2, signal: TX, pin_signal: PTD7/LPUART2_TX/FTM2_FLT3}
-  - {pin_num: '23', peripheral: LPUART2, signal: RX, pin_signal: PTD6/LPUART2_RX/FTM2_FLT2}
-  - {pin_num: '2', peripheral: ADC2, signal: 'SE, 0', pin_signal: ADC2_SE0/PTD0/FTM0_CH2/LPSPI1_SCK/FTM2_CH0/FXIO_D0/TRGMUX_OUT1}
-  - {pin_num: '1', peripheral: ADC2, signal: 'SE, 1', pin_signal: ADC2_SE1/PTD1/FTM0_CH3/LPSPI1_SIN/FTM2_CH1/FXIO_D1/TRGMUX_OUT2}
+  - {pin_num: '47', peripheral: GPIOA, signal: 'GPIO, 3', pin_signal: ADC1_SE1/PTA3/FTM3_CH1/LPI2C0_SCL/EWM_IN/LPUART0_TX}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -67,56 +58,27 @@ void BOARD_InitPins(void)
     /* Clock Control: Clock enabled */
     CLOCK_EnableClock(kCLOCK_PortA);
     /* Clock Control: Clock enabled */
-    CLOCK_EnableClock(kCLOCK_PortB);
-    /* Clock Control: Clock enabled */
-    CLOCK_EnableClock(kCLOCK_PortC);
-    /* Clock Control: Clock enabled */
     CLOCK_EnableClock(kCLOCK_PortD);
-
-    /* PORTA0 (pin 50) is configured as ADC0_SE0 */
-    PORT_SetPinMux(PORTA, 0U, kPORT_PinDisabledOrAnalog);
-
-    /* PORTA1 (pin 49) is configured as PTA1 */
-    PORT_SetPinMux(PORTA, 1U, kPORT_MuxAsGpio);
-
-    /* PORTA2 (pin 48) is configured as PTA2 */
-    PORT_SetPinMux(PORTA, 2U, kPORT_MuxAsGpio);
+    /* Clock Control: Clock enabled */
+    CLOCK_EnableClock(kCLOCK_PortE);
 
     /* PORTA3 (pin 47) is configured as PTA3 */
     PORT_SetPinMux(PORTA, 3U, kPORT_MuxAsGpio);
 
-    /* PORTB1 (pin 33) is configured as LPSPI0_SOUT */
-    PORT_SetPinMux(PORTB, 1U, kPORT_MuxAlt3);
-
-    /* PORTB2 (pin 32) is configured as LPSPI0_SCK */
-    PORT_SetPinMux(PORTB, 2U, kPORT_MuxAlt3);
-
-    /* PORTB3 (pin 31) is configured as LPSPI0_SIN */
-    PORT_SetPinMux(PORTB, 3U, kPORT_MuxAlt3);
-
-    /* PORTC2 (pin 21) is configured as CAN0_RX */
-    PORT_SetPinMux(PORTC, 2U, kPORT_MuxAlt3);
-
-    /* PORTC3 (pin 20) is configured as CAN0_TX */
-    PORT_SetPinMux(PORTC, 3U, kPORT_MuxAlt3);
-
-    /* PORTC7 (pin 51) is configured as ADC1_SE5 */
-    PORT_SetPinMux(PORTC, 7U, kPORT_PinDisabledOrAnalog);
-
-    /* PORTD0 (pin 2) is configured as ADC2_SE0 */
-    PORT_SetPinMux(PORTD, 0U, kPORT_PinDisabledOrAnalog);
-
-    /* PORTD1 (pin 1) is configured as ADC2_SE1 */
-    PORT_SetPinMux(PORTD, 1U, kPORT_PinDisabledOrAnalog);
-
     /* PORTD2 (pin 46) is configured as PTD2 */
     PORT_SetPinMux(PORTD, 2U, kPORT_MuxAsGpio);
 
-    /* PORTD6 (pin 23) is configured as LPUART2_RX */
-    PORT_SetPinMux(PORTD, 6U, kPORT_MuxAlt2);
+    /* PORTE0 (pin 60) is configured as LPSPI0_SCK */
+    PORT_SetPinMux(PORTE, 0U, kPORT_MuxAlt2);
 
-    /* PORTD7 (pin 22) is configured as LPUART2_TX */
-    PORT_SetPinMux(PORTD, 7U, kPORT_MuxAlt2);
+    /* PORTE1 (pin 59) is configured as LPSPI0_SIN */
+    PORT_SetPinMux(PORTE, 1U, kPORT_MuxAlt2);
+
+    /* PORTE2 (pin 54) is configured as LPSPI0_SOUT */
+    PORT_SetPinMux(PORTE, 2U, kPORT_MuxAlt2);
+
+    /* PORTE6 (pin 53) is configured as PTE6 */
+    PORT_SetPinMux(PORTE, 6U, kPORT_MuxAsGpio);
 }
 /***********************************************************************************************************************
  * EOF
