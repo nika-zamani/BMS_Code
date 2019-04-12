@@ -103,16 +103,16 @@ void bms::adcvsc(uint8_t MD, uint8_t DCP){
     actwait(ms(3));
 }
 
-void wrcomm(uint8_t* data){
+void bms::wrcomm(uint8_t* data){
     spiwrite(WRCOMM, data);
-    actwait(1);
+    actwait(3);
 }
 
-void rdcomm(){
+void bms::rdcomm(){
     spiread(RDCOMM);
 }
 
-void stcomm(uint8_t bytes){
+void bms::stcomm(uint8_t bytes){
     if(actqcheck(2)) return;
     getcommand(STCOMM, tmpbuf);
     pec15_calc(2, tmpbuf, tmpbuf+2);
@@ -218,7 +218,7 @@ void bmsspicb(){
 
         case RDAUXA: //read gpio 1-3
             if(peccheck()) return;
-            for(i = 0; i < slaves; i++){
+            for(i = 0; i < 1; i++){
                 cache.gpio[(i*5)+0] = 
                     (rxdatabuf[4+(8*i)+0]) | (rxdatabuf[4+(8*i)+1]<<8);
                 cache.gpio[(i*5)+1] = 

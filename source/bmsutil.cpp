@@ -41,6 +41,7 @@ uint8_t readall(void){
     bms::rdcvd();
     bms::rdauxa();
     actexecute(voltCheck);
+    actexecute(getTemp);
 
     return 0;
 }
@@ -84,3 +85,60 @@ void voltCheck(void){
     }
 
 }
+
+void stepMux(){
+    if(cache.muxpin > (cache.muxpin+1)%8){
+        muxOff(cache.mux);
+        cache.mux = (cache.mux+1)%2;
+    }
+    cache.muxpin = (cache.muxpin+1)%8;
+    muxOn(cache.mux, cache.muxpin);
+}
+
+void muxOn(uint8_t mux, uint8_t pin){
+    uint8_t addr = 0x90 | (mux<<1);
+    uint8_t comm = 0x08 | pin;
+    uint8_t data[6] = { 0x60, 0x08, 0x00, 0x09, 0x70, 0x09 };
+    data[0] |= (addr>>4)&0x0f;
+    data[1] |= (addr<<4)&0xf0;
+    data[3] |= (comm<<4)&0xf0;
+    bms::wrcomm(data);
+    bms::stcomm(2);
+    bms::rdcomm();
+}
+
+void muxOff(uint8_t mux){
+    uint8_t addr = 0x90 | (mux<<1);
+    uint8_t comm = 0x00;
+    uint8_t data[6] = { 0x60, 0x08, 0x00, 0x09, 0x70, 0x09 };
+    data[0] |= (addr>>4)&0x0f;
+    data[1] |= (addr<<4)&0xf0;
+    data[3] |= (comm<<4)&0xf0;
+    bms::wrcomm(data);
+    bms::stcomm(2);
+    bms::rdcomm();
+}
+
+void getTemp(){
+
+    uint8_t tempid = (cache.mux<<3)|cache.muxpin; // binary: 0000mppp
+    for(uint8_t i = 0; i < slaves; i++){
+        cache.temps[(thermistors*i)+tempid] = cache.gpio[5*i];
+        if(tempconfig & 1<<tempid) // thermistor is cell, not aux
+            tempCheck((thermistors*i)+tempid);
+    }
+}
+    
+void tempCheck(uint16_t tempid){
+    if(cache.temps[tempid] > tempLimitUpper || cache.temps[tempid] < tempLimitLower)
+        cache.tempError();
+}
+
+void setup(){
+    uint8_t confdat[6];
+    memset(confdat, 0, 6);
+    confdat[0] = 0xfc;
+    wakeup();
+    bms::wrcfga(confdat);
+}
+    

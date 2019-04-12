@@ -21,4 +21,15 @@ void panic(void);
 //
 void voltCheck(void);
 
+void stepMux(void);
+void muxOn(uint8_t mux, uint8_t pin);
+void muxOff(uint8_t mux);
+
+// get temperature from gpio buffer
+void getTemp(void);
+// check temp limits
+void tempCheck(uint16_t tempid);
+
+void setup();
+
 #endif

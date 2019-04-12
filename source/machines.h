@@ -14,6 +14,7 @@ enum slavestates_t {
 
 enum masterstates_t {
     startup,
+    temps,
     normalOk,
     normalError,
     charge,

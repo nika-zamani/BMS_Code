@@ -18,8 +18,11 @@ typedef struct cache_t {
     uint8_t tempok : 1;
     uint8_t commsok : 1;
     // Call to indicate an error has occurred 
-    inline void voltError() { allok = 0; voltok = 0; }
-    inline void tempError() { allok = 0; tempok = 0; }
+    inline void allStatus() { allok = voltok && tempok && commsok; }
+    inline void voltError() { voltok = 0; allStatus(); }
+    inline void tempError() { tempok = 0; allStatus(); }
+    inline void commsError() { commsok = 0, allStatus(); }
+    inline void commsGood() { commsok = 1, allStatus(); }
 
     // gpio analog values: 5 per slave, used for temps etc
     uint16_t gpio[5 * slaves];
@@ -43,6 +46,9 @@ typedef struct cache_t {
     uint8_t configA[slaves][6];
     uint8_t statA[slaves][6];
 
+    // mux state
+    uint8_t mux;
+    uint8_t muxpin;
 
 } cache_t;
 

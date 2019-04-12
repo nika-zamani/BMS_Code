@@ -28,6 +28,10 @@ void cacheinit(){
     cache.voltok = 1;
     cache.tempok = 1;
     cache.commsok = 0;
+
+    // mux settings... maximum values; expect rollover immediately
+    cache.mux = 1;
+    cache.muxpin = 7;
 }
 
 void masterdrive(void);
@@ -64,21 +68,6 @@ int main(void) {
         ledstatus.run();
     }
 /*
-void switchMux(uint8_t mux, uint8_t pin){
-    actwait(ms(500));
-    uint8_t addr = 0x90 | (mux<<1);
-    actwait(ms(500));
-    uint8_t comm = 0x08 | pin;
-    uint8_t data[6] = { 0x60, 0x08, 0x00, 0x09, 0x70, 0x09 };
-    data[0] |= (addr>>4)&0x0f;
-    data[1] |= (addr<<4)&0xf0;
-    data[3] |= (comm<<4)&0xf0;
-    bms::wrcomm(data);
-    bms::wait();
-    delay(3);
-    bms::stcomm(2);
-    bms::wait();
-}
 
 uint8_t manage(void){
 
@@ -231,11 +220,16 @@ void masterdrive(void){
 
         case startup:
             if(cache.commsok){
+                setup();
                 master.state = normalOk;
                 break;
             }
             wakeup();
             bms::rdcfga();
+            break;
+
+        case temps:
+            wakeup();
             break;
         
         case normalOk:
@@ -245,6 +239,8 @@ void masterdrive(void){
                 break;
             }
             wakeup();
+            stepMux();
+            actwait(ms(3));
             readall();
             break;
 
