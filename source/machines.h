@@ -18,7 +18,8 @@ enum masterstates_t {
     normalOk,
     normalError,
     charge,
-    discharge
+    discharge,
+    hold
 };
 
 

@@ -5,7 +5,7 @@
 #include "ltcutility.h"
 #include "gpio.h"
 #include "defines.h"
-#define qsize 100
+#define qsize 200 // total action queue size
 
 enum actions_t {
     wait,

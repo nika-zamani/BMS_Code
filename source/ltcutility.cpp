@@ -104,7 +104,10 @@ void bms::adcvsc(uint8_t MD, uint8_t DCP){
 }
 
 void bms::wrcomm(uint8_t* data){
-    spiwrite(WRCOMM, data);
+    uint8_t buffer[6*slaves];
+    for(uint8_t i = 0; i < slaves; i++)
+        memcpy(buffer+(6*i), data, 6);
+    spiwrite(WRCOMM, buffer);
     actwait(3);
 }
 
@@ -218,7 +221,7 @@ void bmsspicb(){
 
         case RDAUXA: //read gpio 1-3
             if(peccheck()) return;
-            for(i = 0; i < 1; i++){
+            for(i = 0; i < slaves; i++){
                 cache.gpio[(i*5)+0] = 
                     (rxdatabuf[4+(8*i)+0]) | (rxdatabuf[4+(8*i)+1]<<8);
                 cache.gpio[(i*5)+1] = 

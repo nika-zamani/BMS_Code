@@ -34,6 +34,9 @@ void cacheinit(){
     cache.muxpin = 7;
 }
 
+uint8_t tmux = 0;
+uint8_t tpin = 6;
+
 void masterdrive(void);
 void slavedrive(void);
 void leddrive(machine<uint32_t*>* m);
@@ -229,7 +232,11 @@ void masterdrive(void){
             break;
 
         case temps:
+            setup();
             wakeup();
+            muxOff((tmux+1)%2);
+            muxOn(tmux, tpin);
+            master.state = hold;
             break;
         
         case normalOk:
@@ -240,7 +247,8 @@ void masterdrive(void){
             }
             wakeup();
             stepMux();
-            actwait(ms(3));
+            //actwait(ms(20));
+            //wakeup();
             readall();
             break;
 
@@ -248,6 +256,11 @@ void masterdrive(void){
             panic();
             wakeup();
             readall();
+            break;
+
+        case hold:
+            wakeup();
+            bms::rdcfga();
             break;
 
         default:

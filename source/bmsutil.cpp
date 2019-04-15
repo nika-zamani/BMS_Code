@@ -35,6 +35,8 @@ uint8_t wakeup(void){
 uint8_t readall(void){
     
     bms::adcvax();
+    actwait(ms(50));
+    wakeup();
     bms::rdcva();
     bms::rdcvb();
     bms::rdcvc();
@@ -89,9 +91,12 @@ void voltCheck(void){
 void stepMux(){
     if(cache.muxpin > (cache.muxpin+1)%8){
         muxOff(cache.mux);
+        muxOff(cache.mux);
+        muxOff(cache.mux);
         cache.mux = (cache.mux+1)%2;
     }
     cache.muxpin = (cache.muxpin+1)%8;
+    muxOn(cache.mux, cache.muxpin);
     muxOn(cache.mux, cache.muxpin);
 }
 
@@ -117,6 +122,7 @@ void muxOff(uint8_t mux){
     bms::wrcomm(data);
     bms::stcomm(2);
     bms::rdcomm();
+    actwait(ms(10));
 }
 
 void getTemp(){
@@ -135,9 +141,9 @@ void tempCheck(uint16_t tempid){
 }
 
 void setup(){
-    uint8_t confdat[6];
-    memset(confdat, 0, 6);
-    confdat[0] = 0xfc;
+    uint8_t confdat[6*slaves];
+    memset(confdat, 0, 6*slaves);
+    for(uint8_t i = 0; i < slaves; i++) confdat[6*i] = 0xfc;
     wakeup();
     bms::wrcfga(confdat);
 }

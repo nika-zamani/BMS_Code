@@ -12,7 +12,7 @@ uint8_t spiinit(){
     spi::SPI& spi = spi::SPI::StaticClass();
 
     spi::SPI::masterConfig mconf;
-    mconf.baudRate = 500000U;
+    mconf.baudRate = 250000U;
     mconf.csport = ltccsport;
     mconf.cspin = ltccspin;
     spi.initMaster(0, &mconf);
