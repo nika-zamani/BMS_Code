@@ -12,7 +12,7 @@ uint8_t spiinit(){
     spi::SPI& spi = spi::SPI::StaticClass();
 
     spi::SPI::masterConfig mconf;
-    mconf.baudRate = 250000U;
+    mconf.baudRate = 500000U;
     mconf.csport = ltccsport;
     mconf.cspin = ltccspin;
     spi.initMaster(0, &mconf);
@@ -20,4 +20,10 @@ uint8_t spiinit(){
     return 0;
 }
 
+void bmsOkOut(){
+    gpio::GPIO::set(bmsokport, bmsokpin);
+}
 
+void bmsNotOkOut(){
+    gpio::GPIO::clear(bmsokport, bmsokpin);
+}

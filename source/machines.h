@@ -13,6 +13,7 @@ enum slavestates_t {
 };
 
 enum masterstates_t {
+    link,
     startup,
     temps,
     normalOk,
@@ -23,9 +24,13 @@ enum masterstates_t {
 };
 
 
-uint32_t ledstates[][5] = {
-    { ms(500), ms(500), 0, 0, 0},
-    { ms(200), ms(200), ms(200), ms(800), 0}
+uint32_t ledstates[][7] = {
+    { ms(1200), ms(1200), 0, 0, 0},               // 0: slow blink
+    { ms(200), ms(800), 0 },                     // 1: one blink
+    { ms(100), ms(100), ms(100), ms(500), 0},    // 2: two blink
+    { ms(200), ms(200), ms(200), ms(200), ms(200), ms(800), 0}, // 3: three blink
+    { ms(200), ms(200), 0 },                     // 4: panicky blink
+    { ms(1000), 0 }                             // 5: just on
 };
 
 typedef struct leddata {

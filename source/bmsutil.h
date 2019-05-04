@@ -28,7 +28,7 @@ void muxOff(uint8_t mux);
 // get temperature from gpio buffer
 void getTemp(void);
 // check temp limits
-void tempCheck(uint16_t tempid);
+uint8_t tempCheck(uint8_t slave, uint8_t id);
 
 void setup();
 

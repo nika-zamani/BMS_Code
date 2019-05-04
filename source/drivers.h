@@ -6,4 +6,7 @@
 
 uint8_t spiinit(void);
 
+void bmsOkOut(void);
+void bmsNotOkOut(void);
+
 #endif

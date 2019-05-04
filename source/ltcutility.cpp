@@ -16,8 +16,6 @@ static bmscommands_t lastcommand;
 static uint8_t txdatabuf[commlen] = {0};
 static uint8_t rxdatabuf[commlen] = {0};
 static uint8_t tmpbuf[commlen+1] = {0}; // for temporary use, extra byte for i2c
-static uint8_t pecError;
-static uint32_t pecErrorCount;
 static uint8_t bmstransmitting;
 
 // get the corresponding command bytes (thanks andrew!)
@@ -127,16 +125,36 @@ void bms::stcomm(uint8_t bytes){
 
 static uint8_t peccheck(){
     uint8_t pecrx[2];
+    uint8_t linked = 0;
     for(uint8_t i = 0; i < slaves; i++){
         pec15_calc(6, rxdatabuf+(8*i)+4, pecrx);
         if(pecrx[0] != rxdatabuf[8*(i+1)+2] || pecrx[1] != rxdatabuf[8*(i+1)+3]){
-            pecError = 1;
-            pecErrorCount++;
-            cache.commsok = 0;
-            return 1;
+            cache.commsError();
+            i = slaves;
+        } else {
+            linked++;
         }
     }
-    cache.commsok = 1;
+
+    // this block should let program start without all slaves attached,
+    // by determining how many slaves are responding, and treating that,
+    // as the number of linked slaves.
+    // implementation is not finished 
+    if(!cache.commsok){
+        if(linked == slaves){
+            cache.commsGood();
+        } else if(linked == cache.linked && linked > 0){
+            cache.confidence++;
+            if(cache.confidence >= confThresh){
+                cache.commsGood();
+                cache.confidence = 0;
+            }
+        } else {
+            cache.confidence = 0;
+        }
+        cache.linked = linked;
+    }
+
     return 0;
 }
 

@@ -17,12 +17,18 @@ typedef struct cache_t {
     uint8_t voltok : 1;
     uint8_t tempok : 1;
     uint8_t commsok : 1;
+    uint8_t reset : 1;
     // Call to indicate an error has occurred 
     inline void allStatus() { allok = voltok && tempok && commsok; }
     inline void voltError() { voltok = 0; allStatus(); }
+    inline void voltGood() { voltok = 1; allStatus(); }
     inline void tempError() { tempok = 0; allStatus(); }
+    inline void tempOk() { tempok = 1; allStatus(); }
     inline void commsError() { commsok = 0, allStatus(); }
     inline void commsGood() { commsok = 1, allStatus(); }
+
+    uint8_t linked;
+    uint8_t confidence;
 
     // gpio analog values: 5 per slave, used for temps etc
     uint16_t gpio[5 * slaves];
@@ -40,6 +46,9 @@ typedef struct cache_t {
     uint16_t temps[thermistors * slaves];
     uint16_t tempMax;
     uint16_t tempMin;
+    uint16_t tempArray[slaves]; // binary representation of functioning temps
+    uint16_t tempGood[slaves]; // binary representation of acceptable temps
+    uint16_t tempBroken; // count of broken temp sensors
 
     // chip registers read from 6811
     uint8_t comm[slaves][6];

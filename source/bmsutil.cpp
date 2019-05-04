@@ -3,6 +3,7 @@
 
 extern cache_t cache;
 
+void update();
 // todo: insert in place
 // todo: don't let actions happen until inserting is done
 uint8_t wakeup(void){
@@ -48,10 +49,6 @@ uint8_t readall(void){
     return 0;
 }
 
-void panic(void){
-    // do all the panicky things
-}
-
 void voltCheck(void){
 
     uint32_t vmax = 0;
@@ -79,11 +76,12 @@ void voltCheck(void){
 
     if(vmax > voltageLimitUpper) {
         cache.voltError();
-        panic();
-    }
-    if(vmin < voltageLimitLower) {
+        update();
+    } else if(vmin < voltageLimitLower) {
         cache.voltError();
-        panic();
+        update();
+    } else {
+        cache.voltGood();
     }
 
 }
@@ -130,16 +128,60 @@ void getTemp(){
     uint8_t tempid = (cache.mux<<3)|cache.muxpin; // binary: 0000mppp
     for(uint8_t i = 0; i < slaves; i++){
         cache.temps[(thermistors*i)+tempid] = cache.gpio[5*i];
-        if(tempconfig & 1<<tempid) // thermistor is cell, not aux
-            tempCheck((thermistors*i)+tempid);
+        if(cache.tempArray[i] & 1<<tempid){ // thermistor is cell, not aux
+            tempCheck(i, tempid);
+        }
+    }
+
+    static uint16_t tempsRead = 0;
+    tempsRead+=slaves;
+    if(tempsRead == thermistors*slaves){
+        uint16_t totalWorking = 0;
+        uint16_t totalGood = 0;
+        if(cache.tempBroken <= tempExtra){
+            for(uint16_t i = 0; i < slaves; i++){
+                for(uint16_t j = 0; j < thermistors; j++){
+                    if(cache.tempArray[i] & 1<<j){
+                        totalWorking++;
+                        if(cache.tempGood[i] & 1<<j){
+                            totalGood++;
+                        }
+                    }
+                }
+            }
+            if(totalWorking == totalGood){
+                cache.tempOk();
+            } else {
+                cache.tempError();
+                update();
+            }
+        } else {
+            cache.tempError();
+            update();
+        }
+        tempsRead = 0;
     }
 }
     
-void tempCheck(uint16_t tempid){
-    if(cache.temps[tempid] > tempLimitUpper || cache.temps[tempid] < tempLimitLower)
+uint8_t tempCheck(uint8_t slave, uint8_t id){
+    uint16_t temp = cache.temps[(slave*thermistors)+id];
+    if(temp > tempBrokenUpper || temp < tempBrokenLower){
+        cache.tempBroken++;
+        cache.tempArray[slave] &= ~(1<<id);
+        cache.tempGood[slave] &= ~(1<<id);
+        return 1;
+    } else if(temp > tempLimitUpper || temp < tempLimitLower) {
+        cache.tempGood[slave] &= ~(1<<id);
         cache.tempError();
+        update();
+        return 1;
+    } else {
+        cache.tempGood[slave] |= 1<<id;
+    }
+    return 0;
 }
 
+// write standard configuration to all slaves
 void setup(){
     uint8_t confdat[6*slaves];
     memset(confdat, 0, 6*slaves);

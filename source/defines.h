@@ -2,6 +2,7 @@
 #define DEFINES_H_
 
 #define slaves 2        // Total slaves
+#define confThresh 6
 #define commlen 4+8*slaves // length of most isospi transactions
 #define cells 11        // Cells per slave
 #define thermistors 16  // Thermistors per slave
@@ -9,9 +10,13 @@
 #define voltageLimitUpper 42000
 #define voltageLimitLower 28000
 
-#define tempLimitUpper 50000
-#define tempLimitLower 0
-#define tempconfig 0b1111111111000011 // 1=cell, 0=aux
+#define tempLimitUpper 20000
+#define tempLimitLower 10000
+#define tempBrokenUpper 28000 // temp shorted to rail
+#define tempBrokenLower 2000 // temp shorted to ground
+#define tempconfig 0b1100001111111111 // 1=cell, 0=aux
+#define tempTotal 12*slaves // total measured cell temps
+#define tempExtra 4 // allowable broken temps
 
 // System ticks: handler called at .1ms
 // Smallest quantum is 100us
@@ -23,4 +28,6 @@
 #define ltccsport BSP::gpio::PortA
 #define ltccspin 2
 
+#define bmsokport BSP::gpio::PortD
+#define bmsokpin 0
 #endif

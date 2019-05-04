@@ -43,6 +43,10 @@ BOARD_InitPins:
   - {pin_num: '33', peripheral: LPSPI0, signal: SOUT, pin_signal: ADC0_SE5/ADC1_SE15/PTB1/LPUART0_TX/LPSPI0_SOUT/TCLK0}
   - {pin_num: '32', peripheral: LPSPI0, signal: SCK, pin_signal: ADC0_SE6/PTB2/FTM1_CH0/LPSPI0_SCK/FTM1_QD_PHB/TRGMUX_IN3}
   - {pin_num: '31', peripheral: LPSPI0, signal: SIN, pin_signal: ADC0_SE7/PTB3/FTM1_CH1/LPSPI0_SIN/FTM1_QD_PHA/TRGMUX_IN2}
+  - {pin_num: '50', peripheral: ADC0, signal: 'SE, 0', pin_signal: ADC0_SE0/ACMP0_IN0/PTA0/FTM2_CH1/LPI2C0_SCLS/FXIO_D2/FTM2_QD_PHA/LPUART0_CTS/TRGMUX_OUT3}
+  - {pin_num: '51', peripheral: ADC1, signal: 'SE, 5', pin_signal: ADC1_SE5/PTC7/LPUART1_TX/CAN1_TX/FTM3_CH3}
+  - {pin_num: '1', peripheral: GPIOD, signal: 'GPIO, 1', pin_signal: ADC2_SE1/PTD1/FTM0_CH3/LPSPI1_SIN/FTM2_CH1/FXIO_D1/TRGMUX_OUT2}
+  - {pin_num: '2', peripheral: GPIOD, signal: 'GPIO, 0', pin_signal: ADC2_SE0/PTD0/FTM0_CH2/LPSPI1_SCK/FTM2_CH0/FXIO_D0/TRGMUX_OUT1}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -60,7 +64,12 @@ void BOARD_InitPins(void)
     /* Clock Control: Clock enabled */
     CLOCK_EnableClock(kCLOCK_PortB);
     /* Clock Control: Clock enabled */
+    CLOCK_EnableClock(kCLOCK_PortC);
+    /* Clock Control: Clock enabled */
     CLOCK_EnableClock(kCLOCK_PortD);
+
+    /* PORTA0 (pin 50) is configured as ADC0_SE0 */
+    PORT_SetPinMux(PORTA, 0U, kPORT_PinDisabledOrAnalog);
 
     /* PORTA2 (pin 48) is configured as PTA2 */
     PORT_SetPinMux(PORTA, 2U, kPORT_MuxAsGpio);
@@ -76,6 +85,15 @@ void BOARD_InitPins(void)
 
     /* PORTB3 (pin 31) is configured as LPSPI0_SIN */
     PORT_SetPinMux(PORTB, 3U, kPORT_MuxAlt3);
+
+    /* PORTC7 (pin 51) is configured as ADC1_SE5 */
+    PORT_SetPinMux(PORTC, 7U, kPORT_PinDisabledOrAnalog);
+
+    /* PORTD0 (pin 2) is configured as PTD0 */
+    PORT_SetPinMux(PORTD, 0U, kPORT_MuxAsGpio);
+
+    /* PORTD1 (pin 1) is configured as PTD1 */
+    PORT_SetPinMux(PORTD, 1U, kPORT_MuxAsGpio);
 
     /* PORTD2 (pin 46) is configured as PTD2 */
     PORT_SetPinMux(PORTD, 2U, kPORT_MuxAsGpio);
