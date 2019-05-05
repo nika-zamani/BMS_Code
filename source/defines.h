@@ -1,7 +1,7 @@
 #ifndef DEFINES_H_
 #define DEFINES_H_
 
-#define slaves 2        // Total slaves
+#define slaves 8        // Total slaves
 #define confThresh 6
 #define commlen 4+8*slaves // length of most isospi transactions
 #define cells 11        // Cells per slave
@@ -16,7 +16,7 @@
 #define tempBrokenLower 2000 // temp shorted to ground
 #define tempconfig 0b1100001111111111 // 1=cell, 0=aux
 #define tempTotal 12*slaves // total measured cell temps
-#define tempExtra 4 // allowable broken temps
+#define tempExtra 6 // allowable broken temps
 
 // System ticks: handler called at .1ms
 // Smallest quantum is 100us

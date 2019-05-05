@@ -10,7 +10,21 @@
 #include <stdint.h>
 #include "defines.h"
 
+typedef struct timeout_t {
+
+    uint16_t charger;
+    uint16_t can;
+
+    void tick(){
+        charger++;
+        can++;
+    }
+
+} timeout_t;
+
 typedef struct cache_t {
+
+    timeout_t timeout;
 
     // flags
     uint8_t allok : 1;
@@ -26,6 +40,11 @@ typedef struct cache_t {
     inline void tempOk() { tempok = 1; allStatus(); }
     inline void commsError() { commsok = 0, allStatus(); }
     inline void commsGood() { commsok = 1, allStatus(); }
+
+    // connection flags
+    uint8_t charger : 1;
+    uint8_t vcu : 1;
+    uint8_t dash : 1;
 
     uint8_t linked;
     uint8_t confidence;

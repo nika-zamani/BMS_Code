@@ -67,6 +67,7 @@ int main(void) {
 
     cacheinit();
     spiinit();
+    caninit();
     actinit();
 
     master.setTimer(ms(250));
@@ -80,6 +81,10 @@ int main(void) {
         master.run();
         ledok.run();
         ledstatus.run();
+        if(cache.timeout.can == ms(500)){
+            cache.timeout.can = 0;
+            cantransmit();
+        }
     }
 }
 
@@ -211,5 +216,6 @@ void SysTick_Handler(void){
     master.tick();
     ledok.tick();
     ledstatus.tick();
+    cache.timeout.tick();
 }
 }

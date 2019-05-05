@@ -3,10 +3,13 @@
 
 #include "spi.h"
 #include "gpio.h"
+#include "canlight.h"
 
-uint8_t spiinit(void);
+uint8_t spiinit();
+uint8_t caninit();
+void cantransmit();
 
-void bmsOkOut(void);
-void bmsNotOkOut(void);
+void bmsOkOut();
+void bmsNotOkOut();
 
 #endif

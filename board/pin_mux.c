@@ -47,6 +47,8 @@ BOARD_InitPins:
   - {pin_num: '51', peripheral: ADC1, signal: 'SE, 5', pin_signal: ADC1_SE5/PTC7/LPUART1_TX/CAN1_TX/FTM3_CH3}
   - {pin_num: '1', peripheral: GPIOD, signal: 'GPIO, 1', pin_signal: ADC2_SE1/PTD1/FTM0_CH3/LPSPI1_SIN/FTM2_CH1/FXIO_D1/TRGMUX_OUT2}
   - {pin_num: '2', peripheral: GPIOD, signal: 'GPIO, 0', pin_signal: ADC2_SE0/PTD0/FTM0_CH2/LPSPI1_SCK/FTM2_CH0/FXIO_D0/TRGMUX_OUT1}
+  - {pin_num: '20', peripheral: CAN0, signal: TX, pin_signal: ADC0_SE11/ACMP0_IN4/EXTAL32/PTC3/FTM0_CH3/CAN0_TX}
+  - {pin_num: '21', peripheral: CAN0, signal: RX, pin_signal: ADC0_SE10/ACMP0_IN5/XTAL32/PTC2/FTM0_CH2/CAN0_RX}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -85,6 +87,12 @@ void BOARD_InitPins(void)
 
     /* PORTB3 (pin 31) is configured as LPSPI0_SIN */
     PORT_SetPinMux(PORTB, 3U, kPORT_MuxAlt3);
+
+    /* PORTC2 (pin 21) is configured as CAN0_RX */
+    PORT_SetPinMux(PORTC, 2U, kPORT_MuxAlt3);
+
+    /* PORTC3 (pin 20) is configured as CAN0_TX */
+    PORT_SetPinMux(PORTC, 3U, kPORT_MuxAlt3);
 
     /* PORTC7 (pin 51) is configured as ADC1_SE5 */
     PORT_SetPinMux(PORTC, 7U, kPORT_PinDisabledOrAnalog);
