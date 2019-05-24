@@ -46,8 +46,12 @@ typedef struct cache_t {
     uint8_t vcu : 1;
     uint8_t dash : 1;
 
+    // used for connection to slaves (unimplemented??)
     uint8_t linked;
     uint8_t confidence;
+    enum class commsEC_t { OK, DISCONNECT };
+    commsEC_t commsEC;
+    uint8_t commsED;
 
     // gpio analog values: 5 per slave, used for temps etc
     uint16_t gpio[5 * slaves];
@@ -60,6 +64,9 @@ typedef struct cache_t {
     uint16_t voltageMin;
     uint16_t voltageMean;
     uint32_t voltageTotal;
+    enum class voltageEC_t { OK, OVERVOLT, UNDERVOLT};
+    voltageEC_t voltEC;
+    uint8_t voltED[3];
     
     // temperatures (calculated from gpio analog signal
     uint16_t temps[thermistors * slaves];
@@ -68,6 +75,9 @@ typedef struct cache_t {
     uint16_t tempArray[slaves]; // binary representation of functioning temps
     uint16_t tempGood[slaves]; // binary representation of acceptable temps
     uint16_t tempBroken; // count of broken temp sensors
+    enum class tempEC_t { OK, OVERTEMP, UNDERTEMP, BROKEN };
+    tempEC_t tempEC;
+    uint8_t tempED;
 
     // chip registers read from 6811
     uint8_t comm[slaves][6];
