@@ -136,10 +136,19 @@ static uint8_t peccheck(){
         }
     }
 
+    if(linked == slaves){
+        cache.commsGood();
+    } else {
+        cache.commsEC = cache.commsEC_t::DISCONNECT;
+        cache.commsED = linked;
+        return 1;
+    }
+
     // this block should let program start without all slaves attached,
     // by determining how many slaves are responding, and treating that,
     // as the number of linked slaves.
     // implementation is not finished 
+    /*
     if(!cache.commsok){
         if(linked == slaves){
             cache.commsGood();
@@ -154,6 +163,7 @@ static uint8_t peccheck(){
         }
         cache.linked = linked;
     }
+    */
 
     return 0;
 }

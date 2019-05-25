@@ -10,8 +10,8 @@
 #define voltageLimitUpper 42000
 #define voltageLimitLower 28000
 
-#define tempLimitUpper 20000
-#define tempLimitLower 10000
+#define tempLimitUpper 20080 // 10C
+#define tempLimitLower 6000 // 60C
 #define tempBrokenUpper 28000 // temp shorted to rail
 #define tempBrokenLower 2000 // temp shorted to ground
 #define tempconfig 0b1100001111111111 // 1=cell, 0=aux

@@ -64,8 +64,8 @@ typedef struct cache_t {
     uint16_t voltageMin;
     uint16_t voltageMean;
     uint32_t voltageTotal;
-    enum class voltageEC_t { OK, OVERVOLT, UNDERVOLT};
-    voltageEC_t voltEC;
+    enum class voltEC_t { OK, OVERVOLT, UNDERVOLT};
+    voltEC_t voltEC;
     uint8_t voltED[3];
     
     // temperatures (calculated from gpio analog signal

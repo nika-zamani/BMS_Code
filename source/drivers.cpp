@@ -103,7 +103,7 @@ void cantransmit(){
     can::CANlight::frame fData;
 
     fData.ext = 1;
-    fData.id = 0x314;
+    fData.id = CANBASE;
     
     // Load voltage data
     uint32_t v = cache.voltageTotal / 10000;
@@ -112,11 +112,18 @@ void cantransmit(){
 
     // Load temperature data
     uint16_t i = 0;
-    while(cache.tempMax > templut[i] && i < TempQa){
+    while(i < TempQa-1 && (cache.tempMax/10) < templut[i]){
         i++;
     }
     fData.data[2] = (i+TempMin) & 0xff;
     fData.data[3] = ((i+TempMin)>>8) & 0xff;
+
+    // Load state data
+
+    fData.data[4] = (1^cache.allok) << 0 |
+        (1^cache.voltok) << 1 |
+        (1^cache.tempok) << 2 |
+        (1^cache.commsok) << 3;
 
     can.tx(0, fData);
 

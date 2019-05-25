@@ -61,8 +61,24 @@ void voltCheck(void){
 
     for(i = 0; i < n; i++){
 
-        if(cache.volts[i] > vmax) vmax = cache.volts[i];
-        if(cache.volts[i] < vmin) vmin = cache.volts[i];
+        if(cache.volts[i] > vmax) {
+            vmax = cache.volts[i];
+            if(cache.volts[i] > voltageLimitUpper){
+                cache.voltEC = cache.voltEC_t::OVERVOLT;
+                cache.voltED[0] = i;
+                cache.voltED[1] = vmax & 0xff;
+                cache.voltED[2] = (vmax>>8) & 0xff;
+            }
+        }
+        if(cache.volts[i] < vmin) {
+            vmin = cache.volts[i];
+            if(cache.volts[i] < voltageLimitLower){
+                cache.voltEC = cache.voltEC_t::UNDERVOLT;
+                cache.voltED[0] = i;
+                cache.voltED[1] = vmin & 0xff;
+                cache.voltED[2] = (vmin>>8) & 0xff;
+            }
+        }
         vtot += cache.volts[i];
 
     }
@@ -129,7 +145,20 @@ void getTemp(){
     for(uint8_t i = 0; i < slaves; i++){
         cache.temps[(thermistors*i)+tempid] = cache.gpio[5*i];
         if(cache.tempArray[i] & 1<<tempid){ // thermistor is cell, not aux
-            tempCheck(i, tempid);
+            uint8_t e = tempCheck(i, tempid);
+            if(e == 2){
+                cache.tempEC = cache.tempEC_t::OVERTEMP;
+                cache.tempED = (thermistors*i)+tempid;
+                cache.tempError();
+                update();
+            } else if(e == 3){
+                cache.tempEC = cache.tempEC_t::UNDERTEMP;
+                cache.tempED = (thermistors*i)+tempid;
+                cache.tempError();
+                update();
+            }
+
+
         }
     }
 
@@ -138,10 +167,20 @@ void getTemp(){
     if(tempsRead == thermistors*slaves){
         uint16_t totalWorking = 0;
         uint16_t totalGood = 0;
+        uint16_t tempMin = ~0;
+        uint16_t tempMax = 0;
         if(cache.tempBroken <= tempExtra){
             for(uint16_t i = 0; i < slaves; i++){
                 for(uint16_t j = 0; j < thermistors; j++){
                     if(cache.tempArray[i] & 1<<j){
+                        if(cache.temps[(thermistors*i)+j] > tempMax){
+                            tempMax = cache.temps[(thermistors*i)+j];
+                            cache.tempMax = tempMax;
+                        }
+                        if(cache.temps[(thermistors*i)+j] < tempMin){
+                            tempMin = cache.temps[(thermistors*i)+j];
+                            cache.tempMin= tempMin;
+                        }
                         totalWorking++;
                         if(cache.tempGood[i] & 1<<j){
                             totalGood++;
@@ -152,10 +191,14 @@ void getTemp(){
             if(totalWorking == totalGood){
                 cache.tempOk();
             } else {
+                cache.tempEC = cache.tempEC_t::BROKEN;
+                cache.tempED = 0;
                 cache.tempError();
                 update();
             }
         } else {
+            cache.tempEC = cache.tempEC_t::BROKEN;
+            cache.tempED = 0;
             cache.tempError();
             update();
         }
@@ -170,11 +213,12 @@ uint8_t tempCheck(uint8_t slave, uint8_t id){
         cache.tempArray[slave] &= ~(1<<id);
         cache.tempGood[slave] &= ~(1<<id);
         return 1;
-    } else if(temp > tempLimitUpper || temp < tempLimitLower) {
+    } else if(temp > tempLimitUpper){ // || temp < tempLimitLower) {
         cache.tempGood[slave] &= ~(1<<id);
-        cache.tempError();
-        update();
-        return 1;
+        return 2;
+    } else if(temp < tempLimitLower){
+        cache.tempGood[slave] &= ~(1<<id);
+        return 3;
     } else {
         cache.tempGood[slave] |= 1<<id;
     }
