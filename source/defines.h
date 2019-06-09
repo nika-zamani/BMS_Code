@@ -30,4 +30,6 @@
 
 #define bmsokport BSP::gpio::PortD
 #define bmsokpin 0
+
+#define CHARGE_CURRENT (3); // in Amps
 #endif

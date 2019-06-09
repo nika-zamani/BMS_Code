@@ -23,5 +23,6 @@ void machine<T>::run(){
 // templated methods have already been compiled
 // other solution would be do define all machines in this file
 template class machine<slavestates_t>;
+template class machine<chargerstates_t>;
 template class machine<masterstates_t>;
 template class machine<uint32_t*>;
