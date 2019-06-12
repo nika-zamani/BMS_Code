@@ -25,3 +25,4 @@ void machine<T>::run(){
 template class machine<slavestates_t>;
 template class machine<masterstates_t>;
 template class machine<uint32_t*>;
+template class machine<uint8_t>;

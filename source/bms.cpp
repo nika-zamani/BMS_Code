@@ -45,6 +45,8 @@ void cacheinit(){
 void masterdrive(void);
 machine<masterstates_t> master(link, masterdrive);
 
+void candrive(void);
+machine<uint8_t> candrv(0, candrive);
 
 void leddrive(machine<uint32_t*>* m);
 
@@ -72,6 +74,10 @@ int main(void) {
 
     master.setTimer(ms(250));
     master.start();
+
+    candrv.setTimer(ms(50));
+    candrv.start();
+
     ledok.start();
     ledstatus.start();
 
@@ -79,6 +85,7 @@ int main(void) {
         update();
         actexec();
         master.run();
+        candrv.run();
         ledok.run();
         ledstatus.run();
         if(cache.timeout.can == ms(500)){
@@ -194,6 +201,38 @@ void masterdrive(void){
 
 }
 
+#define TEMPBASE 0x5300
+#define VOLTBASE 0x5400
+
+void candrive(){
+
+    static uint8_t tempn = 0;
+    uint8_t tempnMax = 16; // 16 thermistors * 8 boards / 8 (temps/frame) 
+
+    static uint8_t voltn = 0;
+    uint8_t voltnMax = 11; // 11 voltages * 8 boards / 8
+
+    can::CANlight::frame ft, fv;
+
+    ft.ext = 1;
+    ft.id = TEMPBASE + tempn;
+    for(uint8_t i = 0; i < 8; i++){
+        ft.data[i] = (cache.temps[(tempn*16)+i]>>8)&0xff;
+    }
+
+    fv.ext = 1;
+    fv.id = VOLTBASE+ voltn;
+    for(uint8_t i = 0; i < 8; i++){
+        fv.data[i] = (cache.volts[(voltn*11)+i]>>8)&0xff;
+    }
+
+    can::CANlight::StaticClass().tx(0, ft);
+    can::CANlight::StaticClass().tx(0, fv);
+
+    voltn = (voltn+1)%voltnMax;
+    tempn = (tempn+1)%tempnMax;
+}
+
 void leddrive(machine<uint32_t*>* m){
     leddata* data = (leddata*)m->data;
     if(!m->state) {
@@ -214,6 +253,7 @@ extern "C" {
 void SysTick_Handler(void){
     acttick();
     master.tick();
+    candrv.tick();
     ledok.tick();
     ledstatus.tick();
     cache.timeout.tick();
