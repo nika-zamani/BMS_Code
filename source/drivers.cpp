@@ -32,7 +32,7 @@ void cancb(){
     switch(f.id){
         case 0x18ff50e5:
 						chargerf = f;
-            cache.charger = 1;
+            cache.charger = 10;
             cache.timeout.charger = 0;
             break;
 

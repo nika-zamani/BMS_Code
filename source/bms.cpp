@@ -85,6 +85,7 @@ int main(void) {
         update();
         actexec();
         master.run();
+        charger.run();
         ledok.run();
         ledstatus.run();
         if(cache.timeout.can == ms(500)){
@@ -202,23 +203,36 @@ void masterdrive(void){
 
 void chargerdrive(void){
 
-    uint16_t chargervolts = cache.voltageTotal/1000;
-    if(chargervolts > 4000 || chargervolts < 2000) return;
+    if(cache.charger){
 
-    uint16_t chargeramps = 10*CHARGE_CURRENT;
+        static uint8_t timer = 0;
+        if(timer < 15){
+            timer++;
+            return;
+        }
 
-    can::CANlight::frame f;
+        uint16_t chargervolts = 3700/2;//(cache.voltageTotal/1000);
+        //if(chargervolts > 4000 || chargervolts < 1000) return;
 
-    f.data[0] = (chargervolts>>8)&0xff;
-    f.data[1] = (chargervolts)&0xff;
-    f.data[2] = (chargeramps>>8)&0xff;
-    f.data[3] = (chargeramps)&0xff;
+        uint16_t chargeramps = 60;
 
-    f.ext = 1;
-    f.id = 0x1806e5f4;
-    f.dlc = 8;
+        can::CANlight::frame f;
 
-    can::CANlight::StaticClass().tx(0, f);
+        f.data[0] = (chargervolts>>8)&0xff;
+        f.data[1] = (chargervolts)&0xff;
+        f.data[2] = (chargervolts>>8)&0xff;
+        f.data[3] = (chargervolts)&0xff;
+        f.data[4] = (chargeramps>>8)&0xff;
+        f.data[5] = (chargeramps)&0xff;
+
+        f.ext = 1;
+        f.id = 0x1806e5f4;
+        f.dlc = 8;
+
+        can::CANlight::StaticClass().tx(0, f);
+
+        cache.charger--;
+    }
 
 }
 

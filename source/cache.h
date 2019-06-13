@@ -42,7 +42,7 @@ typedef struct cache_t {
     inline void commsGood() { commsok = 1, allStatus(); }
 
     // connection flags
-    uint8_t charger : 1;
+    uint8_t charger;
     uint8_t vcu : 1;
     uint8_t dash : 1;
 
