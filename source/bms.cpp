@@ -203,16 +203,16 @@ void masterdrive(void){
 
 void chargerdrive(void){
 
+    static uint8_t timer = 0;
+
     if(cache.charger){
 
-        static uint8_t timer = 0;
         if(timer < 15){
             timer++;
             return;
         }
 
-        uint16_t chargervolts = 3700/2;//(cache.voltageTotal/1000);
-        //if(chargervolts > 4000 || chargervolts < 1000) return;
+        uint16_t chargervolts = 3700;
 
         uint16_t chargeramps = 60;
 
@@ -220,10 +220,8 @@ void chargerdrive(void){
 
         f.data[0] = (chargervolts>>8)&0xff;
         f.data[1] = (chargervolts)&0xff;
-        f.data[2] = (chargervolts>>8)&0xff;
-        f.data[3] = (chargervolts)&0xff;
-        f.data[4] = (chargeramps>>8)&0xff;
-        f.data[5] = (chargeramps)&0xff;
+        f.data[2] = (chargeramps>>8)&0xff;
+        f.data[3] = (chargeramps)&0xff;
 
         f.ext = 1;
         f.id = 0x1806e5f4;
@@ -232,6 +230,11 @@ void chargerdrive(void){
         can::CANlight::StaticClass().tx(0, f);
 
         cache.charger--;
+
+    } else {
+
+        timer = 0;
+
     }
 
 }
