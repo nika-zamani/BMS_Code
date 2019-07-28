@@ -16,7 +16,7 @@
 #define tempBrokenLower 2000 // temp shorted to ground
 #define tempconfig 0b1100001111111111 // 1=cell, 0=aux
 #define tempTotal 12*slaves // total measured cell temps
-#define tempExtra 6 // allowable broken temps
+#define tempExtra 10 // allowable broken temps
 
 // System ticks: handler called at .1ms
 // Smallest quantum is 100us
@@ -32,4 +32,17 @@
 #define bmsokpin 0
 
 #define CHARGE_CURRENT (3); // in Amps
+
+#define CANBASE 0x20000
+#define CANTEMPSOFFSET 0x100
+#define CANVOLTSOFFSET 0x200
+#define CANDATAOFFSET 0x1
+#define CANFAULTSOFFSET 0x2
+
+#define FAULT_OVERVOLTAGE 1
+#define FAULT_UNDERVOLTAGE 2
+#define FAULT_TEMPERROR 3
+#define FAULT_COMMSFAIL 4
+
+
 #endif

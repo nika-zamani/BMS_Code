@@ -40,6 +40,31 @@ void cacheinit(){
     cache.muxpin = 7;
 }
 
+void fault(uint16_t f){
+
+    cache.faults[cache.faultn] = f;
+    cache.faultn++;
+
+}
+
+void logfaults(){
+
+    can::CANlight::frame ffault;
+    ffault.id = CANBASE+CANFAULTSOFFSET;
+    ffault.ext = 1;
+
+    while(cache.faultn){
+
+        cache.faultn--;
+        ffault.data[0] = cache.faults[cache.faultn] & 0xff;
+        ffault.data[1] = (cache.faults[cache.faultn]>>8) & 0xff;
+        can::CANlight::StaticClass().tx(0, ffault);
+
+    }
+
+}
+
+
 /* all the submachines which control the flow */
 
 void masterdrive(void);
@@ -92,6 +117,12 @@ int main(void) {
             cache.timeout.can = 0;
             cantransmit();
         }
+        if(cache.timeout.can_uptime == ms(1)){
+            cache.timeout.can_uptime = 0;
+            can_uptime_tx();
+        }
+
+        if(cache.faultn) logfaults();
     }
 }
 

@@ -14,17 +14,26 @@ typedef struct timeout_t {
 
     uint16_t charger;
     uint16_t can;
+    uint16_t can_uptime;
+    uint16_t can_data;
 
     void tick(){
         charger++;
         can++;
+        can_uptime++;
+        can_data++;
     }
 
 } timeout_t;
 
+void fault(uint16_t f);
+
 typedef struct cache_t {
 
     timeout_t timeout;
+
+    uint16_t faultn;
+    uint16_t faults[256];
 
     // flags
     uint8_t allok : 1;
@@ -45,6 +54,8 @@ typedef struct cache_t {
     uint8_t charger;
     uint8_t vcu : 1;
     uint8_t dash : 1;
+    uint16_t chargerVolts;
+    uint16_t chargerAmps;
 
     // used for connection to slaves (unimplemented??)
     uint8_t linked;
