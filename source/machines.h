@@ -23,6 +23,9 @@ enum masterstates_t {
     hold
 };
 
+enum chargerstates_t {
+    charging
+};
 
 uint32_t ledstates[][7] = {
     { ms(1200), ms(1200), 0, 0, 0},               // 0: slow blink

@@ -91,9 +91,11 @@ void voltCheck(void){
     cache.voltageMean = vavg;
 
     if(vmax > voltageLimitUpper) {
+        fault(FAULT_OVERVOLTAGE);
         cache.voltError();
         update();
     } else if(vmin < voltageLimitLower) {
+        fault(FAULT_UNDERVOLTAGE);
         cache.voltError();
         update();
     } else {
@@ -193,12 +195,14 @@ void getTemp(){
             } else {
                 cache.tempEC = cache.tempEC_t::BROKEN;
                 cache.tempED = 0;
+                fault(FAULT_TEMPERROR);
                 cache.tempError();
                 update();
             }
         } else {
             cache.tempEC = cache.tempEC_t::BROKEN;
             cache.tempED = 0;
+            fault(FAULT_TEMPERROR);
             cache.tempError();
             update();
         }

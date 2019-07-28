@@ -40,13 +40,38 @@ void cacheinit(){
     cache.muxpin = 7;
 }
 
+void fault(uint16_t f){
+
+    cache.faults[cache.faultn] = f;
+    cache.faultn++;
+
+}
+
+void logfaults(){
+
+    can::CANlight::frame ffault;
+    ffault.id = CANBASE+CANFAULTSOFFSET;
+    ffault.ext = 1;
+
+    while(cache.faultn){
+
+        cache.faultn--;
+        ffault.data[0] = cache.faults[cache.faultn] & 0xff;
+        ffault.data[1] = (cache.faults[cache.faultn]>>8) & 0xff;
+        can::CANlight::StaticClass().tx(0, ffault);
+
+    }
+
+}
+
+
 /* all the submachines which control the flow */
 
 void masterdrive(void);
 machine<masterstates_t> master(link, masterdrive);
 
-void candrive(void);
-machine<uint8_t> candrv(0, candrive);
+void chargerdrive(void);
+machine<chargerstates_t> charger(charging, chargerdrive);
 
 void leddrive(machine<uint32_t*>* m);
 
@@ -75,8 +100,8 @@ int main(void) {
     master.setTimer(ms(250));
     master.start();
 
-    candrv.setTimer(ms(50));
-    candrv.start();
+    charger.setTimer(ms(250));
+    charger.start();
 
     ledok.start();
     ledstatus.start();
@@ -85,13 +110,19 @@ int main(void) {
         update();
         actexec();
         master.run();
-        candrv.run();
+        charger.run();
         ledok.run();
         ledstatus.run();
         if(cache.timeout.can == ms(500)){
             cache.timeout.can = 0;
             cantransmit();
         }
+        if(cache.timeout.can_uptime == ms(1)){
+            cache.timeout.can_uptime = 0;
+            can_uptime_tx();
+        }
+
+        if(cache.faultn) logfaults();
     }
 }
 
@@ -201,37 +232,44 @@ void masterdrive(void){
 
 }
 
-#define TEMPBASE 0x5300
-#define VOLTBASE 0x5400
+void chargerdrive(void){
 
-void candrive(){
+    static uint8_t timer = 0;
 
-    static uint8_t tempn = 0;
-    uint8_t tempnMax = 16; // 16 thermistors * 8 boards / 8 (temps/frame) 
+    if(cache.charger){
 
-    static uint8_t voltn = 0;
-    uint8_t voltnMax = 11; // 11 voltages * 8 boards / 8
+        if(timer < 15){
+            timer++;
+            return;
+        }
 
-    can::CANlight::frame ft, fv;
+        uint16_t chargervolts = 3700;
 
-    ft.ext = 1;
-    ft.id = TEMPBASE + tempn;
-    for(uint8_t i = 0; i < 8; i++){
-        ft.data[i] = (cache.temps[(tempn*16)+i]>>8)&0xff;
+        uint16_t chargeramps = 60;
+
+        can::CANlight::frame f;
+
+        f.data[0] = (chargervolts>>8)&0xff;
+        f.data[1] = (chargervolts)&0xff;
+        f.data[2] = (chargeramps>>8)&0xff;
+        f.data[3] = (chargeramps)&0xff;
+
+        f.ext = 1;
+        f.id = 0x1806e5f4;
+        f.dlc = 8;
+
+        can::CANlight::StaticClass().tx(0, f);
+
+        cache.charger--;
+
+    } else {
+
+        timer = 0;
+
     }
 
-    fv.ext = 1;
-    fv.id = VOLTBASE+ voltn;
-    for(uint8_t i = 0; i < 8; i++){
-        fv.data[i] = (cache.volts[(voltn*11)+i]>>8)&0xff;
-    }
-
-    can::CANlight::StaticClass().tx(0, ft);
-    can::CANlight::StaticClass().tx(0, fv);
-
-    voltn = (voltn+1)%voltnMax;
-    tempn = (tempn+1)%tempnMax;
 }
+
 
 void leddrive(machine<uint32_t*>* m){
     leddata* data = (leddata*)m->data;
@@ -253,7 +291,7 @@ extern "C" {
 void SysTick_Handler(void){
     acttick();
     master.tick();
-    candrv.tick();
+    charger.tick();
     ledok.tick();
     ledstatus.tick();
     cache.timeout.tick();

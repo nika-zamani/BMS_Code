@@ -126,10 +126,15 @@ void bms::stcomm(uint8_t bytes){
 static uint8_t peccheck(){
     uint8_t pecrx[2];
     uint8_t linked = 0;
+
+    static uint8_t failures = 0;
+
     for(uint8_t i = 0; i < slaves; i++){
         pec15_calc(6, rxdatabuf+(8*i)+4, pecrx);
         if(pecrx[0] != rxdatabuf[8*(i+1)+2] || pecrx[1] != rxdatabuf[8*(i+1)+3]){
-            cache.commsError();
+            fault(FAULT_COMMSFAIL);
+            failures++;
+            if(failures >= 3) cache.commsError();
             i = slaves;
         } else {
             linked++;
@@ -137,6 +142,7 @@ static uint8_t peccheck(){
     }
 
     if(linked == slaves){
+        failures = 0;
         cache.commsGood();
     } else {
         cache.commsEC = cache.commsEC_t::DISCONNECT;
