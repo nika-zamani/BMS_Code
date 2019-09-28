@@ -49,6 +49,8 @@ void fault(uint16_t f){
 
 void logfaults(){
 
+    return;
+
     can::CANlight::frame ffault;
     ffault.id = CANBASE+CANFAULTSOFFSET;
     ffault.ext = 1;
@@ -113,9 +115,9 @@ int main(void) {
         charger.run();
         ledok.run();
         ledstatus.run();
-        if(cache.timeout.can == ms(500)){
+        if(cache.timeout.can == ms(2000)){
             cache.timeout.can = 0;
-            cantransmit();
+            //cantransmit();
         }
         if(cache.timeout.can_uptime == ms(1)){
             cache.timeout.can_uptime = 0;

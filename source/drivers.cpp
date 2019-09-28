@@ -69,10 +69,10 @@ void can_uptime_tx(){
     f.ext = 1;
     f.id = CANBASE;
     f.dlc = 4;
-    f.data[0] = (uptime>>0) && 0xff;
-    f.data[1] = (uptime>>8) && 0xff;
-    f.data[2] = (uptime>>16) && 0xff;
-    f.data[3] = (uptime>>24) && 0xff;
+    f.data[0] = (uptime>>0) & 0xff;
+    f.data[1] = (uptime>>8) & 0xff;
+    f.data[2] = (uptime>>16) & 0xff;
+    f.data[3] = (uptime>>24) & 0xff;
 
     can::CANlight::StaticClass().tx(0, f);
 
