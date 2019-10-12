@@ -1,12 +1,12 @@
 import os
 
 # !! Update these aths to point to your respective directories !!
-GNU_PATH = '../gcc-arm-none-eabi/bin/'
+GNU_PATH = '/home/gray/embedded/gcc-arm-none-eabi/bin/'
 BSP_PATH = '../MKELibrary/'
 
 
 # Change the compiled name of the file below
-compileTarget = 'rtos'
+compileTarget = 'bms'
 
 # Create Communal build directory to store all the .o's
 VariantDir('build/board', 'board')
@@ -48,6 +48,10 @@ env['CXXFLAGS'] = '-O0 -g -DDEBUG -Wall \
         -DCPU_MKE18F512VLH16 '
 
 env.Append(CPPPATH = [
+    'source',
+    'source/freertos/include',
+    'source/freertos',
+    'source/freertos/portable/ARM_CM4F',
     BSP_PATH+'board',
     BSP_PATH+'CMSIS',
     BSP_PATH+'drivers',
@@ -55,11 +59,7 @@ env.Append(CPPPATH = [
     BSP_PATH+'lib',
     BSP_PATH+'source',
     BSP_PATH+'System',
-    BSP_PATH,
-    'source/include',
-    'source',
-    'source/portable/ARM_CM4F',
-    'source/demo/include'
+    BSP_PATH
 ])
 
 env['LINKFLAGS'] = '-O0 -g -DDEBUG -Wall \
@@ -77,11 +77,10 @@ env['LINKFLAGS'] = '-O0 -g -DDEBUG -Wall \
     -mfpu=fpv4-sp-d16 -TMKE18F512xxx16_flash.ld -static'
 
 src = Glob('build/board/*.c') +\
-    Glob('build/source/demo/Minimal/*.c') +\
-    Glob('build/source/*.c'), \
+    Glob('build/source/freertos/*.c'), \
     Glob('build/source/*.cpp'), \
-    'build/source/portable/ARM_CM4F/port.c', \
-    'build/source/portable/MemMang/heap_4.c'
+    'build/source/freertos/portable/ARM_CM4F/port.c', \
+    'build/source/freertos/portable/MemMang/heap_4.c'
     
 
 # Run the compile command and create .elf

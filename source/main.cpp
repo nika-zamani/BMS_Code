@@ -24,7 +24,7 @@ using namespace BSP;
  * tick interrupt next executes. */
 #define mainCHECK_INTERRUPT_STACK 0
 #if mainCHECK_INTERRUPT_STACK == 1
-	const unsigned char ucExpectedInterruptStackValues[] = { 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC };
+const unsigned char ucExpectedInterruptStackValues[] = { 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC };
 #endif
 
 #define STACK_SIZE 100
@@ -40,166 +40,166 @@ QueueHandle_t xQueue = NULL;
 // Demos the vTaskDelayUntil function that schedules a task at intervals of the global timer
 void demoDelayUntil( void *pvParameters )
 {
-	gpio::GPIO& gpio = gpio::GPIO::StaticClass();
+    gpio::GPIO& gpio = gpio::GPIO::StaticClass();
 
-	TickType_t xLastWakeTime;
-	const TickType_t xFrequency = 100 / portTICK_PERIOD_MS;
-	
-	// Initialise the xLastWakeTime variable with the current time.
-  xLastWakeTime = xTaskGetTickCount();
+    TickType_t xLastWakeTime;
+    const TickType_t xFrequency = 100 / portTICK_PERIOD_MS;
 
-	for (;;)
-	{
-		/* demo task coode */
-		gpio.toggle(gpio::PortD, 16);
-		vTaskDelayUntil( &xLastWakeTime, xFrequency );
-	}
+    // Initialise the xLastWakeTime variable with the current time.
+    xLastWakeTime = xTaskGetTickCount();
+
+    for (;;)
+    {
+        /* demo task coode */
+        gpio.toggle(gpio::PortD, 16);
+        vTaskDelayUntil( &xLastWakeTime, xFrequency );
+    }
 }
 
 // Demos the vTaskDelay funtion that delays a task for a given amount of time from the fuction call
 void demoDelay( void *pvParameters )
 {
-  const TickType_t xDelay = 500 / portTICK_PERIOD_MS;
+    const TickType_t xDelay = 500 / portTICK_PERIOD_MS;
 
-  gpio::GPIO& gpio = gpio::GPIO::StaticClass();
-  
-  for (;;)
-  {
-    /* demo task coode */
-    gpio.toggle(gpio::PortD, 15);
-    vTaskDelay( xDelay );
-  }
+    gpio::GPIO& gpio = gpio::GPIO::StaticClass();
+
+    for (;;)
+    {
+        /* demo task coode */
+        gpio.toggle(gpio::PortD, 15);
+        vTaskDelay( xDelay );
+    }
 }
 
 void demoDelaySend( void *pvParameters )
 {
-	gpio::GPIO& gpio = gpio::GPIO::StaticClass();
+    gpio::GPIO& gpio = gpio::GPIO::StaticClass();
 
-	TickType_t xLastWakeTime;
-	const TickType_t xFrequency = 300 / portTICK_PERIOD_MS;
-	
-	// Initialise the xLastWakeTime variable with the current time.
-	xLastWakeTime = xTaskGetTickCount();
+    TickType_t xLastWakeTime;
+    const TickType_t xFrequency = 300 / portTICK_PERIOD_MS;
 
-	int sendValue = 1;
-	for (;;)
-	{
-		/* demo task coode */
-		xQueueSend(xQueue, (void*) &sendValue, portMAX_DELAY);
-		vTaskDelayUntil( &xLastWakeTime, xFrequency );
-	}
+    // Initialise the xLastWakeTime variable with the current time.
+    xLastWakeTime = xTaskGetTickCount();
+
+    int sendValue = 1;
+    for (;;)
+    {
+        /* demo task coode */
+        xQueueSend(xQueue, (void*) &sendValue, portMAX_DELAY);
+        vTaskDelayUntil( &xLastWakeTime, xFrequency );
+    }
 }
 
 void demoReceive( void *pvParameters )
 {
 
-  int receiveBuff;
-  gpio::GPIO& gpio = gpio::GPIO::StaticClass();
-  
-  for (;;)
-  {
-    /* demo task coode */
-    xQueueReceive(xQueue, (void*) &receiveBuff, portMAX_DELAY);
-    gpio.toggle(gpio::PortD, 15);
-  }
+    int receiveBuff;
+    gpio::GPIO& gpio = gpio::GPIO::StaticClass();
+
+    for (;;)
+    {
+        /* demo task coode */
+        xQueueReceive(xQueue, (void*) &receiveBuff, portMAX_DELAY);
+        gpio.toggle(gpio::PortD, 15);
+    }
 }
 
 int main( void ) {
-	// setup the microcontroller hardware for the demo 
-	prvSetupHardware();
-	
-	// create task
-	//TaskHandle_t xHandle = NULL;
+    // setup the microcontroller hardware for the demo 
+    prvSetupHardware();
 
-	// create a queue capable of containing 5 integers
-	xQueue = xQueueCreate( 5, sizeof(int));	
+    // create task
+    //TaskHandle_t xHandle = NULL;
 
-	xTaskCreate(demoReceive, "demo", STACK_SIZE, NULL, TASK_PRIORITY, NULL );
-	xTaskCreate(demoDelaySend, "demoUntil", STACK_SIZE, NULL, TASK_PRIORITY, NULL );
-	
-	/*if (xReturned == pdPASS)
-	{
-		// The task was created. we use the tasks handle to delete the task.
-		vTaskDelete(xHandle);
-	}*/
+    // create a queue capable of containing 5 integers
+    xQueue = xQueueCreate( 5, sizeof(int));	
 
-	// Start the rtos scheduler, this function should never return as the execution context is changed to
-	// 	the task.
-	
-	vTaskStartScheduler();
+    xTaskCreate(demoReceive, "demo", STACK_SIZE, NULL, TASK_PRIORITY, NULL );
+    xTaskCreate(demoDelaySend, "demoUntil", STACK_SIZE, NULL, TASK_PRIORITY, NULL );
 
-	// shouldn't get here!
-	return 0;
+    /*if (xReturned == pdPASS)
+      {
+    // The task was created. we use the tasks handle to delete the task.
+    vTaskDelete(xHandle);
+    }*/
+
+    // Start the rtos scheduler, this function should never return as the execution context is changed to
+    // 	the task.
+
+    vTaskStartScheduler();
+
+    // shouldn't get here!
+    return 0;
 }
 
 
 static void prvSetupHardware( void ) {
-	// perform all hardare specific setup here
-	BOARD_InitBootClocks();
-	BOARD_InitBootPins();
-    	
-	gpio::GPIO::ConstructStatic();
+    // perform all hardare specific setup here
+    BOARD_InitBootClocks();
+    BOARD_InitBootPins();
+
+    gpio::GPIO::ConstructStatic();
 }
 
 extern "C" {
-	void vApplicationMallocFailedHook( void )
-	{
-		/* vApplicationMallocFailedHook() will only be called if
-		 * configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h.  It is a hook
-		 * function that will get called if a call to pvPortMalloc() fails.
-		 * pvPortMalloc() is called internally by the kernel whenever a task, queue,
-		 * timer or semaphore is created.  It is also called by various parts of the
-		 * demo application.  If heap_1.c or heap_2.c are used, then the size of the
-		 * heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE in
-		 * FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
-		 * to query the size of free heap space that remains (although it does not
-		 * provide information on how the remaining heap might be fragmented). */
-		taskDISABLE_INTERRUPTS();
-		for( ;; );
-	}
+    void vApplicationMallocFailedHook( void )
+    {
+        /* vApplicationMallocFailedHook() will only be called if
+         * configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h.  It is a hook
+         * function that will get called if a call to pvPortMalloc() fails.
+         * pvPortMalloc() is called internally by the kernel whenever a task, queue,
+         * timer or semaphore is created.  It is also called by various parts of the
+         * demo application.  If heap_1.c or heap_2.c are used, then the size of the
+         * heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE in
+         * FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
+         * to query the size of free heap space that remains (although it does not
+         * provide information on how the remaining heap might be fragmented). */
+        taskDISABLE_INTERRUPTS();
+        for( ;; );
+    }
 
-	void vApplicationIdleHook( void )
-	{
-		/* vApplicationIdleHook() will only be called if configUSE_IDLE_HOOK is set
-		 * to 1 in FreeRTOSConfig.h.  It will be called on each iteration of the idle
-		 * task.  It is essential that code added to this hook function never attempts
-		 * to block in any way (for example, call xQueueReceive() with a block time
-		 * specified, or call vTaskDelay()).  If the application makes use of the
-		 * vTaskDelete() API function (as this demo application does) then it is also
-		 * important that vApplicationIdleHook() is permitted to return to its calling
-		 * function, because it is the responsibility of the idle task to clean up
-		 * memory allocated by the kernel to any task that has since been deleted. */
-	}
+    void vApplicationIdleHook( void )
+    {
+        /* vApplicationIdleHook() will only be called if configUSE_IDLE_HOOK is set
+         * to 1 in FreeRTOSConfig.h.  It will be called on each iteration of the idle
+         * task.  It is essential that code added to this hook function never attempts
+         * to block in any way (for example, call xQueueReceive() with a block time
+         * specified, or call vTaskDelay()).  If the application makes use of the
+         * vTaskDelete() API function (as this demo application does) then it is also
+         * important that vApplicationIdleHook() is permitted to return to its calling
+         * function, because it is the responsibility of the idle task to clean up
+         * memory allocated by the kernel to any task that has since been deleted. */
+    }
 
-	void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
-	{
-		( void ) pcTaskName;
-		( void ) pxTask;
+    void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
+    {
+        ( void ) pcTaskName;
+        ( void ) pxTask;
 
-		/* Run time stack overflow checking is performed if
-		 * configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook
-		 * function is called if a stack overflow is detected. */
-		taskDISABLE_INTERRUPTS();
-		for( ;; );
-	}
+        /* Run time stack overflow checking is performed if
+         * configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook
+         * function is called if a stack overflow is detected. */
+        taskDISABLE_INTERRUPTS();
+        for( ;; );
+    }
 
-	void vApplicationTickHook( void )
-	{
-	#if mainCHECK_INTERRUPT_STACK == 1
-	extern unsigned long _pvHeapStart[];
+    void vApplicationTickHook( void )
+    {
+#if mainCHECK_INTERRUPT_STACK == 1
+        extern unsigned long _pvHeapStart[];
 
-		/* This function will be called by each tick interrupt if
-		 * configUSE_TICK_HOOK is set to 1 in FreeRTOSConfig.h.  User code can be
-		 * added here, but the tick hook is called from an interrupt context, so
-		 * code must not attempt to block, and only the interrupt safe FreeRTOS API
-		 * functions can be used (those that end in FromISR()). */
+        /* This function will be called by each tick interrupt if
+         * configUSE_TICK_HOOK is set to 1 in FreeRTOSConfig.h.  User code can be
+         * added here, but the tick hook is called from an interrupt context, so
+         * code must not attempt to block, and only the interrupt safe FreeRTOS API
+         * functions can be used (those that end in FromISR()). */
 
-		/* Manually check the last few bytes of the interrupt stack to check they
-		 * have not been overwritten.  Note - the task stacks are automatically
-		 * checked for overflow if configCHECK_FOR_STACK_OVERFLOW is set to 1 or 2
-		 * in FreeRTOSConifg.h, but the interrupt stack is not. */
-		configASSERT( memcmp( ( void * ) _pvHeapStart, ucExpectedInterruptStackValues, sizeof( ucExpectedInterruptStackValues ) ) == 0U );
-	#endif /* mainCHECK_INTERRUPT_STACK */
-	}
+        /* Manually check the last few bytes of the interrupt stack to check they
+         * have not been overwritten.  Note - the task stacks are automatically
+         * checked for overflow if configCHECK_FOR_STACK_OVERFLOW is set to 1 or 2
+         * in FreeRTOSConifg.h, but the interrupt stack is not. */
+        configASSERT( memcmp( ( void * ) _pvHeapStart, ucExpectedInterruptStackValues, sizeof( ucExpectedInterruptStackValues ) ) == 0U );
+#endif /* mainCHECK_INTERRUPT_STACK */
+    }
 }
 
