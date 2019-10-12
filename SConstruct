@@ -1,11 +1,12 @@
 import os
 
 # !! Update these aths to point to your respective directories !!
-GNU_PATH = '/home/gray/embedded/gcc-arm-none-eabi/bin/'
-BSP_PATH = '../../git/MKELibrary/'
+GNU_PATH = '../gcc-arm-none-eabi/bin/'
+BSP_PATH = '../MKELibrary/'
+
 
 # Change the compiled name of the file below
-compileTarget = 'bms'
+compileTarget = 'rtos'
 
 # Create Communal build directory to store all the .o's
 VariantDir('build/board', 'board')
@@ -54,7 +55,11 @@ env.Append(CPPPATH = [
     BSP_PATH+'lib',
     BSP_PATH+'source',
     BSP_PATH+'System',
-    BSP_PATH
+    BSP_PATH,
+    'source/include',
+    'source',
+    'source/portable/ARM_CM4F',
+    'source/demo/include'
 ])
 
 env['LINKFLAGS'] = '-O0 -g -DDEBUG -Wall \
@@ -72,7 +77,12 @@ env['LINKFLAGS'] = '-O0 -g -DDEBUG -Wall \
     -mfpu=fpv4-sp-d16 -TMKE18F512xxx16_flash.ld -static'
 
 src = Glob('build/board/*.c') +\
-    Glob('build/source/*.cpp')
+    Glob('build/source/demo/Minimal/*.c') +\
+    Glob('build/source/*.c'), \
+    Glob('build/source/*.cpp'), \
+    'build/source/portable/ARM_CM4F/port.c', \
+    'build/source/portable/MemMang/heap_4.c'
+    
 
 # Run the compile command and create .elf
 env.Program(compileTarget, source=src, LIBS=['bsp'], LIBPATH=[BSP_PATH])
