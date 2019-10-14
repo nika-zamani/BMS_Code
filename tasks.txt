@@ -1,0 +1,38 @@
+## LTC6811 communication task
+
+Accept BMS commands from a queue. Behavior will be slightly different for each
+one.
+
+Regardless of command, determine if the BMS needs to be woken up and if it needs
+to be reprogrammed.
+There are two separate important timeouts: 
+- If no communication has happened within t_IDLE (minimum 4.3ms) the
+  communication bus needs to be awoken. This is done by toggling CS down and up
+  once for each slave.
+- If no communication has happened within t_SLEEP, the BMS will have reset, and
+  will need to have all its configuration registers reset. 
+
+Keeping track of timeouts is probably best done in a separate task which can be
+polled for the time since last communication. There are other timeouts which can
+depend on the configuration of the BMS (for example, discharge timer, which can
+be up to 120 minutes). Keep this in mind when designing the timeout tracking.
+
+Once the BMS is ready for communication (core state = STANDBY, isospi state =
+READY) the command can be sent. This is done through a normal SPI transaction
+(assert CS, send data, deassert CS). See tables [31,35] on page 55 of the
+datasheet for example sequences. 
+
+A possible sequence of events is:
+- Load the data into a SPI buffer
+- Start the SPI transaction using MKELibrary
+- Take a semaphore from the SPI callback
+- If semaphore times out: do something
+- If semaphore received: check what was received from the BMS for a good PEC,
+  then move received data wherever it needs to go
+
+After finishing everything in the above list, this task should give a semaphore. It
+will be taken by whatever task invoked the communication.
+
+See the old bms source/drivers.cpp->spiinit() for SPI configuration. See
+source/ltcutility.cpp->pec15_calc() for doing the PEC check.
+

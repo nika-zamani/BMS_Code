@@ -1,0 +1,78 @@
+## Support Hardware
+
+### LED outputs
+
+Each LED has a different blink pattern based on the current state of the
+system.
+
+Linking: OK and STAT blink twice
+Startup: OK on, STAT panicky
+All ok: OK blinks slowly, STAT off
+Error: OK off, STAT blinks thrice
+
+Only one subsystem should control each LED; there should never be competing
+control over one ofthem. Until hardware design is finalized,
+there is no limit to the number of LEDs.
+
+## BMS Functions
+
+### Linking
+
+Attempting to connect to the LTC6811.
+
+wakeup procedure:
+1. For each slave:
+    assert chip select
+    wait 400us
+    deassert chip select
+    wait 100us
+2. Send command RDCFGA (read config register group A)
+
+If the RDCFGA works, move to setup.
+
+### Setup
+
+Programming the default configuration.
+
+1. do the wakeup procedure
+2. for each slave, send the array [0xfc, 0, 0, 0, 0, 0] using the WRCFGA command
+
+If WRCFGA works, move to startup.
+
+### Startup
+
+Check voltages and temperatures before moving to normal mode.
+See stepMux(), muxOn(), and muxOff() for context
+
+1. do the wakeup procedure
+2. increment the mux pin using I2C:
+    1. If already reading from mux pin 7:
+        1. Turn off whichever mux is on (see muxOff())
+        2. Change to the other mux's address
+        3. Using I2C, Turn on the mux, starting with reading from pin 0
+    2. Otherwise:
+        1. Increment the pin number by 1
+        2. Using I2C, change the pin currently being read from
+3. send the ADCVAX command to read voltages and GPIO input
+4. wait 50ms or until the adc conversion is complete
+5. do the wakeup procedure
+6. read from all ADC registers using the read commands:
+    1. RDCVA
+    2. RDCVB
+    3. RDCVC
+    4. RDCVD
+    5. RDAUXA
+7. Check volts and temps to make sure they are within acceptable ranges
+
+Note that this will take 16 cycles to read through all of the thermistor inputs.
+
+If all volts and temps are acceptable, move to normal mode
+
+### Normal
+
+Do the same command procedure as in startup to read all values.. If any volts or
+temps go out of range, move to error mode.
+
+### Error
+
+Not well defined yet.

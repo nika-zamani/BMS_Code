@@ -52,7 +52,7 @@ uint8_t caninit(){
     can::CANlight& can = can::CANlight::StaticClass();
 
     can::CANlight::canx_config c0;
-    c0.baudRate = 1000000UL;
+    c0.baudRate = 250000UL;
     c0.callback = cancb;
     can.init(0, &c0);
     return 0;
