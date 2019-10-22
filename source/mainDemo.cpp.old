@@ -13,7 +13,6 @@
 #include "pin_mux.h"
 
 #include "gpio.h"
-#include "spi.h"
 
 using namespace BSP;
 /* The configCHECK_FOR_STACK_OVERFLOW setting in FreeRTOSConifg can be used to
@@ -31,29 +30,48 @@ const unsigned char ucExpectedInterruptStackValues[] = { 0xCC, 0xCC, 0xCC, 0xCC,
 #define STACK_SIZE 100
 #define TASK_PRIORITY 1
 
-#define SLAVE_COUNT 10
-
-// Array contains command codes for all commands neccecary, position in this array will depend
-//      on a mapped value from the command name in bms.h
-const unsigned char CCS[][] = {
-    {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00}, //RDSPSB*
-    {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x01}  //STSCTRL
-}
-
 /*
  * Perform any hardware specific setup in this function
  */
 static void prvSetupHardware(void);
 
-QueueHandle_t commandQueue = NULL;
-SemaphoreHandle_t cbSemaphore;
+QueueHandle_t xQueue = NULL;
 
-void timeout( void *pvParameters )
+// Demos the vTaskDelayUntil function that schedules a task at intervals of the global timer
+void demoDelayUntil( void *pvParameters )
 {
+    gpio::GPIO& gpio = gpio::GPIO::StaticClass();
 
+    TickType_t xLastWakeTime;
+    const TickType_t xFrequency = 100 / portTICK_PERIOD_MS;
+
+    // Initialise the xLastWakeTime variable with the current time.
+    xLastWakeTime = xTaskGetTickCount();
+
+    for (;;)
+    {
+        /* demo task coode */
+        gpio.toggle(gpio::PortD, 16);
+        vTaskDelayUntil( &xLastWakeTime, xFrequency );
+    }
 }
 
-void commandSend( void *pvParameters )
+// Demos the vTaskDelay funtion that delays a task for a given amount of time from the fuction call
+void demoDelay( void *pvParameters )
+{
+    const TickType_t xDelay = 500 / portTICK_PERIOD_MS;
+
+    gpio::GPIO& gpio = gpio::GPIO::StaticClass();
+
+    for (;;)
+    {
+        /* demo task coode */
+        gpio.toggle(gpio::PortD, 15);
+        vTaskDelay( xDelay );
+    }
+}
+
+void demoDelaySend( void *pvParameters )
 {
     gpio::GPIO& gpio = gpio::GPIO::StaticClass();
 
@@ -72,82 +90,18 @@ void commandSend( void *pvParameters )
     }
 }
 
-void transaction( void *pvParameters )
+void demoReceive( void *pvParameters )
 {
-    int receiveBuff;
-    long lastMessage = xTaskGetTickCount();
-    long time;
 
-    spi::SPI& spi = spi::SPI::StaticClass();
+    int receiveBuff;
+    gpio::GPIO& gpio = gpio::GPIO::StaticClass();
 
     for (;;)
     {
         /* demo task coode */
         xQueueReceive(xQueue, (void*) &receiveBuff, portMAX_DELAY);
-        time = (xTaskGetTickCount() - lastMessage)/portTICK_PERIOD_MS 
-        
-        //create spi buffer
-        uint8_t tx[8];
-        uint8_t rx[8];
-
-        if(time > t_SLEEP)
-        {
-            //add reprograming sequence
-        }
-        if(time > t_IDLE)
-        {
-            //add wakeup sequence
-
-            // toggle the CS down and up once for each slave
-            for(int i = 0; i < SLAVE_COUNT; i++) {
-            }
-        }
-
-        //add command into the buffer
-        if(!decodeCommand(command, &tx))
-        {
-            // command decoding failed, maybe invalid command?
-            // return to sender with error code
-        }
-
-        // Give the semaphore to spi (Don't want to do this unless spi can take the semaphore
-        //      otherwise we may give the semaphore to ourselves)
-        // xSemaphoreGive(cbSemaphore);
-        
-        //send spi messaage
-        spi.mastertx(0, tx, rx, 8);
-        // wait to get semaphore back from spi (Currently waits infinitely)
-        if(xSemaphoreTake(cbSemaphore, portMAX_DELAY) == pdTRUE)
-        {
-            // spi finnished
-            // handle response
-        } else {
-            // spi timed out
-        }
-        
-        // send semaphore to sender
-
+        gpio.toggle(gpio::PortD, 15);
     }
-}
-
-// maps an integer command id to its corrosponding command and
-//      loads said commands SPI command into the spi array.
-//  command: The integer command id
-//  tx: A pointer to the spi array
-//  
-//  return: an integer error code or 1 if successfull
-int decodeCommand(int command, uint8_t **tx)
-{
-    // TODO: error checking of command number
-    unsigned char cc[11] = CCS[command];
-    // create the tx out of the cc
-
-    return 1;
-}
-
-// when spi finishes we give the semaphore back to the transaction
-void bmsspicb() {
-    xSemaphoreGive(cbSemaphore);
 }
 
 int main( void ) {
@@ -158,14 +112,19 @@ int main( void ) {
     //TaskHandle_t xHandle = NULL;
 
     // create a queue capable of containing 5 integers
-    xQueue = xQueueCreate( 5, sizeof(int));
-    //TODO: check if xQueue is NULL as this means it was not created
+    xQueue = xQueueCreate( 5, sizeof(int));	
 
     xTaskCreate(demoReceive, "demo", STACK_SIZE, NULL, TASK_PRIORITY, NULL );
     xTaskCreate(demoDelaySend, "demoUntil", STACK_SIZE, NULL, TASK_PRIORITY, NULL );
 
+    /*if (xReturned == pdPASS)
+      {
+    // The task was created. we use the tasks handle to delete the task.
+    vTaskDelete(xHandle);
+    }*/
+
     // Start the rtos scheduler, this function should never return as the execution context is changed to
-    //      the task.
+    // 	the task.
 
     vTaskStartScheduler();
 
@@ -180,23 +139,6 @@ static void prvSetupHardware( void ) {
     BOARD_InitBootPins();
 
     gpio::GPIO::ConstructStatic();
-}
-
-void spiInit()
-{
-    spi::spi_config conf;
-    conf.callbacks[0] = bmsspicb;
-    spi::SPI::ConstructStatic(&conf);
-    spi::SPI& spi = spi::SPI::StaticClass();
-
-    spi::SPI::masterConfig mconf;
-    mconf.baudRate = 500000U;
-    mconf.csport = ltccsport;
-    mconf.cspin = ltccspin;
-    spi.initMaster(0, &mconf);
-
-    cbSemaphore = xSemaphoreCreateBinary();
-    // TODO: Check if semaphore is NULL as this means it was not created
 }
 
 extern "C" {
