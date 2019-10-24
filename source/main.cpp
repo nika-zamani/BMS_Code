@@ -1,5 +1,7 @@
 /* Standard includes */
 #include "string.h"
+#include <vector>
+#include <array>
 
 /* FreeRTOS includes */
 #include "FreeRTOS.h"
@@ -36,9 +38,19 @@ const unsigned char ucExpectedInterruptStackValues[] = { 0xCC, 0xCC, 0xCC, 0xCC,
 // Array contains command codes for all commands neccecary, position in this array will depend
 //      on a mapped value from the command name in bms.h
 const unsigned char CCS[][] = {
-    {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00}, //RDSPSB*
-    {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x01}  //STSCTRL
+    {0x00, 0x1E}, //RDSPSB*
+    {0x00, 0x0F}  //STSCTRL
 }
+
+const unsigned char PECS[][] = {} //TODO: Fill this out
+
+// a command to be sent to the BMS
+typedef struct Command {
+    int command;            // integer representation of a command
+    int size;               // size of the data
+    int num;                // number of chips
+    unsigned char **data;   // pointer to 2D array of data for each chip
+} bmscommand_t;
 
 /*
  * Perform any hardware specific setup in this function
@@ -72,9 +84,31 @@ void commandSend( void *pvParameters )
     }
 }
 
+/*
+ * Creates and pushes a command to the command queue   
+ *      com: the command id
+ *      length: the length of the command data
+ *      num: the number of chips that this command has data for
+ *      data: all the chips command data (must remmain allocated untill the command is completed)
+ *      ticksToWait: The number of ticks to wait before timing out or portMAX_DELAY for infinite block
+ *
+ *      return: Returns pdTRUE if the item was successfully posted or errQUEUE_FULL if the request times out.
+ */
+void pushTransaction( int com, int length, int num, int **data, ticksToWait )
+{
+    // assemble the command
+    bmscommand_t c;
+    c.command = com;
+    c.length = length;
+    c.num = num;
+    c.data = data;
+    // sends command to the command queue and returns the error or success code
+    return xQueueSend(commandQueue, c, ticksToWait); 
+}
+
 void transaction( void *pvParameters )
 {
-    int receiveBuff;
+    bmscommand_t receiveCommand;
     long lastMessage = xTaskGetTickCount();
     long time;
 
@@ -83,12 +117,13 @@ void transaction( void *pvParameters )
     for (;;)
     {
         /* demo task coode */
-        xQueueReceive(xQueue, (void*) &receiveBuff, portMAX_DELAY);
+        xQueueReceive(commandQueue, (void*) &receiveCommand, portMAX_DELAY);
         time = (xTaskGetTickCount() - lastMessage)/portTICK_PERIOD_MS 
         
-        //create spi buffer
-        uint8_t tx[8];
-        uint8_t rx[8];
+        //create spi buffers
+        int length = 4 + (receiveCommand.size + 2) * receiveCommand.num;
+        uint8_t tx[length];
+        uint8_t rx[length];
 
         if(time > t_SLEEP)
         {
@@ -104,18 +139,16 @@ void transaction( void *pvParameters )
         }
 
         //add command into the buffer
-        if(!decodeCommand(command, &tx))
+        if(!buildCommand(receiveCommand, tx))
         {
             // command decoding failed, maybe invalid command?
             // return to sender with error code
         }
 
-        // Give the semaphore to spi (Don't want to do this unless spi can take the semaphore
-        //      otherwise we may give the semaphore to ourselves)
-        // xSemaphoreGive(cbSemaphore);
+        //TODO: Ensure that the semaphore is working properly
         
         //send spi messaage
-        spi.mastertx(0, tx, rx, 8);
+        spi.mastertx(0, &tx[0], &rx[0], length);
         // wait to get semaphore back from spi (Currently waits infinitely)
         if(xSemaphoreTake(cbSemaphore, portMAX_DELAY) == pdTRUE)
         {
@@ -125,24 +158,60 @@ void transaction( void *pvParameters )
             // spi timed out
         }
         
-        // send semaphore to sender
+        //TODO: figure out a way to return this data to the sender
 
     }
 }
 
-// maps an integer command id to its corrosponding command and
-//      loads said commands SPI command into the spi array.
-//  command: The integer command id
-//  tx: A pointer to the spi array
-//  
-//  return: an integer error code or 1 if successfull
-int decodeCommand(int command, uint8_t **tx)
+/* maps an integer command id to its corrosponding command and loads said commands SPI command into the spi array.
+ *      command: The integer command id
+ *      tx: A pointer to the spi vector
+ *  
+ *      return: an integer error code or 1 if successfull
+ */  
+int buildCommand(int command, uint8_t *tx)
 {
     // TODO: error checking of command number
-    unsigned char cc[11] = CCS[command];
-    // create the tx out of the cc
+    // TODO: figure out PEC
+
+    int len = 0;
+
+    memcpy(tx, CCS[command], 2);
+    len += 2;
+    pec15_calc(len, tx, tx[len]);
+    len += 2;
+    
+    for(int i = command.num-1; i >=0; i--)
+    {
+        memcpy(tx[len], command.data[num], command.size);
+        len += command.size;
+        pec15_calc(len, tx, tx[len]);
+        len += 2
+    }
 
     return 1;
+}
+
+/*
+  Calculates  and returns the CRC15
+  */
+void pec15_calc(uint8_t len,   //Number of bytes that will be used to calculate a PEC
+        uint8_t *data,              //Array of data that will be used to calculate  a PEC
+        uint8_t *pec)               // Location of PEC
+{
+    uint16_t remainder,addr;
+
+    remainder = 16;//initialize the PEC
+    for (uint8_t i = 0; i<len; i++) // loops for each byte in data array
+    {
+        addr = ((remainder>>7)^data[i])&0xff;//calculate PEC table address
+        remainder = (remainder<<8)^crc15Table[addr];
+        //remainder = (remainder<<8)^pgm_read_word_near(crc15Table+addr);
+    }
+
+    //The CRC15 has a 0 in the LSB so the remainder must be multiplied by 2
+    pec[0] = (remainder >> 7) & 0xff; // Upper byte
+    pec[1] = (remainder << 1) & 0xff; // Lower byte
 }
 
 // when spi finishes we give the semaphore back to the transaction
@@ -157,12 +226,12 @@ int main( void ) {
     // create task
     //TaskHandle_t xHandle = NULL;
 
-    // create a queue capable of containing 5 integers
-    xQueue = xQueueCreate( 5, sizeof(int));
+    // create a queue capable of containing 5 commands
+    xQueue = xQueueCreate( 5, sizeof(bmscommand_t));
     //TODO: check if xQueue is NULL as this means it was not created
 
-    xTaskCreate(demoReceive, "demo", STACK_SIZE, NULL, TASK_PRIORITY, NULL );
-    xTaskCreate(demoDelaySend, "demoUntil", STACK_SIZE, NULL, TASK_PRIORITY, NULL );
+    xTaskCreate(transaction, "transaction", STACK_SIZE, NULL, TASK_PRIORITY, NULL );
+    xTaskCreate(commandSend, "commandSend", STACK_SIZE, NULL, TASK_PRIORITY, NULL );
 
     // Start the rtos scheduler, this function should never return as the execution context is changed to
     //      the task.
