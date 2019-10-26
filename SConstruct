@@ -1,7 +1,7 @@
 import os
 
 # !! Update these aths to point to your respective directories !!
-GNU_PATH = '/home/gray/embedded/gcc-arm-none-eabi/bin/'
+GNU_PATH = '../gcc-arm-none-eabi/bin/' 
 BSP_PATH = '../MKELibrary/'
 
 
