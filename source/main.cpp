@@ -5,6 +5,8 @@ SemaphoreHandle_t cbSemaphore;
 
 uint8_t TEST_DATA[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 
+uint8_t RETURN_DATA[12];
+
 void timeout( void *pvParameters )
 {
 
@@ -13,7 +15,7 @@ void timeout( void *pvParameters )
 void commandSend( void *pvParameters )
 {
     TickType_t xLastWakeTime;
-    const TickType_t xFrequency = 1000000000000000000 / portTICK_PERIOD_MS;
+    const TickType_t xFrequency = 1000000 / portTICK_PERIOD_MS;
 
     // Initialise the xLastWakeTime variable with the current time.
     xLastWakeTime = xTaskGetTickCount();
@@ -46,10 +48,10 @@ void commandSend( void *pvParameters )
 int pushTransaction( int com, int length, int num, uint8_t **data, int ticksToWait )
 {
     // assemble the command
-    bmscommand_t *c;
-    bmsCommandInit(c, com, length, num, data);
+    bmscommand_t c;
+    bmsCommandInit(&c, com, length, num, data);
     // sends command to the command queue and returns the error or success code
-    return xQueueSend(commandQueue, c, ticksToWait); 
+    return xQueueSend(commandQueue, &c, ticksToWait); 
 }
 
 void transaction( void *pvParameters )
@@ -100,6 +102,7 @@ void transaction( void *pvParameters )
         {
             // spi finnished
             // handle response
+            memcpy(RETURN_DATA, rx, 12);
         } else {
             // spi timed out
         }
@@ -111,18 +114,20 @@ void transaction( void *pvParameters )
 
 // when spi finishes we give the semaphore back to the transaction
 void bmsspicb() {
-    xSemaphoreGive(cbSemaphore);
+    BaseType_t taskWoken = 0;
+    xSemaphoreGiveFromISR(cbSemaphore, &taskWoken);
 }
 
 int main( void ) {
     // setup the microcontroller hardware for the demo 
     prvSetupHardware();
+    spiInit();
 
     // create a queue capable of containing 5 commands
     commandQueue = xQueueCreate( 5, sizeof(bmscommand_t));
     //TODO: check if commandQueue is NULL as this means it was not created
 
-    xTaskCreate(transaction, "transaction", STACK_SIZE, NULL, TASK_PRIORITY, NULL );
+    xTaskCreate(transaction, "transaction", STACK_SIZE, NULL, TASK_PRIORITY+1, NULL );
     xTaskCreate(commandSend, "commandSend", STACK_SIZE, NULL, TASK_PRIORITY, NULL );
 
     // Start the rtos scheduler, this function should never return as the execution context is changed to
@@ -150,11 +155,11 @@ void spiInit()
     spi::SPI::ConstructStatic(&conf);
     spi::SPI& spi = spi::SPI::StaticClass();
 
-    /*spi::SPI::masterConfig mconf;
+    spi::SPI::masterConfig mconf;
     mconf.baudRate = 500000U;
     mconf.csport = ltccsport;
     mconf.cspin = ltccspin;
-    spi.initMaster(0, &mconf);*/
+    spi.initMaster(0, &mconf);
 
     cbSemaphore = xSemaphoreCreateBinary();
     // TODO: Check if semaphore is NULL as this means it was not created

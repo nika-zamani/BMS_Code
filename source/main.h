@@ -41,9 +41,13 @@ const unsigned char ucExpectedInterruptStackValues[] = { 0xCC, 0xCC, 0xCC, 0xCC,
 #define t_SLEEP 10000 // find this
 #define t_IDLE 1000 // find this
 
+#define ltccsport BSP::gpio::PortA
+#define ltccspin 2
+
 /*
  * Perform any hardware specific setup in this function
  */
 static void prvSetupHardware(void);
 
 int pushTransaction( int com, int length, int num, uint8_t **data, int ticksToWait );
+void spiInit();
