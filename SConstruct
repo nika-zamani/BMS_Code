@@ -45,7 +45,7 @@ env['CXXFLAGS'] = '-O0 -g -DDEBUG -Wall \
         -ffreestanding -fno-builtin -mthumb -mapcs \
         -fno-rtti -fno-exceptions -mcpu=cortex-m4 \
         -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP \
-        -DCPU_MKE18F512VLH16 '
+        -DCPU_MKE18F512VLH16'
 
 env.Append(CPPPATH = [
     'source',

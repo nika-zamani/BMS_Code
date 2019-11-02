@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <future>
 #include "bmsCommand.h"
 
 /*  Initializes data into a bms command
@@ -9,13 +10,15 @@
  *      @param num: The number of chips
  *      @param data: The data for the command
  */
-void bmsCommandInit(bmscommand_t *c, int com, int length, int num, uint8_t **data)
+void bmsCommandInit(bmscommand_t *c, int com, int length, int num, uint8_t **data, uint8_t* result, SemaphoreHandle_t semaphore)
 {
     // TODO: error checking of command number
     c->command = com;
     c->size = length;
     c->num = num;
     c->data = data;
+    c->result = result;
+    c->semaphore = semaphore;
 }
 
 /* maps an integer command id to its corrosponding command and loads said commands SPI command into the spi array.

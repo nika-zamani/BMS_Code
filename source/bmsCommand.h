@@ -2,13 +2,63 @@
 #define BMSCOMMAND_H
 
 #include "MKE18F16.h"
+#include "FreeRTOS.h"
+
+#include "semphr.h"
+
+enum commands{WRCFGA, WRCFGB, RDCFGA, RDCFGB, RDCVA, RDCVB, RDCVC, RDCVD, RDCVE, RDCVF, RDAUXA,
+              RDAUXB, RDAUXC, RDAUXD, RDSTATA, RDSTATB, WRSCTRL, WRPWM, WRPSB, RDSCTRL, RDPWM,
+              RDPSB, STSCTRL, CLRSCTRL, ADCV, ADOW, CVST, ADOL, ADAX, ADAXD, AXST, ADSTAT, ADSTATD,
+              STATST, ADCVAX, ADCVSC, CLRCELL, CLRAUX, CLRSTAT, PLADC, DIAGN, WRCOMM, RDCOMM, STCOMM};
 
 // Array contains command codes for all commands neccecary, position in this array will depend
 //      on a mapped value from the command name in bms.h
-const uint8_t CCS[3][2] = {
+const uint8_t CCS[44][2] = {
+    {0x00, 0x01}, //WRCFGA
+    {0x00, 0x24}, //WRCFGB*
     {0x00, 0x02}, //RDCFGA
-    {0x00, 0x1E}, //RDSPSB*
-    {0x00, 0x0F}  //STSCTRL
+    {0x00, 0x26}, //RDCFGB*
+    {0x00, 0x04}, //RDCVA
+    {0x00, 0x06}, //RDCVB
+    {0x00, 0x08}, //RDCVC
+    {0x00, 0x0A}, //RDCVD
+    {0x00, 0x09}, //RDCVE*
+    {0x00, 0x0B}, //RDCVF*
+    {0x00, 0x0C}, //RDAUXA
+    {0x00, 0x0E}, //RDAUXB
+    {0x00, 0x0D}, //RDAUXC*
+    {0x00, 0x0F}, //RDAUXD*
+    {0x00, 0x10}, //RDSTATA
+    {0x00, 0x12}, //RDSTATB
+    {0x00, 0x14}, //WRSCTRL
+    {0x00, 0x20}, //WRPWM
+    {0x00, 0x1C}, //WRPSB*
+    {0x00, 0x16}, //RDSCTRL
+    {0x00, 0x22}, //RDPWM
+    {0x00, 0x1E}, //RDPSB*
+    {0x00, 0x19}, //STSCTRL
+    {0x00, 0x18}, //CLRSCTRL
+                // THESE REQUIRE OTHER BITS USE 0 and or with options
+    {0x00, 0x00}, //ADCV
+    {0x00, 0x00}, //ADOW
+    {0x00, 0x00}, //CVST
+    {0x00, 0x00}, //ADOL
+    {0x00, 0x00}, //ADAX
+    {0x00, 0x00}, //ADAXD
+    {0x00, 0x00}, //AXST
+    {0x00, 0x00}, //ADSTAT
+    {0x00, 0x00}, //ADSTATD
+    {0x00, 0x00}, //STATST
+    {0x00, 0x00}, //ADCVAX
+    {0x00, 0x00}, //ADCVSC
+    {0x00, 0x00}, //CLRCELL
+    {0x00, 0x00}, //CLRAUX
+    {0x00, 0x00}, //CLRSTAT
+    {0x00, 0x00}, //PLADC
+    {0x00, 0x00}, //DIAGN
+    {0x00, 0x00}, //WRCOMM
+    {0x00, 0x00}, //RDCOMM
+    {0x00, 0x00}, //STCOMM
 };
 
 // Copied from LTSketchbook/libraries/LTC681x/LTC681x.cpp
@@ -42,15 +92,18 @@ const uint16_t crc15Table[256] = {0x0,0xc599, 0xceab, 0xb32, 0xd8cf, 0x1d56,
     0xa76f, 0x62f6, 0x69c4, 0xac5d, 0x7fa0, 0xba39, 0xb10b, 0x7492, 0x5368,
     0x96f1, 0x9dc3, 0x585a, 0x8ba7, 0x4e3e, 0x450c, 0x8095 };
 
+
 // a command to be sent to the BMS
 typedef struct bmscommand_t {
-    int command;            // integer representation of a command
-    int size;               // size of the data
-    int num;                // number of chips
-    uint8_t **data;   // pointer to 2D array of data for each chip
+    int command;                // integer representation of a command
+    int size;                   // size of the data
+    int num;                    // number of chips
+    uint8_t **data;             // pointer to 2D array of data for each chip
+    uint8_t* result;            // location for return data
+    SemaphoreHandle_t semaphore;// semaphore for return data
 } bmscommand_t;
 
-void bmsCommandInit(bmscommand_t *c, int com, int length, int num, uint8_t **data);
+void bmsCommandInit(bmscommand_t *c, int com, int length, int num, uint8_t **data, uint8_t* result, SemaphoreHandle_t semaphore);
 
 int buildCommandBuffer(bmscommand_t *command, uint8_t *tx);
 

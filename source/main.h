@@ -1,3 +1,6 @@
+#ifndef MAIN_H
+#define MAIN_H
+
 /* Standard includes */
 #include "string.h"
 #include <vector>
@@ -16,6 +19,7 @@
 #include "pin_mux.h"
 
 #include "bmsCommand.h"
+#include "transaction.h"
 
 #include "gpio.h"
 #include "spi.h"
@@ -36,18 +40,9 @@ const unsigned char ucExpectedInterruptStackValues[] = { 0xCC, 0xCC, 0xCC, 0xCC,
 #define STACK_SIZE 100
 #define TASK_PRIORITY 1
 
-#define SLAVE_COUNT 10
-
-#define t_SLEEP 10000 // find this
-#define t_IDLE 1000 // find this
-
-#define ltccsport BSP::gpio::PortA
-#define ltccspin 2
-
 /*
  * Perform any hardware specific setup in this function
  */
 static void prvSetupHardware(void);
 
-int pushTransaction( int com, int length, int num, uint8_t **data, int ticksToWait );
-void spiInit();
+#endif

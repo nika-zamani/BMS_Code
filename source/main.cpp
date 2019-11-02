@@ -1,8 +1,5 @@
 #include "main.h"
 
-QueueHandle_t commandQueue = NULL;
-SemaphoreHandle_t cbSemaphore;
-
 uint8_t TEST_DATA[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 
 uint8_t RETURN_DATA[12];
@@ -29,102 +26,21 @@ void commandSend( void *pvParameters )
         data = (uint8_t **)(malloc(sizeof(uint8_t *)));
         data[0] = TEST_DATA;
 
-        pushTransaction(0, 6, 1, data, portMAX_DELAY);
+        uint8_t *rx = sendCommand(0, 6, 1, data, portMAX_DELAY);
+        memcpy(RETURN_DATA, rx, 12);
+
 
         vTaskDelayUntil( &xLastWakeTime, xFrequency );
     }
 }
 
-/*
- * Creates and pushes a command to the command queue   
- *      @param com: the command id
- *      @param length: the length of the command data
- *      @param num: the number of chips that this command has data for
- *      @param data: all the chips command data (must remmain allocated untill the command is completed)
- *      @param ticksToWait: The number of ticks to wait before timing out or portMAX_DELAY for infinite block
- *
- *      @return Returns pdTRUE if the item was successfully posted or errQUEUE_FULL if the request times out.
- */
-int pushTransaction( int com, int length, int num, uint8_t **data, int ticksToWait )
-{
-    // assemble the command
-    bmscommand_t c;
-    bmsCommandInit(&c, com, length, num, data);
-    // sends command to the command queue and returns the error or success code
-    return xQueueSend(commandQueue, &c, ticksToWait); 
-}
-
-void transaction( void *pvParameters )
-{
-    bmscommand_t receiveCommand;
-    long lastMessage = xTaskGetTickCount();
-    long time;
-
-    spi::SPI& spi = spi::SPI::StaticClass();
-
-    for (;;)
-    {
-        /* demo task coode */
-        xQueueReceive(commandQueue, (void*) &receiveCommand, portMAX_DELAY);
-        time = (xTaskGetTickCount() - lastMessage)/portTICK_PERIOD_MS;
-        
-        //create spi buffers
-        int length = bmsCommandSize(&receiveCommand);
-        uint8_t tx[length];
-        uint8_t rx[length];
-
-        if(time > t_SLEEP)
-        {
-            //add reprograming sequence
-        }
-        if(time > t_IDLE)
-        {
-            //add wakeup sequence
-
-            // toggle the CS down and up once for each slave
-            for(int i = 0; i < SLAVE_COUNT; i++) {
-            }
-        }
-
-        //add command into the buffer
-        if(!buildCommandBuffer(&receiveCommand, tx))
-        {
-            // command decoding failed, maybe invalid command?
-            // return to sender with error code
-        }
-
-        //TODO: Ensure that the semaphore is working properly
-        
-        //send spi messaage
-        spi.mastertx(0, &tx[0], &rx[0], length);
-        // wait to get semaphore back from spi (Currently waits infinitely)
-        if(xSemaphoreTake(cbSemaphore, portMAX_DELAY) == pdTRUE)
-        {
-            // spi finnished
-            // handle response
-            memcpy(RETURN_DATA, rx, 12);
-        } else {
-            // spi timed out
-        }
-        
-        //TODO: figure out a way to return this data to the sender
-
-    }
-}
-
-// when spi finishes we give the semaphore back to the transaction
-void bmsspicb() {
-    BaseType_t taskWoken = 0;
-    xSemaphoreGiveFromISR(cbSemaphore, &taskWoken);
-}
-
 int main( void ) {
     // setup the microcontroller hardware for the demo 
     prvSetupHardware();
-    spiInit();
+    transactionInit();
 
-    // create a queue capable of containing 5 commands
-    commandQueue = xQueueCreate( 5, sizeof(bmscommand_t));
+    NVIC->IP[26] |= 6 << 4;
+
     //TODO: check if commandQueue is NULL as this means it was not created
 
     xTaskCreate(transaction, "transaction", STACK_SIZE, NULL, TASK_PRIORITY+1, NULL );
@@ -144,26 +60,13 @@ static void prvSetupHardware( void ) {
     // perform all hardare specific setup here
     BOARD_InitBootClocks();
     BOARD_InitBootPins();
-
-    gpio::GPIO::ConstructStatic();
 }
 
-void spiInit()
-{
-    spi::spi_config conf;
-    conf.callbacks[0] = bmsspicb;
-    spi::SPI::ConstructStatic(&conf);
-    spi::SPI& spi = spi::SPI::StaticClass();
 
-    spi::SPI::masterConfig mconf;
-    mconf.baudRate = 500000U;
-    mconf.csport = ltccsport;
-    mconf.cspin = ltccspin;
-    spi.initMaster(0, &mconf);
 
-    cbSemaphore = xSemaphoreCreateBinary();
-    // TODO: Check if semaphore is NULL as this means it was not created
-}
+
+
+
 
 /************************************************************************************/
 /*************************   RTOS CODE BEYOND THIS POINT   **************************/
