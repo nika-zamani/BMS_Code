@@ -38,27 +38,28 @@ const uint8_t CCS[44][2] = {
     {0x00, 0x1E}, //RDPSB*
     {0x00, 0x19}, //STSCTRL
     {0x00, 0x18}, //CLRSCTRL
-                // THESE REQUIRE OTHER BITS USE 0 and or with options
-    {0x00, 0x00}, //ADCV
-    {0x00, 0x00}, //ADOW
-    {0x00, 0x00}, //CVST
-    {0x00, 0x00}, //ADOL
-    {0x00, 0x00}, //ADAX
-    {0x00, 0x00}, //ADAXD
-    {0x00, 0x00}, //AXST
-    {0x00, 0x00}, //ADSTAT
-    {0x00, 0x00}, //ADSTATD
-    {0x00, 0x00}, //STATST
-    {0x00, 0x00}, //ADCVAX
-    {0x00, 0x00}, //ADCVSC
-    {0x00, 0x00}, //CLRCELL
-    {0x00, 0x00}, //CLRAUX
-    {0x00, 0x00}, //CLRSTAT
-    {0x00, 0x00}, //PLADC
-    {0x00, 0x00}, //DIAGN
-    {0x00, 0x00}, //WRCOMM
-    {0x00, 0x00}, //RDCOMM
-    {0x00, 0x00}, //STCOMM
+                // BEGIN SPECIAL BIT COMMANDS
+    {0x02, 0x60}, //ADCV   - MD, DCP, CH
+    {0x02, 0x28}, //ADOW   - MD, PUP, DCP, CH
+    {0x02, 0x07}, //CVST   - MD, ST
+    {0x02, 0x01}, //ADOL   - MD, DCP
+    {0x04, 0x60}, //ADAX   - MD, CHG
+    {0x04, 0x00}, //ADAXD  - MD, CHG
+    {0x04, 0x07}, //AXST   - MD, ST
+    {0x04, 0x68}, //ADSTAT - MD, CHST
+    {0x04, 0x08}, //ADSTATD- MD, CHST
+    {0x04, 0x0F}, //STATST - MD, ST
+    {0x04, 0x6F}, //ADCVAX - MD, DCP
+    {0x04, 0x67}, //ADCVSC - MD, DCP
+                // END SPECIAL BIT COMMANDS
+    {0x07, 0x11}, //CLRCELL
+    {0x07, 0x12}, //CLRAUX
+    {0x07, 0x13}, //CLRSTAT
+    {0x07, 0x14}, //PLADC
+    {0x07, 0x15}, //DIAGN
+    {0x07, 0x21}, //WRCOMM
+    {0x07, 0x22}, //RDCOMM
+    {0x07, 0x23}, //STCOMM
 };
 
 // Copied from LTSketchbook/libraries/LTC681x/LTC681x.cpp
@@ -95,7 +96,7 @@ const uint16_t crc15Table[256] = {0x0,0xc599, 0xceab, 0xb32, 0xd8cf, 0x1d56,
 
 // a command to be sent to the BMS
 typedef struct bmscommand_t {
-    int command;                // integer representation of a command
+    uint8_t command[2];         // command code of the command
     int size;                   // size of the data
     int num;                    // number of chips
     uint8_t **data;             // pointer to 2D array of data for each chip
@@ -103,7 +104,7 @@ typedef struct bmscommand_t {
     SemaphoreHandle_t semaphore;// semaphore for return data
 } bmscommand_t;
 
-void bmsCommandInit(bmscommand_t *c, int com, int length, int num, uint8_t **data, uint8_t* result, SemaphoreHandle_t semaphore);
+void bmsCommandInit(bmscommand_t *c, uint8_t com[2], int length, int num, uint8_t **data, uint8_t* result, SemaphoreHandle_t semaphore);
 
 int buildCommandBuffer(bmscommand_t *command, uint8_t *tx);
 

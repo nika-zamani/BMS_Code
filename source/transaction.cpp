@@ -30,9 +30,7 @@ void transaction( void *pvParameters )
         }
         if(time > t_IDLE)
         {
-            //add wakeup sequence
-
-            // toggle the CS down and up once for each slave
+            // toggle the CS down and up once for each slave to wake
             for(int i = 0; i < SLAVE_COUNT; i++) {
                 gpio.clear(ltccsport, ltccspin);
                 //wait 400 microseconds
@@ -46,7 +44,7 @@ void transaction( void *pvParameters )
         if(!buildCommandBuffer(&receiveCommand, tx))
         {
             // command decoding failed, maybe invalid command?
-            // return to sender with error code
+            // TODO: return to sender with error code
         }
 
         //TODO: Ensure that the semaphore is working properly
@@ -61,26 +59,32 @@ void transaction( void *pvParameters )
         if(xSemaphoreTake(cbSemaphore, portMAX_DELAY) == pdTRUE)
         {
             // spi finnished
-            // handle response
+            // TODO: handle response, check pecs
+            
+            // return result to caller
+            receiveCommand.result = rx;
+            xSemaphoreGive(receiveCommand.semaphore);
         } else {
-            // spi timed out
+            // spi timed out return null to sender
+            free(rx);
+            receiveCommand.result = NULL;
+            xSemaphoreGive(receiveCommand.semaphore);
         }
         
-        // TODO check for memory leaks
-        receiveCommand.result = rx;
-        xSemaphoreGive(receiveCommand.semaphore);
+        // TODO: check for memory leaks
     }
 }
 
 /*
- * Creates and pushes a command to the command queue synchronously only returning once the command has been executed
+ * Creates and pushes a command to the command queue synchronously only returning once the command has been executed.
  *      @param com: the command id
  *      @param length: the length of the command data
  *      @param num: the number of chips that this command has data for
  *      @param data: all the chips command data (must remmain allocated untill the command is completed)
  *      @param ticksToWait: The number of ticks to wait before timing out or portMAX_DELAY for infinite block
+ *                              evenly divided between sending to the command queue and waiting for command to return
  *
- *      @return Returns the resultant data of the command
+ *      @return Returns the resultant data of the command, must be free'd once no longer needed
  */
 uint8_t* sendCommand( int com, int length, int num, uint8_t **data, int ticksToWait )
 {
@@ -88,16 +92,164 @@ uint8_t* sendCommand( int com, int length, int num, uint8_t **data, int ticksToW
     SemaphoreHandle_t xSemaphore = xSemaphoreCreateBinary();
     // assemble the command
     bmscommand_t c;
-    bmsCommandInit(&c, com, length, num, data, result, xSemaphore);
+    bmsCommandInit(&c, CCS[com], length, num, data, result, xSemaphore);
     // sends command to the command queue and returns the error or success code
-    xQueueSend(commandQueue, &c, ticksToWait);
+    xQueueSend(commandQueue, &c, ticksToWait/2); //TODO: check for failure and return NULL
 
     // wait for callback and return its return
-    xSemaphoreTake(xSemaphore, portMAX_DELAY);
-    return result;
+    xSemaphoreTake(xSemaphore, ticksToWait/2); //TODO: check for failure and return NULL
+    
+    return result; // can be NULL if add to queue fails, command takes too long to return, or spi never returned in transaction
 }
 
-/*
+// call ADCV command like any other but with base 10 integer values for MD, DCP, and CH
+uint8_t* sendCommandADCV( int md, int dcp, int ch, int length, int num, uint8_t **data, int ticksToWait ) {
+    int com = ADCV;
+    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    new_com[0] = CCS[com][0] | md>>1;
+    new_com[1] = CCS[com][1] | (md%2 * 128);
+    new_com[1] = new_com[1] | (dcp * 16);
+    new_com[1] = new_com[1] | (ch); 
+    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    free(new_com);
+    return ret;
+}
+
+// call ADOW command like any other but with base 10 integer values for MD, PUP, DCP, and CH
+uint8_t* sendCommandADOW( int md, int pup, int dcp, int ch, int length, int num, uint8_t **data, int ticksToWait ) {
+    int com = ADOW;    
+    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    new_com[0] = CCS[com][0] | md>>1;
+    new_com[1] = CCS[com][1] | (md%2 * 128);
+    new_com[1] = new_com[1] | (pup * 64);
+    new_com[1] = new_com[1] | (dcp * 16);
+    new_com[1] = new_com[1] | (ch); 
+    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    free(new_com);
+    return ret;
+}
+
+// call CVST command like any other but with base 10 integer values for MD, and ST
+uint8_t* sendCommandCVST( int md, int st, int length, int num, uint8_t **data, int ticksToWait ) {
+    int com = CVST;
+    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    new_com[0] = CCS[com][0] | md>>1;
+    new_com[1] = CCS[com][1] | (md%2 * 128);
+    new_com[1] = new_com[1] | (st * 32);
+    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    free(new_com);
+    return ret;
+}
+
+// call ADOL command like any other but with base 10 integer values for MD, and DCP
+uint8_t* sendCommandADOL( int md, int dcp, int length, int num, uint8_t **data, int ticksToWait ) {
+    int com = ADOL;
+    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    new_com[0] = CCS[com][0] | md>>1;
+    new_com[1] = CCS[com][1] | (md%2 * 128);
+    new_com[1] = new_com[1] | (dcp * 16);
+    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    free(new_com);
+    return ret;
+}
+
+// call ADAX command like any other but with base 10 integer values for MD, and CHG
+uint8_t* sendCommandADAX( int md, int chg, int length, int num, uint8_t **data, int ticksToWait ) {
+    int com = ADAX;
+    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    new_com[0] = CCS[com][0] | md>>1;
+    new_com[1] = CCS[com][1] | (md%2 * 128);
+    new_com[1] = new_com[1] | (chg); 
+    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    free(new_com);
+    return ret;
+}
+
+// call ADAXD command like any other but with base 10 integer values for MD, and CHG
+uint8_t* sendCommandADAXD( int md, int chg, int length, int num, uint8_t **data, int ticksToWait ) {
+    int com = ADAXD;
+    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    new_com[0] = CCS[com][0] | md>>1;
+    new_com[1] = CCS[com][1] | (md%2 * 128);
+    new_com[1] = new_com[1] | (chg); 
+    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    free(new_com);
+    return ret;
+}
+
+// call AXST command like any other but with base 10 integer values for MD, and ST
+uint8_t* sendCommandAXST( int md, int st, int length, int num, uint8_t **data, int ticksToWait ) {
+    int com = AXST;
+    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    new_com[0] = CCS[com][0] | md>>1;
+    new_com[1] = CCS[com][1] | (md%2 * 128);
+    new_com[1] = new_com[1] | (st * 32);
+    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    free(new_com);
+    return ret;
+}
+
+// call ADSTAT command like any other but with base 10 integer values for MD, and CHST
+uint8_t* sendCommandADSTAT( int md, int chst, int length, int num, uint8_t **data, int ticksToWait ) {
+    int com = ADSTAT;
+    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    new_com[0] = CCS[com][0] | md>>1;
+    new_com[1] = CCS[com][1] | (md%2 * 128);
+    new_com[1] = new_com[1] | (chst); 
+    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    free(new_com);
+    return ret;
+}
+
+// call ADSTATD command like any other but with base 10 integer values for MD, and CHST
+uint8_t* sendCommandADSTATD( int md, int chst, int length, int num, uint8_t **data, int ticksToWait ) {
+    int com = ADSTATD;
+    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    new_com[0] = CCS[com][0] | md>>1;
+    new_com[1] = CCS[com][1] | (md%2 * 128);
+    new_com[1] = new_com[1] | (chst); 
+    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    free(new_com);
+    return ret;
+}
+
+// call STATST command like any other but with base 10 integer values for MD, and ST
+uint8_t* sendCommandSTATST( int md, int st, int length, int num, uint8_t **data, int ticksToWait ) {
+    int com = STATST;
+    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    new_com[0] = CCS[com][0] | md>>1;
+    new_com[1] = CCS[com][1] | (md%2 * 128);
+    new_com[1] = new_com[1] | (st * 32);
+    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    free(new_com);
+    return ret;
+}
+
+// call ADCVAX command like any other but with base 10 integer values for MD, and DCP
+uint8_t* sendCommandADCVAX( int md, int dcp, int length, int num, uint8_t **data, int ticksToWait ) {
+    int com = ADCVAX;
+    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    new_com[0] = CCS[com][0] | md>>1;
+    new_com[1] = CCS[com][1] | (md%2 * 128);
+    new_com[1] = new_com[1] | (dcp * 16);
+    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    free(new_com);
+    return ret;
+}
+
+// call ADCVSC command like any other but with base 10 integer values for MD, and DCP
+uint8_t* sendCommandADCVSC( int md, int dcp, int length, int num, uint8_t **data, int ticksToWait ) {
+    int com = ADCVSC;
+    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    new_com[0] = CCS[com][0] | md>>1;
+    new_com[1] = CCS[com][1] | (md%2 * 128);
+    new_com[1] = new_com[1] | (dcp * 16);
+    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    free(new_com);
+    return ret;
+}
+
+/* NONFUNCTIONAL
  * Creates and pushes a command to the command queue asynchronously
  *      @param com: the command id
  *      @param length: the length of the command data
@@ -110,6 +262,7 @@ uint8_t* sendCommand( int com, int length, int num, uint8_t **data, int ticksToW
  */
 int sendCommandAsync( int com, int length, int num, uint8_t **data, int ticksToWait, uint8_t* result)
 {
+    return 0;
     // assemble the command
     bmscommand_t c;
     SemaphoreHandle_t xSemaphore = xSemaphoreCreateBinary(); // wont work needs to be allocated

@@ -28,6 +28,8 @@ void commandSend( void *pvParameters )
 
         uint8_t *rx = sendCommand(0, 6, 1, data, portMAX_DELAY);
         memcpy(RETURN_DATA, rx, 12);
+        free(rx);
+        free(data);
 
 
         vTaskDelayUntil( &xLastWakeTime, xFrequency );
