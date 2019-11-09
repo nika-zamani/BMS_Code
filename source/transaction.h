@@ -50,7 +50,7 @@ int sendCommandAsync( int com, int length, int num, uint8_t **data, int ticksToW
  * 
  *  @return the data returned in rx from the command or NULL if the command timed out 
  */
-uint8_t* sendCommand( int com, int length, int num, uint8_t **data, int ticksToWait );
+uint8_t* sendCommand( uint8_t *com, int length, int num, uint8_t **data, int ticksToWait );
 
 // call ADCV command like any other but with base 10 integer values for MD, DCP, and CH
 uint8_t* sendCommandADCV( int md, int dcp, int ch, int length, int num, uint8_t **data, int ticksToWait );
@@ -59,7 +59,7 @@ uint8_t* sendCommandADCV( int md, int dcp, int ch, int length, int num, uint8_t 
 uint8_t* sendCommandADOW( int md, int pup, int dcp, int ch, int length, int num, uint8_t **data, int ticksToWait );
 
 // call CVST command like any other but with base 10 integer values for MD, and ST
-uint8_t* sendCommandCVST( int md, int st, int length, int num, uint8_t **data, int ticksToWait ) {
+uint8_t* sendCommandCVST( int md, int st, int length, int num, uint8_t **data, int ticksToWait );
 
 // call ADOL command like any other but with base 10 integer values for MD, and DCP
 uint8_t* sendCommandADOL( int md, int dcp, int length, int num, uint8_t **data, int ticksToWait );

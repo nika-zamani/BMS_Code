@@ -23,14 +23,18 @@ void commandSend( void *pvParameters )
         /* demo task coode */
 
         uint8_t **data;
-        data = (uint8_t **)(malloc(sizeof(uint8_t *)));
+        data = (uint8_t **)(pvPortMalloc(sizeof(uint8_t *)));
         data[0] = TEST_DATA;
-
-        uint8_t *rx = sendCommand(0, 6, 1, data, portMAX_DELAY);
+        
+        uint8_t *com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
+        com[0] = CCS[0][0];
+        com[1] = CCS[0][1];
+        
+        uint8_t *rx = sendCommand(com, 6, 1, data, portMAX_DELAY);
         memcpy(RETURN_DATA, rx, 12);
-        free(rx);
-        free(data);
-
+        vPortFree(rx);
+        vPortFree(com);
+        vPortFree(data);
 
         vTaskDelayUntil( &xLastWakeTime, xFrequency );
     }
@@ -44,6 +48,7 @@ int main( void ) {
     NVIC->IP[26] |= 6 << 4;
 
     //TODO: check if commandQueue is NULL as this means it was not created
+    //TODO: check for memory leaks
 
     xTaskCreate(transaction, "transaction", STACK_SIZE, NULL, TASK_PRIORITY+1, NULL );
     xTaskCreate(commandSend, "commandSend", STACK_SIZE, NULL, TASK_PRIORITY, NULL );
@@ -85,7 +90,7 @@ extern "C" {
          * demo application.  If heap_1.c or heap_2.c are used, then the size of the
          * heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE in
          * FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
-         * to query the size of free heap space that remains (although it does not
+         * to query the size of vPortFree heap space that remains (although it does not
          * provide information on how the remaining heap might be fragmented). */
         taskDISABLE_INTERRUPTS();
         for( ;; );

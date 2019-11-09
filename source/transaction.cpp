@@ -3,6 +3,21 @@
 QueueHandle_t commandQueue = NULL;
 SemaphoreHandle_t cbSemaphore;
 
+bool checkPECS(uint8_t* rx, int len, int num) {
+    int pos = 4;
+    uint8_t pec[2];
+    
+    for(int i = 0; i < num; i++) {
+        pec15_calc(len, &rx[pos], pec);
+        pos+=len;
+        if(rx[pos] != pec[0] || rx[pos+1] != pec[1]) {
+            return false;
+        }
+        pos+=2;
+    }
+    return true;
+}
+
 void transaction( void *pvParameters )
 {
     bmscommand_t receiveCommand;
@@ -21,8 +36,8 @@ void transaction( void *pvParameters )
         
         //create spi buffers
         int length = bmsCommandSize(&receiveCommand);
-        uint8_t *tx = (uint8_t*)(malloc(length * sizeof(uint8_t)));
-        uint8_t *rx = (uint8_t*)(malloc(length * sizeof(uint8_t)));
+        uint8_t *tx = (uint8_t*)(pvPortMalloc(length * sizeof(uint8_t)));
+        uint8_t *rx = (uint8_t*)(pvPortMalloc(length * sizeof(uint8_t)));
 
         if(time > t_SLEEP)
         {
@@ -52,26 +67,31 @@ void transaction( void *pvParameters )
         //send spi messaage
         spi.mastertx(0, &tx[0], &rx[0], length);
 
-        // free the space for tx
-        free(tx);
+        // vPortFree the space for tx
+        vPortFree(tx);
 
         // wait to get semaphore back from spi (Currently waits infinitely)
         if(xSemaphoreTake(cbSemaphore, portMAX_DELAY) == pdTRUE)
         {
             // spi finnished
             // TODO: handle response, check pecs
+            if(!checkPECS(rx, receiveCommand.size, receiveCommand.num)) {
+                // PEC Check failed return NULL to sender
+                vPortFree(rx);
+                receiveCommand.result = NULL;
+                xSemaphoreGive(receiveCommand.semaphore);
+            } else {
+                // return result to caller
+                receiveCommand.result = rx;
+                xSemaphoreGive(receiveCommand.semaphore); 
+            }
             
-            // return result to caller
-            receiveCommand.result = rx;
-            xSemaphoreGive(receiveCommand.semaphore);
         } else {
-            // spi timed out return null to sender
-            free(rx);
+            // spi timed out return NULL to sender
+            vPortFree(rx);
             receiveCommand.result = NULL;
             xSemaphoreGive(receiveCommand.semaphore);
         }
-        
-        // TODO: check for memory leaks
     }
 }
 
@@ -84,168 +104,169 @@ void transaction( void *pvParameters )
  *      @param ticksToWait: The number of ticks to wait before timing out or portMAX_DELAY for infinite block
  *                              evenly divided between sending to the command queue and waiting for command to return
  *
- *      @return Returns the resultant data of the command, must be free'd once no longer needed
+ *      @return Returns the resultant data of the command, must be vPortFree'd once no longer needed
  */
-uint8_t* sendCommand( int com, int length, int num, uint8_t **data, int ticksToWait )
+uint8_t* sendCommand( uint8_t *com, int length, int num, uint8_t **data, int ticksToWait )
 {
     uint8_t* result;
     SemaphoreHandle_t xSemaphore = xSemaphoreCreateBinary();
     // assemble the command
     bmscommand_t c;
-    bmsCommandInit(&c, CCS[com], length, num, data, result, xSemaphore);
+
+    bmsCommandInit(&c, com, length, num, data, result, xSemaphore);
     // sends command to the command queue and returns the error or success code
     xQueueSend(commandQueue, &c, ticksToWait/2); //TODO: check for failure and return NULL
 
     // wait for callback and return its return
     xSemaphoreTake(xSemaphore, ticksToWait/2); //TODO: check for failure and return NULL
     
-    return result; // can be NULL if add to queue fails, command takes too long to return, or spi never returned in transaction
+    return result; // can be NULL if add to queue fails, command takes too long to return, spi never returned in transaction, or PEC check failed
 }
 
 // call ADCV command like any other but with base 10 integer values for MD, DCP, and CH
 uint8_t* sendCommandADCV( int md, int dcp, int ch, int length, int num, uint8_t **data, int ticksToWait ) {
     int com = ADCV;
-    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    uint8_t *new_com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (dcp * 16);
     new_com[1] = new_com[1] | (ch); 
     uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
-    free(new_com);
+    vPortFree(new_com);
     return ret;
 }
 
 // call ADOW command like any other but with base 10 integer values for MD, PUP, DCP, and CH
 uint8_t* sendCommandADOW( int md, int pup, int dcp, int ch, int length, int num, uint8_t **data, int ticksToWait ) {
     int com = ADOW;    
-    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    uint8_t *new_com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (pup * 64);
     new_com[1] = new_com[1] | (dcp * 16);
     new_com[1] = new_com[1] | (ch); 
     uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
-    free(new_com);
+    vPortFree(new_com);
     return ret;
 }
 
 // call CVST command like any other but with base 10 integer values for MD, and ST
 uint8_t* sendCommandCVST( int md, int st, int length, int num, uint8_t **data, int ticksToWait ) {
     int com = CVST;
-    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    uint8_t *new_com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (st * 32);
     uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
-    free(new_com);
+    vPortFree(new_com);
     return ret;
 }
 
 // call ADOL command like any other but with base 10 integer values for MD, and DCP
 uint8_t* sendCommandADOL( int md, int dcp, int length, int num, uint8_t **data, int ticksToWait ) {
     int com = ADOL;
-    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    uint8_t *new_com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (dcp * 16);
     uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
-    free(new_com);
+    vPortFree(new_com);
     return ret;
 }
 
 // call ADAX command like any other but with base 10 integer values for MD, and CHG
 uint8_t* sendCommandADAX( int md, int chg, int length, int num, uint8_t **data, int ticksToWait ) {
     int com = ADAX;
-    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    uint8_t *new_com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (chg); 
     uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
-    free(new_com);
+    vPortFree(new_com);
     return ret;
 }
 
 // call ADAXD command like any other but with base 10 integer values for MD, and CHG
 uint8_t* sendCommandADAXD( int md, int chg, int length, int num, uint8_t **data, int ticksToWait ) {
     int com = ADAXD;
-    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    uint8_t *new_com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (chg); 
     uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
-    free(new_com);
+    vPortFree(new_com);
     return ret;
 }
 
 // call AXST command like any other but with base 10 integer values for MD, and ST
 uint8_t* sendCommandAXST( int md, int st, int length, int num, uint8_t **data, int ticksToWait ) {
     int com = AXST;
-    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    uint8_t *new_com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (st * 32);
     uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
-    free(new_com);
+    vPortFree(new_com);
     return ret;
 }
 
 // call ADSTAT command like any other but with base 10 integer values for MD, and CHST
 uint8_t* sendCommandADSTAT( int md, int chst, int length, int num, uint8_t **data, int ticksToWait ) {
     int com = ADSTAT;
-    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    uint8_t *new_com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (chst); 
     uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
-    free(new_com);
+    vPortFree(new_com);
     return ret;
 }
 
 // call ADSTATD command like any other but with base 10 integer values for MD, and CHST
 uint8_t* sendCommandADSTATD( int md, int chst, int length, int num, uint8_t **data, int ticksToWait ) {
     int com = ADSTATD;
-    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    uint8_t *new_com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (chst); 
     uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
-    free(new_com);
+    vPortFree(new_com);
     return ret;
 }
 
 // call STATST command like any other but with base 10 integer values for MD, and ST
 uint8_t* sendCommandSTATST( int md, int st, int length, int num, uint8_t **data, int ticksToWait ) {
     int com = STATST;
-    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    uint8_t *new_com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (st * 32);
     uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
-    free(new_com);
+    vPortFree(new_com);
     return ret;
 }
 
 // call ADCVAX command like any other but with base 10 integer values for MD, and DCP
 uint8_t* sendCommandADCVAX( int md, int dcp, int length, int num, uint8_t **data, int ticksToWait ) {
     int com = ADCVAX;
-    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    uint8_t *new_com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (dcp * 16);
     uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
-    free(new_com);
+    vPortFree(new_com);
     return ret;
 }
 
 // call ADCVSC command like any other but with base 10 integer values for MD, and DCP
 uint8_t* sendCommandADCVSC( int md, int dcp, int length, int num, uint8_t **data, int ticksToWait ) {
     int com = ADCVSC;
-    uint8_t *new_com = malloc(2*sizeof(uint8_t));
+    uint8_t *new_com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (dcp * 16);
     uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
-    free(new_com);
+    vPortFree(new_com);
     return ret;
 }
 
@@ -262,13 +283,15 @@ uint8_t* sendCommandADCVSC( int md, int dcp, int length, int num, uint8_t **data
  */
 int sendCommandAsync( int com, int length, int num, uint8_t **data, int ticksToWait, uint8_t* result)
 {
-    return 0;
+    /*
     // assemble the command
     bmscommand_t c;
     SemaphoreHandle_t xSemaphore = xSemaphoreCreateBinary(); // wont work needs to be allocated
     bmsCommandInit(&c, com, length, num, data, result, xSemaphore);
     // sends command to the command queue and returns the error or success code
     return xQueueSend(commandQueue, &c, ticksToWait); 
+    */
+   return 0;
 }
 
 // when spi finishes we give the semaphore back to the transaction

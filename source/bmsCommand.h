@@ -96,7 +96,7 @@ const uint16_t crc15Table[256] = {0x0,0xc599, 0xceab, 0xb32, 0xd8cf, 0x1d56,
 
 // a command to be sent to the BMS
 typedef struct bmscommand_t {
-    uint8_t command[2];         // command code of the command
+    uint8_t *command;           // uint8_t[2] command code
     int size;                   // size of the data
     int num;                    // number of chips
     uint8_t **data;             // pointer to 2D array of data for each chip
