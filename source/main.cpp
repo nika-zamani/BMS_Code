@@ -27,8 +27,8 @@ void commandSend( void *pvParameters )
         data[0] = TEST_DATA;
         
         uint8_t *com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
-        com[0] = CCS[0][0];
-        com[1] = CCS[0][1];
+        com[0] = CCS[RDCFGA][0];
+        com[1] = CCS[RDCFGA][1];
         
         uint8_t *rx = sendCommand(com, 6, 1, data, portMAX_DELAY);
         memcpy(RETURN_DATA, rx, 12);

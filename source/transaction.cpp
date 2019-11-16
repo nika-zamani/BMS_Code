@@ -67,9 +67,6 @@ void transaction( void *pvParameters )
         //send spi messaage
         spi.mastertx(0, &tx[0], &rx[0], length);
 
-        // vPortFree the space for tx
-        vPortFree(tx);
-
         // wait to get semaphore back from spi (Currently waits infinitely)
         if(xSemaphoreTake(cbSemaphore, portMAX_DELAY) == pdTRUE)
         {
@@ -78,16 +75,22 @@ void transaction( void *pvParameters )
             if(!checkPECS(rx, receiveCommand.size, receiveCommand.num)) {
                 // PEC Check failed return NULL to sender
                 vPortFree(rx);
+								vPortFree(tx);
                 receiveCommand.result = NULL;
                 xSemaphoreGive(receiveCommand.semaphore);
             } else {
                 // return result to caller
                 receiveCommand.result = rx;
-                xSemaphoreGive(receiveCommand.semaphore); 
+                // vPortFree the space for tx
+        				vPortFree(tx);
+								vPortFree(rx);
+								xSemaphoreGive(receiveCommand.semaphore); 
             }
             
         } else {
             // spi timed out return NULL to sender
+						// vPortFree the space for tx
+        		vPortFree(tx);
             vPortFree(rx);
             receiveCommand.result = NULL;
             xSemaphoreGive(receiveCommand.semaphore);
@@ -118,7 +121,7 @@ uint8_t* sendCommand( uint8_t *com, int length, int num, uint8_t **data, int tic
     xQueueSend(commandQueue, &c, ticksToWait/2); //TODO: check for failure and return NULL
 
     // wait for callback and return its return
-    xSemaphoreTake(xSemaphore, ticksToWait/2); //TODO: check for failure and return NULL
+    xSemaphoreTake(xSemaphore, portMAX_DELAY); //TODO: check for failure and return NULL
     
     return result; // can be NULL if add to queue fails, command takes too long to return, spi never returned in transaction, or PEC check failed
 }
