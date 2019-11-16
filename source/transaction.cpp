@@ -98,19 +98,8 @@ void transaction( void *pvParameters )
     }
 }
 
-/*
- * Creates and pushes a command to the command queue synchronously only returning once the command has been executed.
- *      @param com: the command id
- *      @param length: the length of the command data
- *      @param num: the number of chips that this command has data for
- *      @param data: all the chips command data (must remmain allocated untill the command is completed)
- *      @param ticksToWait: The number of ticks to wait before timing out or portMAX_DELAY for infinite block
- *                              evenly divided between sending to the command queue and waiting for command to return
- *
- *      @return Returns the resultant data of the command, must be vPortFree'd once no longer needed
- */
-uint8_t* sendCommand( uint8_t *com, int length, int num, uint8_t **data, int ticksToWait )
-{
+// push given command to command queue 
+uint8_t* pushCommand( uint8_t *com, int length, int num, uint8_t **data, int ticksToWait ) {
     uint8_t* result;
     SemaphoreHandle_t xSemaphore = xSemaphoreCreateBinary();
     // assemble the command
@@ -126,6 +115,27 @@ uint8_t* sendCommand( uint8_t *com, int length, int num, uint8_t **data, int tic
     return result; // can be NULL if add to queue fails, command takes too long to return, spi never returned in transaction, or PEC check failed
 }
 
+/*
+ * Creates and pushes a command to the command queue synchronously only returning once the command has been executed.
+ *      @param com: the command id
+ *      @param length: the length of the command data
+ *      @param num: the number of chips that this command has data for
+ *      @param data: all the chips command data (must remmain allocated untill the command is completed)
+ *      @param ticksToWait: The number of ticks to wait before timing out or portMAX_DELAY for infinite block
+ *                              evenly divided between sending to the command queue and waiting for command to return
+ *
+ *      @return Returns the resultant data of the command, must be vPortFree'd once no longer needed
+ */
+uint8_t* sendCommand( int com, int length, int num, uint8_t **data, int ticksToWait )
+{
+    uint8_t *new_com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
+    new_com[0] = CCS[com][0];
+    new_com[1] = CCS[com][1];
+    uint8_t* ret = pushCommand( new_com, length, num, data, ticksToWait );
+    vPortFree(new_com);
+    return ret;
+}
+
 // call ADCV command like any other but with base 10 integer values for MD, DCP, and CH
 uint8_t* sendCommandADCV( int md, int dcp, int ch, int length, int num, uint8_t **data, int ticksToWait ) {
     int com = ADCV;
@@ -134,7 +144,7 @@ uint8_t* sendCommandADCV( int md, int dcp, int ch, int length, int num, uint8_t 
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (dcp * 16);
     new_com[1] = new_com[1] | (ch); 
-    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    uint8_t* ret = pushCommand(new_com, length, num, data, ticksToWait );
     vPortFree(new_com);
     return ret;
 }
@@ -148,7 +158,7 @@ uint8_t* sendCommandADOW( int md, int pup, int dcp, int ch, int length, int num,
     new_com[1] = new_com[1] | (pup * 64);
     new_com[1] = new_com[1] | (dcp * 16);
     new_com[1] = new_com[1] | (ch); 
-    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    uint8_t* ret = pushCommand(new_com, length, num, data, ticksToWait );
     vPortFree(new_com);
     return ret;
 }
@@ -160,7 +170,7 @@ uint8_t* sendCommandCVST( int md, int st, int length, int num, uint8_t **data, i
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (st * 32);
-    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    uint8_t* ret = pushCommand(new_com, length, num, data, ticksToWait );
     vPortFree(new_com);
     return ret;
 }
@@ -172,7 +182,7 @@ uint8_t* sendCommandADOL( int md, int dcp, int length, int num, uint8_t **data, 
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (dcp * 16);
-    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    uint8_t* ret = pushCommand(new_com, length, num, data, ticksToWait );
     vPortFree(new_com);
     return ret;
 }
@@ -184,7 +194,7 @@ uint8_t* sendCommandADAX( int md, int chg, int length, int num, uint8_t **data, 
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (chg); 
-    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    uint8_t* ret = pushCommand(new_com, length, num, data, ticksToWait );
     vPortFree(new_com);
     return ret;
 }
@@ -196,7 +206,7 @@ uint8_t* sendCommandADAXD( int md, int chg, int length, int num, uint8_t **data,
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (chg); 
-    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    uint8_t* ret = pushCommand(new_com, length, num, data, ticksToWait );
     vPortFree(new_com);
     return ret;
 }
@@ -208,7 +218,7 @@ uint8_t* sendCommandAXST( int md, int st, int length, int num, uint8_t **data, i
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (st * 32);
-    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    uint8_t* ret = pushCommand(new_com, length, num, data, ticksToWait );
     vPortFree(new_com);
     return ret;
 }
@@ -220,7 +230,7 @@ uint8_t* sendCommandADSTAT( int md, int chst, int length, int num, uint8_t **dat
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (chst); 
-    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    uint8_t* ret = pushCommand(new_com, length, num, data, ticksToWait );
     vPortFree(new_com);
     return ret;
 }
@@ -232,7 +242,7 @@ uint8_t* sendCommandADSTATD( int md, int chst, int length, int num, uint8_t **da
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (chst); 
-    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    uint8_t* ret = pushCommand(new_com, length, num, data, ticksToWait );
     vPortFree(new_com);
     return ret;
 }
@@ -244,19 +254,19 @@ uint8_t* sendCommandSTATST( int md, int st, int length, int num, uint8_t **data,
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (st * 32);
-    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    uint8_t* ret = pushCommand(new_com, length, num, data, ticksToWait );
     vPortFree(new_com);
     return ret;
 }
 
 // call ADCVAX command like any other but with base 10 integer values for MD, and DCP
-uint8_t* sendCommandADCVAX( int md, int dcp, int length, int num, uint8_t **data, int ticksToWait ) {
+uint8_t* sendCommandADCVAX( int md, int dcp, int length, int num, int ticksToWait ) {
     int com = ADCVAX;
     uint8_t *new_com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (dcp * 16);
-    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    uint8_t* ret = pushCommand(new_com, length, num, NULL, ticksToWait );
     vPortFree(new_com);
     return ret;
 }
@@ -268,7 +278,7 @@ uint8_t* sendCommandADCVSC( int md, int dcp, int length, int num, uint8_t **data
     new_com[0] = CCS[com][0] | md>>1;
     new_com[1] = CCS[com][1] | (md%2 * 128);
     new_com[1] = new_com[1] | (dcp * 16);
-    uint8_t* ret = sendCommand( new_com, length, num, data, ticksToWait );
+    uint8_t* ret = pushCommand(new_com, length, num, data, ticksToWait );
     vPortFree(new_com);
     return ret;
 }

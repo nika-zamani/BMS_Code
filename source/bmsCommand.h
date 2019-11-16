@@ -49,7 +49,7 @@ const uint8_t CCS[44][2] = {
     {0x04, 0x68}, //ADSTAT - MD, CHST
     {0x04, 0x08}, //ADSTATD- MD, CHST
     {0x04, 0x0F}, //STATST - MD, ST
-    {0x04, 0x6F}, //ADCVAX - MD, DCP NO DATA
+    {0x04, 0x6F}, //ADCVAX - MD, DCP ---- NO DATA
     {0x04, 0x67}, //ADCVSC - MD, DCP
                 // END SPECIAL BIT COMMANDS
     {0x07, 0x11}, //CLRCELL

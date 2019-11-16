@@ -21,20 +21,9 @@ void commandSend( void *pvParameters )
     for (;;)
     {
         /* demo task coode */
-
-        uint8_t **data;
-        data = (uint8_t **)(pvPortMalloc(sizeof(uint8_t *)));
-        data[0] = TEST_DATA;
-        
-        uint8_t *com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
-        com[0] = CCS[RDCFGA][0];
-        com[1] = CCS[RDCFGA][1];
-        
-        uint8_t *rx = sendCommand(com, 6, 1, data, portMAX_DELAY);
+        uint8_t *rx = sendCommand(RDCFGA, 6, 1, NULL, portMAX_DELAY);
         memcpy(RETURN_DATA, rx, 12);
-        vPortFree(rx);
-        vPortFree(com);
-        vPortFree(data);
+        vPortFree(rx); // DONT FORGET THIS FREE RETURN DATA IS ALLOCATED WHILE RECEIVING THE COMMAND
 
         vTaskDelayUntil( &xLastWakeTime, xFrequency );
     }

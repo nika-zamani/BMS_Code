@@ -50,7 +50,7 @@ int sendCommandAsync( int com, int length, int num, uint8_t **data, int ticksToW
  * 
  *  @return the data returned in rx from the command or NULL if the command timed out 
  */
-uint8_t* sendCommand( uint8_t *com, int length, int num, uint8_t **data, int ticksToWait );
+uint8_t* sendCommand( int com, int length, int num, uint8_t **data, int ticksToWait );
 
 // call ADCV command like any other but with base 10 integer values for MD, DCP, and CH
 uint8_t* sendCommandADCV( int md, int dcp, int ch, int length, int num, uint8_t **data, int ticksToWait );

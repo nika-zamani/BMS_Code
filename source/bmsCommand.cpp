@@ -36,6 +36,14 @@ int buildCommandBuffer(bmscommand_t *command, uint8_t *tx)
     pec15_calc(len, tx, &tx[len]);
     len += 2;
     
+    // If the command does not require data fill the command buffer with F's
+    if(command->data == NULL) {
+
+        memset(&tx[len], 255, command->num * (command->size + 2));
+
+        return 1;
+    }
+
     for(int i = command->num-1; i >=0; i--)
     {
         memcpy(&tx[len], command->data[i], command->size);
