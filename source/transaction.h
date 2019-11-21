@@ -39,7 +39,7 @@ using namespace BSP;
 void transactionInit();
 void transaction( void *pvParameters );
 
-int sendCommandAsync( int com, int length, int num, uint8_t **data, int ticksToWait, uint8_t* result);
+int sendCommandAsync( int com, int length, int num, uint8_t *data, int ticksToWait, uint8_t** result);
 
 /* To call a command that does not require any special command bits use this command with the name of the command (eg. WRCFGA) for the first argument
  *  @param length:  the length of each peice of data
@@ -50,7 +50,7 @@ int sendCommandAsync( int com, int length, int num, uint8_t **data, int ticksToW
  * 
  *  @return the data returned in rx from the command or NULL if the command timed out 
  */
-uint8_t* sendCommand( int com, int length, int num, uint8_t **data, int ticksToWait );
+uint8_t* sendCommand( int com, int length, int num, uint8_t *data, int ticksToWait );
 
 // call ADCV command like any other but with base 10 integer values for MD, DCP, and CH
 uint8_t* sendCommandADCV( int md, int dcp, int ch, int length, int num, uint8_t **data, int ticksToWait );

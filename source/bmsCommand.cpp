@@ -10,7 +10,7 @@
  *      @param num: The number of chips
  *      @param data: The data for the command
  */
-void bmsCommandInit(bmscommand_t *c, uint8_t com[2], int length, int num, uint8_t **data, uint8_t* result, SemaphoreHandle_t semaphore)
+void bmsCommandInit(bmscommand_t *c, uint8_t com[2], int length, int num, uint8_t *data, uint8_t** result, SemaphoreHandle_t semaphore)
 {
     // TODO: error checking of command number
     c->command = com;
@@ -46,7 +46,7 @@ int buildCommandBuffer(bmscommand_t *command, uint8_t *tx)
 
     for(int i = command->num-1; i >=0; i--)
     {
-        memcpy(&tx[len], command->data[i], command->size);
+        memcpy(&tx[len], &command->data[i*command->size], command->size);
         len += command->size;
         pec15_calc(len, tx, &tx[len]);
         len += 2;

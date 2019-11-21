@@ -6,6 +6,9 @@
 
 #include "semphr.h"
 
+#define NUM_CHIPS       1
+#define DATA_LENGTH     6
+
 enum commands{WRCFGA, WRCFGB, RDCFGA, RDCFGB, RDCVA, RDCVB, RDCVC, RDCVD, RDCVE, RDCVF, RDAUXA,
               RDAUXB, RDAUXC, RDAUXD, RDSTATA, RDSTATB, WRSCTRL, WRPWM, WRPSB, RDSCTRL, RDPWM,
               RDPSB, STSCTRL, CLRSCTRL, ADCV, ADOW, CVST, ADOL, ADAX, ADAXD, AXST, ADSTAT, ADSTATD,
@@ -99,12 +102,12 @@ typedef struct bmscommand_t {
     uint8_t *command;           // uint8_t[2] command code
     int size;                   // size of the data
     int num;                    // number of chips
-    uint8_t **data;             // pointer to 2D array of data for each chip
-    uint8_t* result;            // location for return data
+    uint8_t *data;              // pointer to concatenated array of data for each chip
+    uint8_t **result;            // location for return data
     SemaphoreHandle_t semaphore;// semaphore for return data
 } bmscommand_t;
 
-void bmsCommandInit(bmscommand_t *c, uint8_t com[2], int length, int num, uint8_t **data, uint8_t* result, SemaphoreHandle_t semaphore);
+void bmsCommandInit(bmscommand_t *c, uint8_t com[2], int length, int num, uint8_t *data, uint8_t** result, SemaphoreHandle_t semaphore);
 
 int buildCommandBuffer(bmscommand_t *command, uint8_t *tx);
 

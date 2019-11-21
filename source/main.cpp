@@ -16,14 +16,30 @@ void commandSend( void *pvParameters )
 
     // Initialise the xLastWakeTime variable with the current time.
     xLastWakeTime = xTaskGetTickCount();
+    uint8_t *rx;
 
     int sendValue = 1;
     for (;;)
     {
         /* demo task coode */
-        uint8_t *rx = sendCommand(RDCFGA, 6, 1, NULL, portMAX_DELAY);
-        memcpy(RETURN_DATA, rx, 12);
-        vPortFree(rx); // DONT FORGET THIS FREE RETURN DATA IS ALLOCATED WHILE RECEIVING THE COMMAND
+        uint8_t data[NUM_CHIPS * DATA_LENGTH] = {
+            0x0, 0x0, 0x0, 0x0, 0x1, 0x0
+        };
+        /*rx = sendCommand(WRCFGA, DATA_LENGTH, NUM_CHIPS, data, portMAX_DELAY);
+        if (rx != NULL ) { 
+            memcpy(RETURN_DATA, rx, 12);
+            vPortFree(rx);  // DONT FORGET THIS FREE RETURN DATA IS ALLOCATED WHILE RECEIVING THE COMMAND
+        } else {
+           bool error = true; // error in command
+        }*/
+
+        rx = sendCommand(RDCFGA, DATA_LENGTH, NUM_CHIPS, NULL, portMAX_DELAY);
+        if (rx != NULL ) { 
+            memcpy(RETURN_DATA, rx, 12);
+            vPortFree(rx);  // DONT FORGET THIS FREE RETURN DATA IS ALLOCATED WHILE RECEIVING THE COMMAND
+        } else {
+           bool error = true; // error in command
+        }
 
         vTaskDelayUntil( &xLastWakeTime, xFrequency );
     }
