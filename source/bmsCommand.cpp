@@ -1,6 +1,4 @@
-include <stdio.h>
 #include <string.h>
-#include <future>
 #include "bmsCommand.h"
 
 /*  Initializes data into a bms command

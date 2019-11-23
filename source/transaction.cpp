@@ -27,23 +27,26 @@ void transaction( void *pvParameters )
     spi::SPI& spi = spi::SPI::StaticClass();
     gpio::GPIO& gpio = gpio::GPIO::StaticClass();
 
+    uint8_t start = 1; // run startup sequence?
 
     for (;;)
     {
         /* demo task code */
         xQueueReceive(commandQueue, (void*) &receiveCommand, portMAX_DELAY);
-        time = (xTaskGetTickCount() - lastMessage)/portTICK_PERIOD_MS;
+        // set to over sleep threshold first time through
+        time = start ? t_SLEEP + 1 : ((xTaskGetTickCount() - lastMessage)/portTICK_PERIOD_MS);
+        start = 0;
         
         //create spi buffers
         int length = bmsCommandSize(&receiveCommand);
         uint8_t *tx = (uint8_t*)(pvPortMalloc(length * sizeof(uint8_t)));
         uint8_t *rx = (uint8_t*)(pvPortMalloc(length * sizeof(uint8_t)));
 
-        if(time > t_SLEEP)
+        if(time >= t_SLEEP)
         {
             //add reprograming sequence
         }
-        if(time > t_IDLE)
+        if(time >= t_IDLE)
         {
             // toggle the CS down and up once for each slave to wake
             for(int i = 0; i < SLAVE_COUNT; i++) {
