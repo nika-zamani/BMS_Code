@@ -4,6 +4,8 @@ uint8_t TEST_DATA[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 
 uint8_t RETURN_DATA[12];
 
+SemaphoreHandle_t pushsemaphore;
+
 void timeout( void *pvParameters )
 {
 
@@ -16,6 +18,8 @@ void commandSend( void *pvParameters )
 
     // Initialise the xLastWakeTime variable with the current time.
     xLastWakeTime = xTaskGetTickCount();
+
+    pushsemaphore = xSemaphoreCreateBinary();
 
     int sendValue = 1;
     for (;;)

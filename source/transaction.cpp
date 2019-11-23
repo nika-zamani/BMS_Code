@@ -27,13 +27,12 @@ void transaction( void *pvParameters )
     spi::SPI& spi = spi::SPI::StaticClass();
     gpio::GPIO& gpio = gpio::GPIO::StaticClass();
 
-    uint8_t start = 1; // run startup sequence?
+    uint8_t start = 1;
 
     for (;;)
     {
         /* demo task code */
         xQueueReceive(commandQueue, (void*) &receiveCommand, portMAX_DELAY);
-        // set to over sleep threshold first time through
         time = start ? t_SLEEP + 1 : ((xTaskGetTickCount() - lastMessage)/portTICK_PERIOD_MS);
         start = 0;
         
@@ -42,11 +41,11 @@ void transaction( void *pvParameters )
         uint8_t *tx = (uint8_t*)(pvPortMalloc(length * sizeof(uint8_t)));
         uint8_t *rx = (uint8_t*)(pvPortMalloc(length * sizeof(uint8_t)));
 
-        if(time >= t_SLEEP)
+        if(time > t_SLEEP)
         {
             //add reprograming sequence
         }
-        if(time >= t_IDLE)
+        if(time > t_IDLE)
         {
             // toggle the CS down and up once for each slave to wake
             for(int i = 0; i < SLAVE_COUNT; i++) {
@@ -73,6 +72,8 @@ void transaction( void *pvParameters )
         // wait to get semaphore back from spi (Currently waits infinitely)
         if(xSemaphoreTake(cbSemaphore, portMAX_DELAY) == pdTRUE)
         {
+
+            lastMessage = xTaskGetTickCount();
             // spi finnished
             // TODO: handle response, check pecs
             if(!checkPECS(rx, receiveCommand.size, receiveCommand.num)) {
@@ -96,21 +97,23 @@ void transaction( void *pvParameters )
             vPortFree(rx);
             xSemaphoreGive(receiveCommand.semaphore);
         }
+        
+
     }
 }
 
+extern SemaphoreHandle_t pushsemaphore;
 // push given command to command queue 
 void pushCommand( uint8_t *com, int length, int num, uint8_t *data, uint8_t *rx, int ticksToWait ) {
-    SemaphoreHandle_t xSemaphore = xSemaphoreCreateBinary();
     // assemble the command
     bmscommand_t c;
 
-    bmsCommandInit(&c, com, length, num, data, rx, xSemaphore);
+    bmsCommandInit(&c, com, length, num, data, rx, pushsemaphore);
     // sends command to the command queue and returns the error or success code
     xQueueSend(commandQueue, &c, ticksToWait); //TODO: check for failure and return NULL
 
     // wait for callback and return its return
-    xSemaphoreTake(xSemaphore, portMAX_DELAY); //TODO: check for failure and return NULL
+    xSemaphoreTake(pushsemaphore, portMAX_DELAY); //TODO: check for failure and return NULL
     
 }
 
