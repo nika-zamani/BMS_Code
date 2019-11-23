@@ -27,13 +27,15 @@ void transaction( void *pvParameters )
     spi::SPI& spi = spi::SPI::StaticClass();
     gpio::GPIO& gpio = gpio::GPIO::StaticClass();
 
-    uint8_t start = 1;
+    uint8_t start = 1; // 1 = do startup sequence
 
     for (;;)
     {
         /* demo task code */
         xQueueReceive(commandQueue, (void*) &receiveCommand, portMAX_DELAY);
-        time = start ? t_SLEEP + 1 : ((xTaskGetTickCount() - lastMessage)/portTICK_PERIOD_MS);
+        // always do full wakeup on first time through
+        time = start ? t_SLEEP + 1 : 
+            ((xTaskGetTickCount() - lastMessage)/portTICK_PERIOD_MS);
         start = 0;
         
         //create spi buffers
@@ -102,6 +104,7 @@ void transaction( void *pvParameters )
     }
 }
 
+// semaphore for pushCommand. created in main.cpp
 extern SemaphoreHandle_t pushsemaphore;
 // push given command to command queue 
 void pushCommand( uint8_t *com, int length, int num, uint8_t *data, uint8_t *rx, int ticksToWait ) {

@@ -28,8 +28,8 @@
 
 #define SLAVE_COUNT 10
 
-#define t_SLEEP 10000 // find this
-#define t_IDLE 100 // find this
+#define t_SLEEP 10000 // TODO: find this
+#define t_IDLE 100 // TODO: find this
 
 #define ltccsport BSP::gpio::PortA
 #define ltccspin 2
