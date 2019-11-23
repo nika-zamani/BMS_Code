@@ -1,4 +1,4 @@
-#include <stdio.h>
+include <stdio.h>
 #include <string.h>
 #include <future>
 #include "bmsCommand.h"
@@ -10,7 +10,7 @@
  *      @param num: The number of chips
  *      @param data: The data for the command
  */
-void bmsCommandInit(bmscommand_t *c, uint8_t com[2], int length, int num, uint8_t *data, uint8_t** result, SemaphoreHandle_t semaphore)
+void bmsCommandInit(bmscommand_t *c, uint8_t com[2], int length, int num, uint8_t *data, uint8_t* result, SemaphoreHandle_t semaphore)
 {
     // TODO: error checking of command number
     c->command = com;
@@ -21,7 +21,7 @@ void bmsCommandInit(bmscommand_t *c, uint8_t com[2], int length, int num, uint8_
     c->semaphore = semaphore;
 }
 
-/* maps an integer command id to its corrosponding command and loads said commands SPI command into the spi array.
+/* maps an integer command id to its corresponding command and loads said command's SPI command into the spi array.
  *      @param command: A ponter to the command to turn into a buffer
  *      @param tx: A pointer to the spi buffer array [must be at least bmsCommandSize(command) bytes large]
  *  

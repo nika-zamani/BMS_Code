@@ -30,7 +30,7 @@ void transaction( void *pvParameters )
 
     for (;;)
     {
-        /* demo task coode */
+        /* demo task code */
         xQueueReceive(commandQueue, (void*) &receiveCommand, portMAX_DELAY);
         time = (xTaskGetTickCount() - lastMessage)/portTICK_PERIOD_MS;
         
@@ -74,44 +74,41 @@ void transaction( void *pvParameters )
             // TODO: handle response, check pecs
             if(!checkPECS(rx, receiveCommand.size, receiveCommand.num)) {
                 // PEC Check failed return NULL to sender
-				        vPortFree(tx);
+                vPortFree(tx);
                 vPortFree(rx);
-                *receiveCommand.result = NULL;
                 xSemaphoreGive(receiveCommand.semaphore);
             } else {
                 // return result to caller
-                *receiveCommand.result = rx;
+                memcpy(receiveCommand.result, rx, length);
                 // vPortFree the space for tx
         		vPortFree(tx);
+                vPortFree(rx);
 				xSemaphoreGive(receiveCommand.semaphore); 
             }
             
         } else {
             // spi timed out return NULL to sender
-			// vPortFree the space for tx
+            // vPortFree the space for tx
         	vPortFree(tx);
             vPortFree(rx);
-            *receiveCommand.result = NULL;
             xSemaphoreGive(receiveCommand.semaphore);
         }
     }
 }
 
 // push given command to command queue 
-uint8_t* pushCommand( uint8_t *com, int length, int num, uint8_t *data, int ticksToWait ) {
-    uint8_t** result;
+void pushCommand( uint8_t *com, int length, int num, uint8_t *data, uint8_t *rx, int ticksToWait ) {
     SemaphoreHandle_t xSemaphore = xSemaphoreCreateBinary();
     // assemble the command
     bmscommand_t c;
 
-    bmsCommandInit(&c, com, length, num, data, result, xSemaphore);
+    bmsCommandInit(&c, com, length, num, data, rx, xSemaphore);
     // sends command to the command queue and returns the error or success code
     xQueueSend(commandQueue, &c, ticksToWait); //TODO: check for failure and return NULL
 
     // wait for callback and return its return
     xSemaphoreTake(xSemaphore, portMAX_DELAY); //TODO: check for failure and return NULL
     
-    return *result; // can be NULL if add to queue fails, command takes too long to return, spi never returned in transaction, or PEC check failed
 }
 
 /*
@@ -125,16 +122,17 @@ uint8_t* pushCommand( uint8_t *com, int length, int num, uint8_t *data, int tick
  *
  *      @return Returns the resultant data of the command, must be vPortFree'd once no longer needed
  */
-uint8_t* sendCommand( int com, int length, int num, uint8_t *data, int ticksToWait )
+uint8_t new_com[2];
+
+void sendCommand( int com, int length, int num, uint8_t *data, uint8_t *rx, int ticksToWait )
 {
-    uint8_t *new_com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
+    //uint8_t *new_com = (uint8_t*)(pvPortMalloc(2*sizeof(uint8_t)));
     new_com[0] = CCS[com][0];
     new_com[1] = CCS[com][1];
-    uint8_t* ret = pushCommand( new_com, length, num, data, ticksToWait );
-    vPortFree(new_com);
-    return ret;
+    pushCommand( new_com, length, num, data, rx, ticksToWait );
+    //vPortFree(new_com);
 }
-
+/*
 // call ADCV command like any other but with base 10 integer values for MD, DCP, and CH
 uint8_t* sendCommandADCV( int md, int dcp, int ch, int length, int num, uint8_t *data, int ticksToWait ) {
     int com = ADCV;
@@ -281,6 +279,7 @@ uint8_t* sendCommandADCVSC( int md, int dcp, int length, int num, uint8_t *data,
     vPortFree(new_com);
     return ret;
 }
+*/
 
 /* NONFUNCTIONAL
  * Creates and pushes a command to the command queue asynchronously
@@ -325,7 +324,8 @@ void transactionInit()
     spi::SPI& spi = spi::SPI::StaticClass();
 
     spi::SPI::masterConfig mconf;
-    mconf.baudRate = 500000U;
+    // parameterized in transaction.h
+    mconf.baudRate = ltcbaud;
     mconf.csport = ltccsport;
     mconf.cspin = ltccspin;
     spi.initMaster(0, &mconf);

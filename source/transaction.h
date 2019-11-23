@@ -33,10 +33,15 @@
 
 #define ltccsport BSP::gpio::PortA
 #define ltccspin 2
+#define ltcbaud 500000U
 
 using namespace BSP;
 
+// GPIO static init
+// SPI static init
 void transactionInit();
+
+
 void transaction( void *pvParameters );
 
 int sendCommandAsync( int com, int length, int num, uint8_t *data, int ticksToWait, uint8_t** result);
@@ -50,7 +55,7 @@ int sendCommandAsync( int com, int length, int num, uint8_t *data, int ticksToWa
  * 
  *  @return the data returned in rx from the command or NULL if the command timed out 
  */
-uint8_t* sendCommand( int com, int length, int num, uint8_t *data, int ticksToWait );
+void sendCommand( int com, int length, int num, uint8_t *data, uint8_t *rx, int ticksToWait );
 
 // call ADCV command like any other but with base 10 integer values for MD, DCP, and CH
 uint8_t* sendCommandADCV( int md, int dcp, int ch, int length, int num, uint8_t **data, int ticksToWait );

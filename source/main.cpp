@@ -12,11 +12,10 @@ void timeout( void *pvParameters )
 void commandSend( void *pvParameters )
 {
     TickType_t xLastWakeTime;
-    const TickType_t xFrequency = 1000000 / portTICK_PERIOD_MS;
+    const TickType_t xFrequency = 1000 / portTICK_PERIOD_MS;
 
     // Initialise the xLastWakeTime variable with the current time.
     xLastWakeTime = xTaskGetTickCount();
-    uint8_t *rx;
 
     int sendValue = 1;
     for (;;)
@@ -33,13 +32,7 @@ void commandSend( void *pvParameters )
            bool error = true; // error in command
         }*/
 
-        rx = sendCommand(RDCFGA, DATA_LENGTH, NUM_CHIPS, NULL, portMAX_DELAY);
-        if (rx != NULL ) { 
-            memcpy(RETURN_DATA, rx, 12);
-            vPortFree(rx);  // DONT FORGET THIS FREE RETURN DATA IS ALLOCATED WHILE RECEIVING THE COMMAND
-        } else {
-           bool error = true; // error in command
-        }
+        sendCommand(RDCFGA, DATA_LENGTH, NUM_CHIPS, NULL, RETURN_DATA, portMAX_DELAY);
 
         vTaskDelayUntil( &xLastWakeTime, xFrequency );
     }
@@ -47,9 +40,10 @@ void commandSend( void *pvParameters )
 
 int main( void ) {
     // setup the microcontroller hardware for the demo 
-    prvSetupHardware();
+    prvSetupHardware(); //MKELib hw setup
     transactionInit();
 
+    // reduce priority for lpspi interrupt(?)
     NVIC->IP[26] |= 6 << 4;
 
     //TODO: check if commandQueue is NULL as this means it was not created
@@ -59,7 +53,7 @@ int main( void ) {
     xTaskCreate(commandSend, "commandSend", STACK_SIZE, NULL, TASK_PRIORITY, NULL );
 
     // Start the rtos scheduler, this function should never return as the execution context is changed to
-    //      the task.
+    // the task.
 
     vTaskStartScheduler();
 
