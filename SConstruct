@@ -1,16 +1,15 @@
-import os
-
-# !! Update these aths to point to your respective directories !!
-GNU_PATH = '../gcc-arm-none-eabi/bin/' 
 BSP_PATH = '../MKELibrary/'
 
+import os
 
-# Change the compiled name of the file below
+GNU_PATH = SConscript(BSP_PATH+'config.txt')
+
 compileTarget = 'bms'
 
 # Create Communal build directory to store all the .o's
 VariantDir('build/board', 'board')
 VariantDir('build/source', 'source')
+VariantDir('build/rtos', 'rtos')
 
 env = Environment(ENV = os.environ)
 
@@ -33,13 +32,11 @@ env['ASFLAGS'] = '-g -DDEBUG -D__STARTUP_CLEAR_BSS \
         -ffunction-sections -fdata-sections -ffreestanding \
         -fno-builtin -mthumb -mapcs -std=gnu99 -mcpu=cortex-m4 \
         -mfloat-abi=hard -mfpu=fpv4-sp-d16'
-
 env['CCFLAGS'] = '-O0 -g -DDEBUG -DCPU_MKE18F512VLH16 \
         -DTWR_KE18F -DTOWER -Wall -fno-common \
         -ffunction-sections -fdata-sections -ffreestanding \
         -fno-builtin -mthumb -mapcs -std=gnu99 -mcpu=cortex-m4 \
         -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP'
-
 env['CXXFLAGS'] = '-O0 -g -DDEBUG -Wall \
         -fno-common -ffunction-sections -fdata-sections \
         -ffreestanding -fno-builtin -mthumb -mapcs \
@@ -47,20 +44,26 @@ env['CXXFLAGS'] = '-O0 -g -DDEBUG -Wall \
         -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP \
         -DCPU_MKE18F512VLH16'
 
-env.Append(CPPPATH = [
+includes = [
     'source',
-    'source/freertos/include',
-    'source/freertos',
-    'source/freertos/portable/ARM_CM4F',
-    BSP_PATH+'board',
+    'board',
     BSP_PATH+'CMSIS',
     BSP_PATH+'drivers',
     BSP_PATH+'utilities',
     BSP_PATH+'lib',
-    BSP_PATH+'source',
     BSP_PATH+'System',
     BSP_PATH
-])
+]
+
+
+rtos_includes = [
+    'rtos',
+    'rtos/include',
+    'rtos/portable/ARM_CM4F'
+    ]
+
+env.Append(CPPPATH = includes)
+env.Append(CPPPATH = rtos_includes)
 
 env['LINKFLAGS'] = '-O0 -g -DDEBUG -Wall \
     -fno-common -ffunction-sections -fdata-sections \
@@ -76,15 +79,18 @@ env['LINKFLAGS'] = '-O0 -g -DDEBUG -Wall \
     -mcpu=cortex-m4 -mfloat-abi=hard \
     -mfpu=fpv4-sp-d16 -TMKE18F512xxx16_flash.ld -static'
 
-src = Glob('build/board/*.c') +\
-    Glob('build/source/freertos/*.c'), \
+src = \
+    Glob('build/board/*.c'), \
     Glob('build/source/*.cpp'), \
-    'build/source/freertos/portable/ARM_CM4F/port.c', \
-    'build/source/freertos/portable/MemMang/heap_4.c'
+    Glob('build/source/*.c'),
     
+rtos_src = \
+    Glob('build/rtos/*.c'), \
+    'build/rtos/portable/ARM_CM4F/port.c', \
+    'build/rtos/portable/MemMang/heap_4.c'
 
 # Run the compile command and create .elf
-env.Program(compileTarget, source=src, LIBS=['bsp'], LIBPATH=[BSP_PATH])
+env.Program(compileTarget, source=src+rtos_src, LIBS=['bsp'], LIBPATH=[BSP_PATH])
 
 # Create .lst from .elf
 #env.Command(compileTarget+".lst", compileTarget+".elf", \
