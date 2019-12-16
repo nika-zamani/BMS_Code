@@ -24,6 +24,12 @@
 #include "gpio.h"
 #include "spi.h"
 
+/* Hardware Defines */
+
+#define ltccsport BSP::gpio::PortA
+#define ltccspin 2
+#define ltcbaud 500000U
+
 using namespace BSP;
 /* The configCHECK_FOR_STACK_OVERFLOW setting in FreeRTOSConifg can be used to
  * check task stacks for overflows.  It does not however check the stack used by

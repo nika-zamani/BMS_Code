@@ -47,7 +47,7 @@ int main( void ) {
     prvSetupHardware(); //MKELib hw setup
     transactionInit();
 
-    // reduce priority for lpspi interrupt(?)
+    // reduce priority for lpspi interrupt
     NVIC->IP[26] |= 6 << 4;
 
     //TODO: check if commandQueue is NULL as this means it was not created
@@ -70,6 +70,21 @@ static void prvSetupHardware( void ) {
     // perform all hardare specific setup here
     BOARD_InitBootClocks();
     BOARD_InitBootPins();
+
+    gpio::GPIO::ConstructStatic();
+
+    spi::spi_config conf;
+    conf.callbacks[0] = bmsspicb;
+    spi::SPI::ConstructStatic(&conf);
+    spi::SPI& spi = spi::SPI::StaticClass();
+
+    spi::SPI::masterConfig mconf;
+    // parameterized in main.h
+    mconf.baudRate = ltcbaud;
+    mconf.csport = ltccsport;
+    mconf.cspin = ltccspin;
+    spi.initMaster(0, &mconf);
+
 }
 
 

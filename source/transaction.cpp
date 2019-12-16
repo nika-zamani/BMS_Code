@@ -323,23 +323,14 @@ void bmsspicb() {
 void transactionInit()
 {
     // create a queue capable of containing 5 commands
+    // TODO: check if null
     commandQueue = xQueueCreate( 5, sizeof(bmscommand_t));
-
-    gpio::GPIO::ConstructStatic();
-
-    spi::spi_config conf;
-    conf.callbacks[0] = bmsspicb;
-    spi::SPI::ConstructStatic(&conf);
-    spi::SPI& spi = spi::SPI::StaticClass();
-
-    spi::SPI::masterConfig mconf;
-    // parameterized in transaction.h
-    mconf.baudRate = ltcbaud;
-    mconf.csport = ltccsport;
-    mconf.cspin = ltccspin;
-    spi.initMaster(0, &mconf);
 
     cbSemaphore = xSemaphoreCreateBinary();
 
-    // TODO: Check if semaphore is NULL as this means it was not created
+    // Check if semaphore is NULL as this means it was not created
+    if(cbSemaphore == NULL){
+        // TODO: panic LED
+        for(;;);
+    }
 }
