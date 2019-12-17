@@ -1,15 +1,14 @@
 #include "main.h"
 
 uint8_t TEST_DATA[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-
 uint8_t RETURN_DATA[12];
-
-SemaphoreHandle_t pushsemaphore;
 
 void timeout( void *pvParameters )
 {
 
 }
+
+SemaphoreHandle_t pushsemaphore;
 
 void commandSend( void *pvParameters )
 {
@@ -56,8 +55,8 @@ int main( void ) {
     xTaskCreate(transaction, "transaction", STACK_SIZE, NULL, TASK_PRIORITY+1, NULL );
     xTaskCreate(commandSend, "commandSend", STACK_SIZE, NULL, TASK_PRIORITY, NULL );
 
-    // Start the rtos scheduler, this function should never return as the execution context is changed to
-    // the task.
+    // Start the rtos scheduler, this function should never return as the
+    // execution context is changed to the task.
 
     vTaskStartScheduler();
 

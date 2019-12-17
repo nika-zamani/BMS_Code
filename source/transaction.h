@@ -31,10 +31,6 @@
 #define t_SLEEP 10000 // TODO: find this
 #define t_IDLE 100 // TODO: find this
 
-#define ltccsport BSP::gpio::PortA
-#define ltccspin 2
-#define ltcbaud 500000U
-
 using namespace BSP;
 
 // GPIO static init
