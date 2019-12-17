@@ -25,6 +25,9 @@
 #include "gpio.h"
 #include "spi.h"
 
+#define tick_ms(x) (x*10)
+#define tick_us(x) (x/100)
+
 /* Hardware Defines */
 
 #define ltccsport BSP::gpio::PortA

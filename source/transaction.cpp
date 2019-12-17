@@ -55,9 +55,10 @@ void transaction( void *pvParameters )
             for(int i = 0; i < SLAVE_COUNT; i++) {
                 gpio.clear(ltccsport, ltccspin);
                 //wait 400 microseconds
-                vTaskDelay(.4 / portTICK_PERIOD_MS);
+                // vTaskDelay(.4 / portTICK_PERIOD_MS);
+                vTaskDelay(tick_us(400));
                 gpio.set(ltccsport, ltccspin);
-                vTaskDelay(.1 / portTICK_PERIOD_MS);
+                vTaskDelay(tick_us(100));
             }
         }
 
