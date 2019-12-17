@@ -1,7 +1,7 @@
 #ifndef DEFINES_H_
 #define DEFINES_H_
 
-#define slaves 8        // Total slaves
+#define slaves 1        // Total slaves
 #define confThresh 6
 #define commlen 4+8*slaves // length of most isospi transactions
 #define cells 11        // Cells per slave

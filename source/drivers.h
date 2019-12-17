@@ -3,7 +3,7 @@
 
 #include "spi.h"
 #include "gpio.h"
-#include "canlight.h"
+#include "can.h"
 
 uint8_t spiinit();
 uint8_t caninit();

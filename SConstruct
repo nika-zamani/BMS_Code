@@ -1,11 +1,12 @@
+#!/bin/python
+
+BSP_PATH = '../MKELibrary/'
+
 import os
 
-# !! Update these aths to point to your respective directories !!
-GNU_PATH = '/home/gray/embedded/gcc-arm-none-eabi/bin/'
-BSP_PATH = '../../git/MKELibrary/'
+GNU_PATH = SConscript(BSP_PATH+'config.txt')
 
-# Change the compiled name of the file below
-compileTarget = 'bms'
+compileTarget = 'main'
 
 # Create Communal build directory to store all the .o's
 VariantDir('build/board', 'board')
@@ -32,31 +33,17 @@ env['ASFLAGS'] = '-g -DDEBUG -D__STARTUP_CLEAR_BSS \
         -ffunction-sections -fdata-sections -ffreestanding \
         -fno-builtin -mthumb -mapcs -std=gnu99 -mcpu=cortex-m4 \
         -mfloat-abi=hard -mfpu=fpv4-sp-d16'
-
 env['CCFLAGS'] = '-O0 -g -DDEBUG -DCPU_MKE18F512VLH16 \
         -DTWR_KE18F -DTOWER -Wall -fno-common \
         -ffunction-sections -fdata-sections -ffreestanding \
         -fno-builtin -mthumb -mapcs -std=gnu99 -mcpu=cortex-m4 \
         -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP'
-
 env['CXXFLAGS'] = '-O0 -g -DDEBUG -Wall \
         -fno-common -ffunction-sections -fdata-sections \
         -ffreestanding -fno-builtin -mthumb -mapcs \
         -fno-rtti -fno-exceptions -mcpu=cortex-m4 \
         -mfloat-abi=hard -mfpu=fpv4-sp-d16 -MMD -MP \
-        -DCPU_MKE18F512VLH16 '
-
-env.Append(CPPPATH = [
-    BSP_PATH+'board',
-    BSP_PATH+'CMSIS',
-    BSP_PATH+'drivers',
-    BSP_PATH+'utilities',
-    BSP_PATH+'lib',
-    BSP_PATH+'source',
-    BSP_PATH+'System',
-    BSP_PATH
-])
-
+        -DCPU_MKE18F512VLH16'
 env['LINKFLAGS'] = '-O0 -g -DDEBUG -Wall \
     -fno-common -ffunction-sections -fdata-sections \
     -ffreestanding -fno-builtin -mthumb -mapcs \
@@ -71,9 +58,24 @@ env['LINKFLAGS'] = '-O0 -g -DDEBUG -Wall \
     -mcpu=cortex-m4 -mfloat-abi=hard \
     -mfpu=fpv4-sp-d16 -TMKE18F512xxx16_flash.ld -static'
 
-src = Glob('build/board/*.c') +\
-    Glob('build/source/*.cpp')
+includes = [
+    'source',
+    'board',
+    BSP_PATH+'CMSIS',
+    BSP_PATH+'drivers',
+    BSP_PATH+'utilities',
+    BSP_PATH+'lib',
+    BSP_PATH+'System',
+    BSP_PATH
+]
 
+env.Append(CPPPATH = includes)
+
+src = \
+    Glob('build/board/*.c'), \
+    Glob('build/source/*.cpp'), \
+    Glob('build/source/*.c')
+    
 # Run the compile command and create .elf
 env.Program(compileTarget, source=src, LIBS=['bsp'], LIBPATH=[BSP_PATH])
 

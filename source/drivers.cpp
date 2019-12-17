@@ -47,7 +47,7 @@ void cancb(){
 
 uint8_t caninit(){
 
-    can::canlight_config c;
+    can::can_config c;
     can::CANlight::ConstructStatic(&c);
     can::CANlight& can = can::CANlight::StaticClass();
 
