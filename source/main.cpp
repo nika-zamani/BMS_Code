@@ -41,6 +41,8 @@ void commandSend( void *pvParameters )
     }
 }
 
+extern void bmsspicb();
+
 int main( void ) {
     // setup the microcontroller hardware for the demo 
     prvSetupHardware(); //MKELib hw setup

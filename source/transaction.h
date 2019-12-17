@@ -24,6 +24,8 @@
 #include "gpio.h"
 #include "spi.h"
 
+#include "main.h"
+
 #include <future>
 
 #define SLAVE_COUNT 10
