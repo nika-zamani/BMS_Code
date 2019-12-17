@@ -1,47 +1,33 @@
 #include "main.h"
 
-uint8_t TEST_DATA[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-uint8_t RETURN_DATA[12];
-
 void timeout( void *pvParameters )
 {
 
 }
 
-SemaphoreHandle_t pushsemaphore;
-
-void commandSend( void *pvParameters )
-{
-    TickType_t xLastWakeTime;
-    const TickType_t xFrequency = 1000 / portTICK_PERIOD_MS;
-
-    // Initialise the xLastWakeTime variable with the current time.
-    xLastWakeTime = xTaskGetTickCount();
-
-    pushsemaphore = xSemaphoreCreateBinary();
-
-    int sendValue = 1;
-    for (;;)
-    {
-        /* demo task coode */
-        uint8_t data[NUM_CHIPS * DATA_LENGTH] = {
-            0x0, 0x0, 0x0, 0x0, 0x1, 0x0
-        };
-        /*rx = sendCommand(WRCFGA, DATA_LENGTH, NUM_CHIPS, data, portMAX_DELAY);
-        if (rx != NULL ) { 
-            memcpy(RETURN_DATA, rx, 12);
-            vPortFree(rx);  // DONT FORGET THIS FREE RETURN DATA IS ALLOCATED WHILE RECEIVING THE COMMAND
-        } else {
-           bool error = true; // error in command
-        }*/
-
-        sendCommand(RDCFGA, DATA_LENGTH, NUM_CHIPS, NULL, RETURN_DATA, portMAX_DELAY);
-
-        vTaskDelayUntil( &xLastWakeTime, xFrequency );
-    }
-}
-
 extern void bmsspicb();
+
+static void prvSetupHardware( void ) {
+
+    // perform all hardare specific setup here
+    BOARD_InitBootClocks();
+    BOARD_InitBootPins();
+
+    gpio::GPIO::ConstructStatic();
+
+    spi::spi_config conf;
+    conf.callbacks[0] = bmsspicb;
+    spi::SPI::ConstructStatic(&conf);
+    spi::SPI& spi = spi::SPI::StaticClass();
+
+    spi::SPI::masterConfig mconf;
+    // parameterized in main.h
+    mconf.baudRate = ltcbaud;
+    mconf.csport = ltccsport;
+    mconf.cspin = ltccspin;
+    spi.initMaster(0, &mconf);
+
+}
 
 int main( void ) {
     // setup the microcontroller hardware for the demo 
@@ -65,29 +51,6 @@ int main( void ) {
     // shouldn't get here!
     return 0;
 }
-
-
-static void prvSetupHardware( void ) {
-    // perform all hardare specific setup here
-    BOARD_InitBootClocks();
-    BOARD_InitBootPins();
-
-    gpio::GPIO::ConstructStatic();
-
-    spi::spi_config conf;
-    conf.callbacks[0] = bmsspicb;
-    spi::SPI::ConstructStatic(&conf);
-    spi::SPI& spi = spi::SPI::StaticClass();
-
-    spi::SPI::masterConfig mconf;
-    // parameterized in main.h
-    mconf.baudRate = ltcbaud;
-    mconf.csport = ltccsport;
-    mconf.cspin = ltccspin;
-    spi.initMaster(0, &mconf);
-
-}
-
 
 
 

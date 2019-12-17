@@ -15,6 +15,7 @@ bool checkPECS(uint8_t* rx, int len, int num) {
         }
         pos+=2;
     }
+
     return true;
 }
 
@@ -31,8 +32,9 @@ void transaction( void *pvParameters )
 
     for (;;)
     {
-        /* demo task code */
+
         xQueueReceive(commandQueue, (void*) &receiveCommand, portMAX_DELAY);
+
         // always do full wakeup on first time through
         time = start ? t_SLEEP + 1 : 
             ((xTaskGetTickCount() - lastMessage)/portTICK_PERIOD_MS);
@@ -67,9 +69,9 @@ void transaction( void *pvParameters )
         }
 
         //TODO: Ensure that the semaphore is working properly
-        
+
         //send spi messaage
-        spi.mastertx(0, &tx[0], &rx[0], length);
+        spi.mastertx(0, tx, rx, length);
 
         // wait to get semaphore back from spi (Currently waits infinitely)
         if(xSemaphoreTake(cbSemaphore, portMAX_DELAY) == pdTRUE)
@@ -79,28 +81,22 @@ void transaction( void *pvParameters )
             // spi finnished
             // TODO: handle response, check pecs
             if(!checkPECS(rx, receiveCommand.size, receiveCommand.num)) {
-                // PEC Check failed return NULL to sender
-                vPortFree(tx);
-                vPortFree(rx);
-                xSemaphoreGive(receiveCommand.semaphore);
+                // PEC Check failed 
             } else {
                 // return result to caller
                 memcpy(receiveCommand.result, rx, length);
                 // vPortFree the space for tx
-        		vPortFree(tx);
-                vPortFree(rx);
-				xSemaphoreGive(receiveCommand.semaphore); 
             }
             
         } else {
             // spi timed out return NULL to sender
             // vPortFree the space for tx
-        	vPortFree(tx);
-            vPortFree(rx);
-            xSemaphoreGive(receiveCommand.semaphore);
         }
-        
 
+        vPortFree(tx);
+        vPortFree(rx);
+        xSemaphoreGive(receiveCommand.semaphore);
+        
     }
 }
 

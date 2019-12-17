@@ -20,6 +20,7 @@
 
 #include "bmsCommand.h"
 #include "transaction.h"
+#include "commandSend.h"
 
 #include "gpio.h"
 #include "spi.h"
@@ -45,10 +46,5 @@ const unsigned char ucExpectedInterruptStackValues[] = { 0xCC, 0xCC, 0xCC, 0xCC,
 
 #define STACK_SIZE 100
 #define TASK_PRIORITY 1
-
-/*
- * Perform any hardware specific setup in this function
- */
-static void prvSetupHardware(void);
 
 #endif
