@@ -1,5 +1,7 @@
 #include "main.h"
 
+using namespace BSP;
+
 void timeout( void *pvParameters )
 {
 
@@ -21,7 +23,7 @@ static void prvSetupHardware( void ) {
     spi::SPI& spi = spi::SPI::StaticClass();
 
     spi::SPI::masterConfig mconf;
-    // parameterized in main.h
+    // parameterized in hardware.h
     mconf.baudRate = ltcbaud;
     mconf.csport = ltccsport;
     mconf.cspin = ltccspin;
@@ -29,8 +31,8 @@ static void prvSetupHardware( void ) {
 
 }
 
+
 int main( void ) {
-    // setup the microcontroller hardware for the demo 
     prvSetupHardware(); //MKELib hw setup
     transactionInit();
 
@@ -40,8 +42,9 @@ int main( void ) {
     //TODO: check if commandQueue is NULL as this means it was not created
     //TODO: check for memory leaks
 
-    xTaskCreate(transaction, "transaction", STACK_SIZE, NULL, TASK_PRIORITY+1, NULL );
-    xTaskCreate(commandSend, "commandSend", STACK_SIZE, NULL, TASK_PRIORITY, NULL );
+    xTaskCreate(transaction, "transaction", STACK_SIZE, NULL,
+            configMAX_PRIORITIES-1, NULL );
+    //xTaskCreate(commandSend, "commandSend", STACK_SIZE, NULL, 1, NULL );
 
     // Start the rtos scheduler, this function should never return as the
     // execution context is changed to the task.
@@ -51,10 +54,6 @@ int main( void ) {
     // shouldn't get here!
     return 0;
 }
-
-
-
-
 
 
 /************************************************************************************/

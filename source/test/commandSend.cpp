@@ -8,7 +8,7 @@ SemaphoreHandle_t pushsemaphore;
 void commandSend( void *pvParameters )
 {
     TickType_t xLastWakeTime;
-    const TickType_t xFrequency = 1000 / portTICK_PERIOD_MS;
+    const TickType_t xFrequency = tick_ms(1000);
 
     // Initialise the xLastWakeTime variable with the current time.
     xLastWakeTime = xTaskGetTickCount();

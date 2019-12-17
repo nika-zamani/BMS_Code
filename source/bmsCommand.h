@@ -1,69 +1,123 @@
 #ifndef BMSCOMMAND_H
 #define BMSCOMMAND_H
 
-#include "MKE18F16.h"
-#include "FreeRTOS.h"
+#include "common.h"
 
-#include "semphr.h"
+enum Command{WRCFGA, WRCFGB, RDCFGA, RDCFGB, RDCVA, RDCVB, RDCVC, RDCVD,
+    RDCVE, RDCVF, RDAUXA, RDAUXB, RDAUXC, RDAUXD, RDSTATA, RDSTATB, WRSCTRL,
+    WRPWM, WRPSB, RDSCTRL, RDPWM, RDPSB, STSCTRL, CLRSCTRL, ADCV, ADOW, CVST,
+    ADOL, ADAX, ADAXD, AXST, ADSTAT, ADSTATD, STATST, ADCVAX, ADCVSC, CLRCELL,
+    CLRAUX, CLRSTAT, PLADC, DIAGN, WRCOMM, RDCOMM, STCOMM};
 
-#define NUM_CHIPS       1
-#define DATA_LENGTH     6
+struct bmscommand_t; // forward declare struct for use in buildbuffer_f def
 
-enum commands{WRCFGA, WRCFGB, RDCFGA, RDCFGB, RDCVA, RDCVB, RDCVC, RDCVD, RDCVE, RDCVF, RDAUXA,
-              RDAUXB, RDAUXC, RDAUXD, RDSTATA, RDSTATB, WRSCTRL, WRPWM, WRPSB, RDSCTRL, RDPWM,
-              RDPSB, STSCTRL, CLRSCTRL, ADCV, ADOW, CVST, ADOL, ADAX, ADAXD, AXST, ADSTAT, ADSTATD,
-              STATST, ADCVAX, ADCVSC, CLRCELL, CLRAUX, CLRSTAT, PLADC, DIAGN, WRCOMM, RDCOMM, STCOMM};
+typedef uint8_t (*buildbuffer_f)(bmscommand_t*, uint8_t*); // assemble command buffer
 
-// Array contains command codes for all commands neccecary, position in this array will depend
-//      on a mapped value from the command name in bms.h
-const uint8_t CCS[44][2] = {
-    {0x00, 0x01}, //WRCFGA
-    {0x00, 0x24}, //WRCFGB*
-    {0x00, 0x02}, //RDCFGA
-    {0x00, 0x26}, //RDCFGB*
-    {0x00, 0x04}, //RDCVA
-    {0x00, 0x06}, //RDCVB
-    {0x00, 0x08}, //RDCVC
-    {0x00, 0x0A}, //RDCVD
-    {0x00, 0x09}, //RDCVE*
-    {0x00, 0x0B}, //RDCVF*
-    {0x00, 0x0C}, //RDAUXA
-    {0x00, 0x0E}, //RDAUXB
-    {0x00, 0x0D}, //RDAUXC*
-    {0x00, 0x0F}, //RDAUXD*
-    {0x00, 0x10}, //RDSTATA
-    {0x00, 0x12}, //RDSTATB
-    {0x00, 0x14}, //WRSCTRL
-    {0x00, 0x20}, //WRPWM
-    {0x00, 0x1C}, //WRPSB*
-    {0x00, 0x16}, //RDSCTRL
-    {0x00, 0x22}, //RDPWM
-    {0x00, 0x1E}, //RDPSB*
-    {0x00, 0x19}, //STSCTRL
-    {0x00, 0x18}, //CLRSCTRL
-                // BEGIN SPECIAL BIT COMMANDS
-    {0x02, 0x60}, //ADCV   - MD, DCP, CH
-    {0x02, 0x28}, //ADOW   - MD, PUP, DCP, CH
-    {0x02, 0x07}, //CVST   - MD, ST
-    {0x02, 0x01}, //ADOL   - MD, DCP
-    {0x04, 0x60}, //ADAX   - MD, CHG
-    {0x04, 0x00}, //ADAXD  - MD, CHG
-    {0x04, 0x07}, //AXST   - MD, ST
-    {0x04, 0x68}, //ADSTAT - MD, CHST
-    {0x04, 0x08}, //ADSTATD- MD, CHST
-    {0x04, 0x0F}, //STATST - MD, ST
-    {0x04, 0x6F}, //ADCVAX - MD, DCP ---- NO DATA
-    {0x04, 0x67}, //ADCVSC - MD, DCP
-                // END SPECIAL BIT COMMANDS
-    {0x07, 0x11}, //CLRCELL
-    {0x07, 0x12}, //CLRAUX
-    {0x07, 0x13}, //CLRSTAT
-    {0x07, 0x14}, //PLADC
-    {0x07, 0x15}, //DIAGN
-    {0x07, 0x21}, //WRCOMM
-    {0x07, 0x22}, //RDCOMM
-    {0x07, 0x23}, //STCOMM
+// this struct used only in const definition of bmscom
+typedef struct
+{
+    Command name;
+    uint8_t code[2];
+    buildbuffer_f combb;
+    uint8_t sz;
+} bmscom_t;
+
+// the different possible buffer assembly procedures
+uint8_t combbTx(bmscommand_t*, uint8_t*); // send data
+uint8_t combbRx(bmscommand_t*, uint8_t*); // receive data
+uint8_t combbDir(bmscommand_t*, uint8_t*); // send just instruction
+uint8_t combbClk(bmscommand_t*, uint8_t*); // send clock pulses
+
+const bmscom_t bmscom[44] {
+    {WRCFGA, {0x00, 0x01}, combbTx},
+    {WRCFGB, {0x00, 0x24}, combbTx},
+    {RDCFGA, {0x00, 0x02}, combbRx},
+    {RDCFGB, {0x00, 0x26}, combbRx},
+    {RDCVA, {0x00, 0x04}, combbRx},
+    {RDCVB, {0x00, 0x06}, combbRx},
+    {RDCVC, {0x00, 0x08}, combbRx},
+    {RDCVD, {0x00, 0x0A}, combbRx},
+    {RDCVE, {0x00, 0x09}, combbRx},
+    {RDCVF, {0x00, 0x0B}, combbRx},
+    {RDAUXA, {0x00, 0x0C}, combbRx},
+    {RDAUXB, {0x00, 0x0E}, combbRx},
+    {RDAUXC, {0x00, 0x0D}, combbRx},
+    {RDAUXD, {0x00, 0x0F}, combbRx},
+    {RDSTATA, {0x00, 0x10}, combbRx},
+    {RDSTATB, {0x00, 0x12}, combbRx},
+    {WRSCTRL, {0x00, 0x14}, NULL}, //TODO: all NULL combb defs
+    {WRPWM, {0x00, 0x20}, NULL},
+    {WRPSB, {0x00, 0x1C}, NULL},
+    {RDSCTRL, {0x00, 0x16}, combbRx},
+    {RDPWM, {0x00, 0x22}, combbRx},
+    {RDPSB, {0x00, 0x1E}, combbRx},
+    {STSCTRL, {0x00, 0x19}, NULL},
+    {CLRSCTRL, {0x00, 0x18}, NULL},
+    {ADCV, {0x02, 0x60}, combbDir},
+    {ADOW, {0x02, 0x28}, combbDir},
+    {CVST, {0x02, 0x07}, NULL},
+    {ADOL, {0x02, 0x01}, combbDir},
+    {ADAX, {0x04, 0x60}, combbDir},
+    {ADAXD, {0x04, 0x00}, combbDir},
+    {AXST, {0x04, 0x07}, combbDir},
+    {ADSTAT, {0x04, 0x68}, combbDir},
+    {ADSTATD, {0x04, 0x08}, combbDir},
+    {STATST, {0x04, 0x0F}, NULL},
+    {ADCVAX, {0x04, 0x6F}, combbDir},
+    {ADCVSC, {0x04, 0x67}, combbDir},
+    {CLRCELL, {0x07, 0x11}, NULL},
+    {CLRAUX, {0x07, 0x12}, NULL},
+    {CLRSTAT, {0x07, 0x13}, NULL},
+    {PLADC, {0x07, 0x14}, NULL},
+    {DIAGN, {0x07, 0x15}, NULL},
+    {WRCOMM, {0x07, 0x21}, combbTx},
+    {RDCOMM, {0x07, 0x22}, combbRx},
+    {STCOMM, {0x07, 0x23}, combbClk},
 };
+
+// a command to be sent to the BMS
+typedef struct bmscommand_t {
+    bmscom_t c;
+    int size;                   // size of the data DEPRECATED
+    int num;                    // number of chips
+    uint8_t *data;              // pointer to concatenated array of data for each chip
+    uint8_t *result;            // location for return data
+    SemaphoreHandle_t semaphore;// semaphore for return data
+} bmscommand_t;
+
+/*  Initializes data into a bms command
+ *      @param c: The command to initialize
+ *      @param com: The command definition
+ *      @param num: The number of chips
+ *      @param data: The data for the command
+ *      @param result: Where to store the received data
+ *      @param semaphore: semaphore which gets given by... something TODO: finish thought
+ */
+void bmsCommandInit(bmscommand_t *c, bmscom_t com, int num,
+        uint8_t *data, uint8_t* result, SemaphoreHandle_t semaphore);
+
+/* buildCommandBuffer: maps an integer command id to its corresponding command
+ * and loads said command's SPI command into the spi array.
+ *
+ *      @param command: A ponter to the command to turn into a buffer
+ *      @param tx: A pointer to the spi buffer array [must be at least
+ *              bmsCommandSize(command) bytes large]
+ *  
+ *      @return An integer error code or 1 if successfull
+ */  
+int buildCommandBuffer(bmscommand_t *command, uint8_t *tx);
+
+/*  Gets the size of a command buffer [byte array] for this command
+ *      @param c: Pointer to the command to get the size of
+ * 
+ *      @return The size of the command as a byte array
+ */
+int bmsCommandSize(bmscommand_t *c);
+
+/* Calculates and returns the PEC15 */
+void pec15_calc(uint8_t len,    //Number of bytes to be used to calculate a PEC
+        uint8_t *data,          //Array of data to be used to calculate  a PEC
+        uint8_t *pec);          // Location of PEC
 
 // Copied from LTSketchbook/libraries/LTC681x/LTC681x.cpp
 const uint16_t crc15Table[256] = {0x0,0xc599, 0xceab, 0xb32, 0xd8cf, 0x1d56,
@@ -96,25 +150,5 @@ const uint16_t crc15Table[256] = {0x0,0xc599, 0xceab, 0xb32, 0xd8cf, 0x1d56,
     0xa76f, 0x62f6, 0x69c4, 0xac5d, 0x7fa0, 0xba39, 0xb10b, 0x7492, 0x5368,
     0x96f1, 0x9dc3, 0x585a, 0x8ba7, 0x4e3e, 0x450c, 0x8095 };
 
-
-// a command to be sent to the BMS
-typedef struct bmscommand_t {
-    uint8_t *command;           // uint8_t[2] command code
-    int size;                   // size of the data
-    int num;                    // number of chips
-    uint8_t *data;              // pointer to concatenated array of data for each chip
-    uint8_t *result;            // location for return data
-    SemaphoreHandle_t semaphore;// semaphore for return data
-} bmscommand_t;
-
-void bmsCommandInit(bmscommand_t *c, uint8_t com[2], int length, int num, uint8_t *data, uint8_t* result, SemaphoreHandle_t semaphore);
-
-int buildCommandBuffer(bmscommand_t *command, uint8_t *tx);
-
-int bmsCommandSize(bmscommand_t *c);
-
-void pec15_calc(uint8_t len,   //Number of bytes that will be used to calculate a PEC
-        uint8_t *data,              //Array of data that will be used to calculate  a PEC
-        uint8_t *pec);               // Location of PEC
 
 #endif
