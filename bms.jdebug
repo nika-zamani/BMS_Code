@@ -23,6 +23,7 @@ void OnProjectLoad (void) {
   // User settings
   //
   File.Open ("$(ProjectDir)/bms.elf");
+  Project.SetOSPlugin("FreeRTOSPlugin");
 }
 
 /*********************************************************************

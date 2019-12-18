@@ -1,5 +1,7 @@
 #include "transaction.h"
 
+using namespace BSP;
+
 static QueueHandle_t commandQueue = NULL;
 static SemaphoreHandle_t cbSemaphore, pushSemaphore;
 
