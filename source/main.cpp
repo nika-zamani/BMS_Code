@@ -42,9 +42,8 @@ int main( void ) {
     //TODO: check if commandQueue is NULL as this means it was not created
     //TODO: check for memory leaks
 
-    xTaskCreate(transaction, "transaction", STACK_SIZE, NULL,
-            configMAX_PRIORITIES-1, NULL );
-    //xTaskCreate(commandSend, "commandSend", STACK_SIZE, NULL, 1, NULL );
+    xTaskCreate(transaction, "transaction", STACK_SIZE, NULL, configMAX_PRIORITIES-1, NULL );
+    xTaskCreate(commandRW, "wrcfgatest", STACK_SIZE, NULL, 1, NULL );
 
     // Start the rtos scheduler, this function should never return as the
     // execution context is changed to the task.

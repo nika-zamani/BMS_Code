@@ -13,4 +13,6 @@ cmake_install.cmake
 .sconsign.dblite
 *.bak
 
+*.jdebug.user
+
 SConstruct

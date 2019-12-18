@@ -11,7 +11,7 @@ enum Command{WRCFGA, WRCFGB, RDCFGA, RDCFGB, RDCVA, RDCVB, RDCVC, RDCVD,
 
 struct bmscommand_t; // forward declare struct for use in buildbuffer_f def
 
-typedef uint8_t (*buildbuffer_f)(bmscommand_t*, uint8_t*); // assemble command buffer
+typedef int (*buildbuffer_f)(bmscommand_t*, uint8_t*); // assemble command buffer
 
 // this struct used only in const definition of bmscom
 typedef struct
@@ -19,14 +19,14 @@ typedef struct
     Command name;
     uint8_t code[2];
     buildbuffer_f combb;
-    uint8_t sz;
 } bmscom_t;
 
+// COMmand Build Buffer
 // the different possible buffer assembly procedures
-uint8_t combbTx(bmscommand_t*, uint8_t*); // send data
-uint8_t combbRx(bmscommand_t*, uint8_t*); // receive data
-uint8_t combbDir(bmscommand_t*, uint8_t*); // send just instruction
-uint8_t combbClk(bmscommand_t*, uint8_t*); // send clock pulses
+int combbTx(bmscommand_t*, uint8_t*); // send data
+int combbRx(bmscommand_t*, uint8_t*); // receive data
+int combbDir(bmscommand_t*, uint8_t*); // send just instruction
+int combbClk(bmscommand_t*, uint8_t*); // send clock pulses
 
 const bmscom_t bmscom[44] {
     {WRCFGA, {0x00, 0x01}, combbTx},
@@ -78,11 +78,10 @@ const bmscom_t bmscom[44] {
 // a command to be sent to the BMS
 typedef struct bmscommand_t {
     bmscom_t c;
-    int size;                   // size of the data DEPRECATED
     int num;                    // number of chips
-    uint8_t *data;              // pointer to concatenated array of data for each chip
-    uint8_t *result;            // location for return data
-    SemaphoreHandle_t semaphore;// semaphore for return data
+    int len;                    // data length
+    uint8_t *data;              // incoming/outgoing data
+    uint8_t *error;              // success flag
 } bmscommand_t;
 
 /*  Initializes data into a bms command
@@ -92,9 +91,10 @@ typedef struct bmscommand_t {
  *      @param data: The data for the command
  *      @param result: Where to store the received data
  *      @param semaphore: semaphore which gets given by... something TODO: finish thought
+ *      @param sent: pointer to success flag
  */
-void bmsCommandInit(bmscommand_t *c, bmscom_t com, int num,
-        uint8_t *data, uint8_t* result, SemaphoreHandle_t semaphore);
+void bmsCommandInit(bmscommand_t *c, bmscom_t com, int num, uint8_t *data, 
+        uint8_t *error);
 
 /* buildCommandBuffer: maps an integer command id to its corresponding command
  * and loads said command's SPI command into the spi array.

@@ -1,11 +1,8 @@
-#include "commandSend.h"
+#include "testroutines.h"
 
-uint8_t TEST_DATA[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-uint8_t RETURN_DATA[12];
+uint8_t RETURN_DATA[6];
 
-SemaphoreHandle_t pushsemaphore;
-
-void commandSend( void *pvParameters )
+void commandRDCFGA( void *pvParameters )
 {
     TickType_t xLastWakeTime;
     const TickType_t xFrequency = tick_ms(1000);
@@ -13,26 +10,55 @@ void commandSend( void *pvParameters )
     // Initialise the xLastWakeTime variable with the current time.
     xLastWakeTime = xTaskGetTickCount();
 
-    pushsemaphore = xSemaphoreCreateBinary();
-
-    int sendValue = 1;
     for (;;)
     {
-        /* demo task coode */
-        uint8_t data[NUM_CHIPS * DATA_LENGTH] = {
-            0x0, 0x0, 0x0, 0x0, 0x1, 0x0
-        };
-        /*rx = sendCommand(WRCFGA, DATA_LENGTH, NUM_CHIPS, data, portMAX_DELAY);
-        if (rx != NULL ) { 
-            memcpy(RETURN_DATA, rx, 12);
-            vPortFree(rx);  // DONT FORGET THIS FREE RETURN DATA IS ALLOCATED WHILE RECEIVING THE COMMAND
-        } else {
-           bool error = true; // error in command
-        }*/
-
-        sendCommand(RDCFGA, DATA_LENGTH, NUM_CHIPS, NULL, RETURN_DATA, portMAX_DELAY);
+        int error = pushCommand(RDCFGA, SLAVE_COUNT, RETURN_DATA);
 
         vTaskDelayUntil( &xLastWakeTime, xFrequency );
     }
 }
 
+void commandWRCFGA( void *pvParameters )
+{
+    TickType_t xLastWakeTime;
+    const TickType_t xFrequency = tick_ms(1000);
+
+    // Initialise the xLastWakeTime variable with the current time.
+    xLastWakeTime = xTaskGetTickCount();
+
+    for (;;)
+    {
+        uint8_t data[SLAVE_COUNT * 6] = {
+            0x0, 0x0, 0x0, 0x0, 0x1, 0x0
+        };
+
+        volatile int error = pushCommand(WRCFGA, SLAVE_COUNT, data);
+
+        vTaskDelayUntil( &xLastWakeTime, xFrequency );
+    }
+}
+
+void commandRW( void *pvParameters )
+{
+    TickType_t xLastWakeTime;
+    const TickType_t xFrequency = tick_ms(1000);
+
+    // Initialise the xLastWakeTime variable with the current time.
+    xLastWakeTime = xTaskGetTickCount();
+
+    for (;;)
+    {
+        uint8_t data[SLAVE_COUNT * 6] = {
+            0x0, 0x0, 0x0, 0x0, 0x1, 0x0
+        };
+
+        volatile int error = pushCommand(WRCFGA, SLAVE_COUNT, data);
+
+        vTaskDelayUntil( &xLastWakeTime, xFrequency/2 );
+
+        error = pushCommand(RDCFGA, SLAVE_COUNT, RETURN_DATA);
+
+        vTaskDelayUntil( &xLastWakeTime, xFrequency/2 );
+
+    }
+}

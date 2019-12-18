@@ -1,27 +1,29 @@
 #include "transaction.h"
 
-QueueHandle_t commandQueue = NULL;
-SemaphoreHandle_t cbSemaphore;
+static QueueHandle_t commandQueue = NULL;
+static SemaphoreHandle_t cbSemaphore, pushSemaphore;
 
-bool checkPECS(uint8_t* rx, int len, int num) {
+// Check to make sure received PECs are correct.
+// Returns 0 on success, >0 on failure
+static int checkPECS(uint8_t* rx, int len, int num) {
     int pos = 4;
     uint8_t pec[2];
     
     for(int i = 0; i < num; i++) {
-        pec15_calc(len, &rx[pos], pec);
-        pos+=len;
+        pec15_calc(6, rx+pos, pec);
+        pos+=6;
         if(rx[pos] != pec[0] || rx[pos+1] != pec[1]) {
-            return false;
+            return 1;
         }
         pos+=2;
     }
 
-    return true;
+    return 0;
 }
 
 // when spi finishes we give the semaphore back to the transaction
 void bmsspicb() {
-    BaseType_t taskWoken = 0;
+    BaseType_t taskWoken = 0; // TODO what does this do?
     xSemaphoreGiveFromISR(cbSemaphore, &taskWoken);
 }
 
@@ -34,9 +36,10 @@ void transactionInit()
     commandQueue = xQueueCreate( 5, sizeof(bmscommand_t));
 
     cbSemaphore = xSemaphoreCreateBinary();
+    pushSemaphore = xSemaphoreCreateBinary();
 
     // Check if semaphore is NULL as this means it was not created
-    if(cbSemaphore == NULL){
+    if(cbSemaphore == NULL || pushSemaphore == NULL){
         // TODO: panic LED
         for(;;);
     }
@@ -44,6 +47,7 @@ void transactionInit()
 
 void transaction( void *pvParameters )
 {
+
     bmscommand_t receiveCommand;
     long lastMessage = xTaskGetTickCount();
     long time;
@@ -64,15 +68,22 @@ void transaction( void *pvParameters )
         start = 0;
         
         //create spi buffers
-        int length = bmsCommandSize(&receiveCommand);
+        int length = receiveCommand.len;
         uint8_t *tx = (uint8_t*)(pvPortMalloc(length * sizeof(uint8_t)));
         uint8_t *rx = (uint8_t*)(pvPortMalloc(length * sizeof(uint8_t)));
 
-        if(tick_us(time) > t_SLEEP)
+        //add command into the buffer
+        if(receiveCommand.c.combb(&receiveCommand, tx))
+        {
+            // buffer assembly failed
+            // TODO: return to sender with error code
+        }
+
+        if(time > tick_us(t_SLEEP))
         {
             //add reprograming sequence
         }
-        if(tick_us(time) > t_IDLE)
+        if(time > tick_us(t_IDLE))
         {
             // toggle the CS down and up once for each slave to wake
             for(int i = 0; i < SLAVE_COUNT; i++) {
@@ -85,13 +96,6 @@ void transaction( void *pvParameters )
             }
         }
 
-        //add command into the buffer
-        //if(receiveCommand.buildbuffer(&receiveCommand, tx))
-        if(0)
-        {
-            // command decoding failed, maybe invalid command?
-            // TODO: return to sender with error code
-        }
 
         //TODO: Ensure that the semaphore is working properly
 
@@ -102,42 +106,123 @@ void transaction( void *pvParameters )
         if(xSemaphoreTake(cbSemaphore, portMAX_DELAY) == pdTRUE)
         {
 
-            lastMessage = xTaskGetTickCount();
             // spi finished
-            // TODO: handle response, check pecs
-            if(!checkPECS(rx, receiveCommand.size, receiveCommand.num)) {
-                // PEC Check failed 
-            } else {
-                // return result to caller
-                memcpy(receiveCommand.result, rx, length);
-                // vPortFree the space for tx
-            }
+            lastMessage = xTaskGetTickCount();
+
+            if(receiveCommand.c.combb == combbRx){
+                if(checkPECS(rx, length, receiveCommand.num)){
+                    *(receiveCommand.error) = 1;
+                } else {
+                    for(int i = 0; i < receiveCommand.num; i++){
+                        memcpy(receiveCommand.data+(i*6), rx+4+(i*8), 6);
+                    }
+                }
+            } 
             
         } else {
             // spi timed out return NULL to sender
-            // vPortFree the space for tx
+            // TODO: timeout handling
         }
 
         vPortFree(tx);
         vPortFree(rx);
-        xSemaphoreGive(receiveCommand.semaphore);
+        xSemaphoreGive(pushSemaphore);
         
     }
 }
 
-// semaphore for pushCommand. created in main.cpp
-extern SemaphoreHandle_t pushsemaphore;
 // push given command to command queue 
-void pushCommand( uint8_t *com, int length, int num, uint8_t *data, uint8_t *rx, int ticksToWait ) {
+uint8_t pushCommand(uint8_t comn, int num, uint8_t *data, 
+        uint8_t arg1, uint8_t arg2, uint8_t arg3, uint8_t arg4)
+{
     // assemble the command
     bmscommand_t c;
 
-    bmsCommandInit(&c, com, length, num, data, rx, pushsemaphore, NULL);
+    bmscom_t com = bmscom[comn];
+
+    switch(comn){
+
+        case ADCV: // arg1 = md, arg2 = dcp, arg3 = ch
+            com.code[0] |= (arg1&0b10)>>1;
+            com.code[1] |= (arg1&0b1)<<7
+                | (arg2&0b1)<<4
+                | (arg3&0b111)<<0;
+            break;
+        case ADOW: // arg1 = md, arg2 = pup, arg3 = dcp, arg4 = ch
+            com.code[0] |= (arg1&0b10)>>1;
+            com.code[1] |= (arg1&0b1)<<7
+                | (arg2&0b1)<<6
+                | (arg3&0b1)<<4
+                | (arg4&0b111)<<0;
+            break;
+        case CVST: // arg1 = md, arg2 = st
+            com.code[0] |= (arg1&0b10)>>1;
+            com.code[1] |= (arg1&0b1)<<7
+                | (arg2&0b11)<<6;
+            break;
+        case ADOL: // arg1 = md, arg2 = dcp
+            com.code[0] |= (arg1&0b10)>>1;
+            com.code[1] |= (arg1&0b1)<<7
+                | (arg2&0b1)<<4;
+            break;
+        case ADAX: // arg1 = md, arg2 = chg
+            com.code[0] |= (arg1&0b10)>>1;
+            com.code[1] |= (arg1&0b1)<<7
+                | (arg2&0b111)<<0;
+            break;
+        case ADAXD: // arg1 = md, arg2 = chg
+            com.code[0] |= (arg1&0b10)>>1;
+            com.code[1] |= (arg1&0b1)<<7
+                | (arg2&0b111)<<0;
+            break;
+        case AXST: // arg1 = md, arg2 = st
+            com.code[0] |= (arg1&0b10)>>1;
+            com.code[1] |= (arg1&0b1)<<7
+                | (arg2&0b11)<<6;
+            break;
+        case ADSTAT: // arg1 = md, arg2 = chst
+            com.code[0] |= (arg1&0b10)>>1;
+            com.code[1] |= (arg1&0b1)<<7
+                | (arg2&0b11)<<6;
+            break;
+        case ADSTATD: // arg1 = md, arg2 = chst
+            com.code[0] |= (arg1&0b10)>>1;
+            com.code[1] |= (arg1&0b1)<<7
+                | (arg2&0b11)<<6;
+            break;
+        case STATST: // arg1 = md, arg2 = st
+            com.code[0] |= (arg1&0b10)>>1;
+            com.code[1] |= (arg1&0b1)<<7
+                | (arg2&0b11)<<6;
+            break;
+        case ADCVAX: // arg1 = md, arg2 = dcp
+            com.code[0] |= (arg1&0b10)>>1;
+            com.code[1] |= (arg1&0b1)<<7
+                | (arg2&0b1)<<4;
+            break;
+        case ADCVSC: // arg1 = md, arg2 = dcp
+            com.code[0] |= (arg1&0b10)>>1;
+            com.code[1] |= (arg1&0b1)<<7
+                | (arg2&0b1)<<4;
+            break;
+        default:
+            break;
+
+    }
+
+    uint8_t error = 0;
+
+    bmsCommandInit(&c, com, num, data, &error);
+
     // sends command to the command queue and returns the error or success code
-    xQueueSend(commandQueue, &c, ticksToWait); //TODO: check for failure and return NULL
+    // TODO: check for failure 
+    xQueueSend(commandQueue, &c, portMAX_DELAY); 
 
     // wait for callback and return its return
-    xSemaphoreTake(pushsemaphore, portMAX_DELAY); //TODO: check for failure and return NULL
+    // TODO: check for failure 
+    xSemaphoreTake(pushSemaphore, portMAX_DELAY); 
+
+    return error;
     
 }
 

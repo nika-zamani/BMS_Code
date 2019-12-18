@@ -46,6 +46,7 @@ env['CXXFLAGS'] = '-O0 -g -DDEBUG -Wall \
 
 includes = [
     'source',
+    'source/test',
     'board',
     BSP_PATH+'CMSIS',
     BSP_PATH+'drivers',
@@ -82,7 +83,8 @@ env['LINKFLAGS'] = '-O0 -g -DDEBUG -Wall \
 src = \
     Glob('build/board/*.c'), \
     Glob('build/source/*.cpp'), \
-    Glob('build/source/*.c'),
+    Glob('build/source/*.c'), \
+    Glob('build/source/test/*.cpp'),
     
 rtos_src = \
     Glob('build/rtos/*.c'), \

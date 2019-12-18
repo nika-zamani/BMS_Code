@@ -11,6 +11,8 @@
 #include "bmsCommand.h"
 #include "transaction.h"
 
+#include "testroutines.h"
+
 #include "gpio.h"
 #include "spi.h"
 

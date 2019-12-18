@@ -1,19 +1,54 @@
 #include "bmsCommand.h"
 
-void bmsCommandInit(bmscommand_t *c, bmscom_t com, int num,
-        uint8_t *data, uint8_t* result, SemaphoreHandle_t semaphore)
+void bmsCommandInit(bmscommand_t *c, bmscom_t com, int num, uint8_t *data, uint8_t *error)
 {
     c->c= com;
     c->num = num;
     c->data = data;
-    c->result = result;
-    c->semaphore = semaphore;
+    c->error = error;
+
+    if(com.combb == combbTx){
+        c->len = 4 + (8 * num);
+    } else if(com.combb == combbRx){
+        c->len = 4 + (8 * num);
+    } else if(com.combb == combbDir){
+        c->len = 4;
+    } else if(com.combb == combbClk){
+        c->len = 4 + ((3 * (*data)) * num); // TODO: check this
+    } else {
+        c->len = 0;
+    }
 }
 
-int bmsCommandSize(bmscommand_t *c) {
-    /* command code(2) + pec(2) + number of chips(num) * 
-           [command length(size) bytes + pec(2)] */
-    return 4 + (c->size + 2) * c->num;
+int combbTx(bmscommand_t* c, uint8_t* buf){
+    int len = 0;
+    memcpy(buf, c->c.code, 2);
+    pec15_calc(2, buf, buf+2);
+    len += 4;
+    for(int i = 0; i < c->num; i++){
+        memcpy(buf + len, c->data + (6*i), 6);
+        pec15_calc(6, buf + len, buf + len + 6);
+        len += 8;
+    }
+    return 0;
+}
+
+int combbRx(bmscommand_t* c, uint8_t* buf){
+    memcpy(buf, c->c.code, 2);
+    pec15_calc(2, buf, buf+2);
+    memset(buf+4, 0xff, 8*c->num);
+    return 0;
+}
+
+int combbDir(bmscommand_t* c, uint8_t* buf){
+    memcpy(buf, c->c.code, 2);
+    pec15_calc(2, buf, buf+2);
+    return 0;
+}
+
+int combbClk(bmscommand_t* c, uint8_t* buf){
+    for(;;);
+    return 0;
 }
 
 void pec15_calc(uint8_t len,    
