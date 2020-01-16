@@ -118,7 +118,7 @@ uint8_t selfTests(uint8_t md, uint8_t st) {
  * SC, ITMP, VA, VD (STATA, STATB): STATST Result
 */
 uint8_t checkSelfTest(uint8_t md, uint8_t st) {
-    uint8_t expect = getSelfTestOutputPatern(_ADCOPT, md, st);
+    int expect = getSelfTestOutputPatern(_ADCOPT, md, st);
 
     uint8_t error = 0;
 
