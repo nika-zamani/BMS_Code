@@ -12,6 +12,7 @@
 #include "transaction.h"
 
 #include "testroutines.h"
+#include "bmsHealth.h"
 
 #include "gpio.h"
 #include "spi.h"

@@ -24,7 +24,7 @@ static void prvSetupHardware( void ) {
 
     spi::SPI::masterConfig mconf;
     // parameterized in hardware.h
-    mconf.baudRate = ltcbaud;
+    mconf.baudRate = ltcbaud/10;
     mconf.csport = ltccsport;
     mconf.cspin = ltccspin;
     spi.initMaster(0, &mconf);
@@ -43,7 +43,7 @@ int main( void ) {
     //TODO: check for memory leaks
 
     xTaskCreate(transaction, "transaction", STACK_SIZE, NULL, configMAX_PRIORITIES-1, NULL );
-    xTaskCreate(commandRW, "wrcfgatest", STACK_SIZE, NULL, 1, NULL );
+    xTaskCreate(monitorBMSHealth, "monitorbmshlth", STACK_SIZE, NULL, 1, NULL );
 
     // Start the rtos scheduler, this function should never return as the
     // execution context is changed to the task.
