@@ -14,7 +14,7 @@ void bmsCommandInit(bmscommand_t *c, bmscom_t com, int num, uint8_t *data, uint8
     } else if(com.combb == combbDir){
         c->len = 4;
     } else if(com.combb == combbClk){
-        c->len = 4 + ((3 * (*data)) * num); // TODO: check this
+        c->len = 4 + ((3 * (*data))); // TODO: check this
     } else {
         c->len = 0;
     }
@@ -47,7 +47,9 @@ int combbDir(bmscommand_t* c, uint8_t* buf){
 }
 
 int combbClk(bmscommand_t* c, uint8_t* buf){
-    for(;;);
+    memcpy(buf, c->c.code, 2);
+    pec15_calc(2, buf, buf+2);
+    memcpy(buf+4, 0xff, c->len - 4); //TODO: check this should fill entire space with f's
     return 0;
 }
 

@@ -76,6 +76,8 @@ FCOMn[3:0]        | 0000  | Master ACK        | Master generates an ACK signal o
         During I2C or SPI communication, the data received from
         the slave device is updated in the COMM register.
 
+        puchCommand(STCOMM, NUM_SLAVES, NUM_BYTES)
+
     RDCOMM Command: The data received from the slave
         device can be read back from the COMM register using
         the RDCOMM command. The command reads back six
