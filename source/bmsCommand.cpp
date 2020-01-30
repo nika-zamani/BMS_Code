@@ -49,7 +49,7 @@ int combbDir(bmscommand_t* c, uint8_t* buf){
 int combbClk(bmscommand_t* c, uint8_t* buf){
     memcpy(buf, c->c.code, 2);
     pec15_calc(2, buf, buf+2);
-    memcpy(buf+4, 0xff, c->len - 4); //TODO: check this should fill entire space with f's
+    memset(buf+4, 0xff, c->len - 4); //TODO: check this should fill entire space with f's
     return 0;
 }
 
