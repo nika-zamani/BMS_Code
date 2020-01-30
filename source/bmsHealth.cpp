@@ -43,8 +43,9 @@ int wiresOpen() {
     /*1. Run the 12-cell command ADOW with PUP = 1 at least
     twice. Read the cell voltages for cells 1 through 12 once
     at the end and store them in array CELLPU(n).*/
-    error = pushCommand(ADOW, SLAVE_COUNT, RETURN_DATA, _MD, 1 /*pup*/, _DCP, _CH);
-    error = pushCommand(ADOW, SLAVE_COUNT, RETURN_DATA, _MD, 1 /*pup*/, _DCP, _CH);
+    for(int i = 0; i < 100; i++) {
+        error = pushCommand(ADOW, SLAVE_COUNT, RETURN_DATA, 3, 1 /*pup*/, _DCP, _CH);
+    }
 
     error = pushCommand(RDCVA, SLAVE_COUNT, RETURN_DATA);
     memcpy(&_CELLPU, RETURN_DATA, 6);
@@ -60,8 +61,10 @@ int wiresOpen() {
     twice. Read the cell voltages for cells 1 through 12 once
     at the end and store them in array CELLPD(n).*/
 
-    error = pushCommand(ADOW, SLAVE_COUNT, RETURN_DATA, _MD, 0 /*pup*/, _DCP, _CH);
-    error = pushCommand(ADOW, SLAVE_COUNT, RETURN_DATA, _MD, 0 /*pup*/, _DCP, _CH);
+    for(int i = 0; i < 100; i++) {
+        error = pushCommand(ADOW, SLAVE_COUNT, RETURN_DATA, 3, 0 /*pup*/, _DCP, _CH);
+    }
+
 
     error = pushCommand(RDCVA, SLAVE_COUNT, RETURN_DATA);
     memcpy(&_CELLPD, RETURN_DATA, 6);
@@ -75,7 +78,7 @@ int wiresOpen() {
     /*3. Take the difference between the pull-up and pull-down
     measurements made in above steps for cells 2 to 12:
     CELLΔ(n) = CELLPU(n) – CELLPD(n).*/
-    for(int i = 0; i < 12; i++) {
+    for(int i = 0; i < 150; i++) {
         _CELLDELTA[i] = _CELLPU[i] - _CELLPD[i];
     }
     /*4. For all values of n from 1 to 11: If CELLΔ(n+1) < –400mV,
@@ -86,7 +89,7 @@ int wiresOpen() {
             open++;
         }
     }
-    if(_CELLPU[1] == 0) {
+    if(_CELLPU[0] == 0) {
         open++;
     }
     if(_CELLPD[11] == 0) {
@@ -199,8 +202,8 @@ void monitorBMSHealth( void *pvParameters )
     {
         // perform diagnostic tests
 
-        getVoltages(_MD);
-        _SELF_TEST_FLAGS = selfTest(_MD,_ST);
+        //getVoltages(_MD);
+        //_SELF_TEST_FLAGS = selfTest(_MD,_ST);
         wireOpen = wiresOpen();
         vTaskDelayUntil( &xLastWakeTime, xFrequency );
     }
