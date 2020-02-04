@@ -2,12 +2,14 @@
 
 uint8_t RETURN_DATA[6];
 
-uint16_t _CELLPU[12];
+uint16_t _CELLPU[12]; //TODO: check if number of cells will always be 12 and change this to a const
 uint16_t _CELLPD[12];
 int32_t _CELLDELTA[12];
 
 uint16_t _CELL_VOLTAGES[12];
 uint16_t _SUM_CELL_VOLTAGES = 0;
+
+uint16_t THERMISTOR_VALUES[16];
 
 uint8_t _SELF_TEST_FLAGS = 0;
 
@@ -179,18 +181,26 @@ void getVoltages(uint8_t md) {
 }
 
 /*  Gets and returns the raw tempurature for each thermistor
- *
- * 
- *  @return An array of TODO raw tempurature values
  */
-/*int* getTempurature() {
-    return [];
-}*/
+void getTempuratures(uint8_t md, uint8_t pin) {
+    int error;
+
+    muxSet(0, pin);
+    muxSet(1, pin);
+    
+    error = pushCommand(ADCVAX, SLAVE_COUNT, RETURN_DATA, md);
+    for (int i = 0; i < 15; i++) {
+        error = pushCommand(RDAUXA, SLAVE_COUNT, RETURN_DATA);
+    }
+
+    THERMISTOR_VALUES[2*pin] = RETURN_DATA[0] & (RETURN_DATA[1]<<8);
+    THERMISTOR_VALUES[2*pin + 1] = RETURN_DATA[2] & (RETURN_DATA[3]<<8);
+}
 
 void monitorBMSHealth( void *pvParameters )
 {
     TickType_t xLastWakeTime;
-    const TickType_t xFrequency = tick_ms(1000000);
+    const TickType_t xFrequency = tick_ms(1000);
 
     uint8_t testResults;
     uint8_t wireOpen;
@@ -202,9 +212,10 @@ void monitorBMSHealth( void *pvParameters )
     {
         // perform diagnostic tests
 
-        //getVoltages(_MD);
+        //getVoltages(1);
         //_SELF_TEST_FLAGS = selfTest(_MD,_ST);
-        wireOpen = wiresOpen();
+        //wireOpen = wiresOpen();
+        getTempuratures(1, 0);
         vTaskDelayUntil( &xLastWakeTime, xFrequency );
     }
 }

@@ -228,6 +228,35 @@ uint8_t pushCommand(uint8_t comn, int num, uint8_t *data,
     
 }
 
+/* Set a multiplexer to the pin provided
+ *
+ *  @param mux: The number of the multiplexer to set (0 or 1)
+ *  @param pin: The pin to set the multiplexer to (0 - 3)
+ * 
+ *  @return error code, true if command acknowlaged false if not //NONFUNCTIONAL
+*/
+uint8_t muxSet(uint8_t mux, uint8_t pin){
+    int error = 0;
+    uint8_t ack_mask = 0x08;
+    uint8_t addr = 0x90 | (mux<<1);
+    uint8_t comm = 0x08 | pin;
+    uint8_t data[6] = { 0x60, 0x08, 0x00, 0x09, 0x70, 0x09 };
+    uint8_t data_buff[6] = { 0x03, 0x00, 0x00, 0x00, 0x00, 0x00};
+    data[0] |= (addr>>4)&0x0f;
+    data[1] |= (addr<<4)&0xf0;
+    data[3] |= (comm<<4)&0xf0;
+
+    //taskENTER_CRITICAL(); //force thread safety if multiple i2c commands are sent in close proximity
+    error = pushCommand(WRCOMM, SLAVE_COUNT, data);
+    error = pushCommand(STCOMM, SLAVE_COUNT, data_buff);
+    error = pushCommand(RDCOMM, SLAVE_COUNT, data_buff);
+    //taskEXIT_CRITICAL();
+
+
+    //Check ack/nack from buff
+    //return !(data_buff[1] & ack_mask) && !(data_buff[3] & ack_mask) && !(data_buff[5] & ack_mask));
+    return 1;
+}
 
 /* NONFUNCTIONAL
  * Creates and pushes a command to the command queue asynchronously
