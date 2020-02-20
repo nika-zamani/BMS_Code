@@ -9,7 +9,7 @@ int32_t _CELLDELTA[12];
 uint16_t _CELL_VOLTAGES[12];
 uint16_t _SUM_CELL_VOLTAGES = 0;
 
-uint16_t THERMISTOR_VALUES[16];
+uint16_t _THERMISTOR_VALUES[16];
 
 uint8_t _SELF_TEST_FLAGS = 0;
 
@@ -193,8 +193,8 @@ void getTempuratures(uint8_t md, uint8_t pin) {
         error = pushCommand(RDAUXA, SLAVE_COUNT, RETURN_DATA);
     }
 
-    THERMISTOR_VALUES[2*pin] = RETURN_DATA[0] & (RETURN_DATA[1]<<8);
-    THERMISTOR_VALUES[2*pin + 1] = RETURN_DATA[2] & (RETURN_DATA[3]<<8);
+    _THERMISTOR_VALUES[2*pin] = RETURN_DATA[0] & (RETURN_DATA[1]<<8);
+    _THERMISTOR_VALUES[2*pin + 1] = RETURN_DATA[2] & (RETURN_DATA[3]<<8);
 }
 
 void monitorBMSHealth( void *pvParameters )
