@@ -4,12 +4,11 @@ import os
 
 GNU_PATH = SConscript(BSP_PATH+'config.txt')
 
-compileTarget = 'bms'
+compileTarget = 'bmstest'
 
 # Create Communal build directory to store all the .o's
 VariantDir('build/board', 'board')
 VariantDir('build/source', 'source')
-VariantDir('build/rtos', 'rtos')
 
 env = Environment(ENV = os.environ)
 
@@ -46,7 +45,6 @@ env['CXXFLAGS'] = '-O0 -g -DDEBUG -Wall \
 
 includes = [
     'source',
-    'source/test',
     'board',
     BSP_PATH+'CMSIS',
     BSP_PATH+'drivers',
@@ -56,14 +54,6 @@ includes = [
     BSP_PATH
 ]
 
-
-rtos_includes = [
-    'rtos',
-    'rtos/include',
-    'rtos/portable/ARM_CM4F'
-    ]
-
-env.Append(CPPPATH = rtos_includes)
 env.Append(CPPPATH = includes)
 
 env['LINKFLAGS'] = '-O0 -g -DDEBUG -Wall \
@@ -86,13 +76,8 @@ src = \
     Glob('build/source/*.c'), \
     Glob('build/source/test/*.cpp'),
     
-rtos_src = \
-    Glob('build/rtos/*.c'), \
-    'build/rtos/portable/ARM_CM4F/port.c', \
-    'build/rtos/portable/MemMang/heap_4.c'
-
 # Run the compile command and create .elf
-env.Program(compileTarget, source=src+rtos_src, LIBS=['bsp'], LIBPATH=[BSP_PATH])
+env.Program(compileTarget, source=src, LIBS=['bsp'], LIBPATH=[BSP_PATH])
 
 # Create .lst from .elf
 #env.Command(compileTarget+".lst", compileTarget+".elf", \
