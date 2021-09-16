@@ -112,7 +112,7 @@ void transaction( void *pvParameters )
             lastMessage = xTaskGetTickCount();
 
             if(receiveCommand.c.combb == combbRx){
-                if(checkPECS(rx, length, receiveCommand.num)){
+                if(checkPECS(rx, length, receiveCommand.num)){  // check error case?
                     *(receiveCommand.error) = 1;
                 } else {
                     for(int i = 0; i < receiveCommand.num; i++){

@@ -67,12 +67,12 @@ typedef enum {
     ThermistorFaults = 538,
     CellValues = 1346, 
     ThermistorValues = 3618, 
-    SectionEnd = 6850,
+    SectionEnd = 6850
 } sectionBitOffsets;
 
 // Each number is the can bit location
 typedef enum{
-    Disconected = 0,
+    SlaveFaultOffsetsDisconected = 0,
     FailedCVST,
     FailedAXST,
     FailedSTATST
@@ -81,14 +81,14 @@ typedef enum{
 typedef enum{
     Undervoltage = 0,
     Overvoltage,
-    Disconected,
+    CellFaultOffsetsDisconected
 } CellFaultOffsets;
 
 typedef enum{
-    Disconected = 0,
+    ThermistorFaultOffsetsDisconected = 0,
     Shorted,
     Undertemp,
-    Overtemp,
+    Overtemp
 } ThermistorFaultOffsets;
 
 uint64_t heartbeat;
@@ -96,19 +96,25 @@ uint8_t faultsCurrent[161];
 uint8_t faultsHistory[161];
 uint16_t dataArray[688];
 
+union Frame{
+    uint64_t faults;
+    uint8_t faultsArray[8];
+    uint16_t dataArray[4];
+};
+
 class CanMessage{
     public:
         static CanMessage* getInstance();        
-        void setBitTrue(BitLocation bl);
-        void setBitFalse(BitLocation bl);
-        void set16(BitLocation bl, uint16_t data);
-        void set64(BitLocation bl, uint16_t data);
+        // void setBitTrue(BitLocation bl);
+        // void setBitFalse(BitLocation bl);
+        // void set16(BitLocation bl, uint16_t data);
+        // void set64(BitLocation bl, uint16_t data);
         void fullSend();
-        int getSlaveOffset(int slaveNumber) { return Slaves + (slaveNumber * 4) }
-        int getCellFaultOffset(int cellNumber) { return CellFaults + (cellNumber * 3) }
-        int getThermistorFaultOffset(int thermistorNumber) { return ThermistorFaults + (thermistorNumber * 4) }
-        int getCellValueOffset(int cellNumber) { return CellValues + (cellNumber * 16)}
-        int getThermistorValueOffset(int thermistorNumber) { return ThermistorValues + (thermistorNumber * 16) }
+        int getSlaveOffset(int slaveNumber) { return Slaves + (slaveNumber * 4); }
+        int getCellFaultOffset(int cellNumber) { return CellFaults + (cellNumber * 3); }
+        int getThermistorFaultOffset(int thermistorNumber) { return ThermistorFaults + (thermistorNumber * 4); }
+        int getCellValueOffset(int cellNumber) { return CellValues + (cellNumber * 16);}
+        int getThermistorValueOffset(int thermistorNumber) { return ThermistorValues + (thermistorNumber * 16); }
     private:
         union Frame frame[5];
         static CanMessage* instance;
@@ -116,3 +122,5 @@ class CanMessage{
         CanMessage();
         void send(uint32_t address, uint8_t *data);
 };
+
+#endif

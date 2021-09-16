@@ -2,7 +2,8 @@ BSP_PATH = '../MKELibrary/'
 
 import os
 
-GNU_PATH = SConscript(BSP_PATH+'config.txt')
+# GNU_PATH = SConscript(BSP_PATH+'config.txt')
+GNU_PATH = '/Users/meghantran/Desktop/Racing/gcc-arm-none-eabi-9-2020-q2-update/bin/'
 
 compileTarget = 'bms'
 

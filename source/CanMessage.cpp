@@ -2,10 +2,10 @@
 
 // Build 8 byte can messages from fault bits
 // 29 bits of adress space
-#include <iostream>
-#include <cmath>
+//#include <iostream>
+//#include <cmath>
 #include "clock_config.h"
-#include "canlight.h"
+#include "can.h"
 #include "Scheduler.h"
 #include "pin_mux.h"
 #include "MKE18F16.h"
@@ -28,39 +28,39 @@ CanMessage* CanMessage::getInstance(){
     return instance;
 }
 
-void CanMessage::setBitTrue(BitLocation bl){
-    int frameNum = floor(int(bl) / 64.0);
-    int byteNum = floor((int(bl) % 64)/8);
-    int bitNum = bl % 8;
-    frame[frameNum].faultsArray[byteNum] = 
-     frame[frameNum].faultsArray[byteNum] | ( 0x01 << bitNum);
-}
+// void CanMessage::setBitTrue(BitLocation bl){
+//     int frameNum = floor(int(bl) / 64.0);
+//     int byteNum = floor((int(bl) % 64)/8);
+//     int bitNum = bl % 8;
+//     frame[frameNum].faultsArray[byteNum] = 
+//      frame[frameNum].faultsArray[byteNum] | ( 0x01 << bitNum);
+// }
 
-void CanMessage::setBitFalse(BitLocation bl){
-    int frameNum = (int) floor(bl / 64.0);
-    int byteNum = (int) floor((bl % 64)/8);
-    int bitNum = bl % 8;
-    frame[frameNum].faultsArray[byteNum] = 
-     frame[frameNum].faultsArray[byteNum] & (~ ( 0x01 << bitNum));
-}
+// void CanMessage::setBitFalse(BitLocation bl){
+//     int frameNum = (int) floor(bl / 64.0);
+//     int byteNum = (int) floor((bl % 64)/8);
+//     int bitNum = bl % 8;
+//     frame[frameNum].faultsArray[byteNum] = 
+//      frame[frameNum].faultsArray[byteNum] & (~ ( 0x01 << bitNum));
+// }
 
-void CanMessage::set16(BitLocation bl, uint16_t data){
-    int frameNum = (int) floor(bl / 64.0);
-    int byteNum = (int) floor((bl % 64)/16);
-    frame[frameNum].dataArray[byteNum] = data;
-}
+// void CanMessage::set16(BitLocation bl, uint16_t data){
+//     int frameNum = (int) floor(bl / 64.0);
+//     int byteNum = (int) floor((bl % 64)/16);
+//     frame[frameNum].dataArray[byteNum] = data;
+// }
 
-void CanMessage::set64(BitLocation bl, uint16_t data){
-    int frameNum = (int) floor(bl / 64.0);
-    frame[frameNum].faults = data;
-}
+// void CanMessage::set64(BitLocation bl, uint16_t data){
+//     int frameNum = (int) floor(bl / 64.0);
+//     frame[frameNum].faults = data;
+// }
 
 void CanMessage::initCAN() {
     // Zero Can Message
     memset(&(this->frame), 0, sizeof(this->frame));
 
     // Setup CAN Config
-    can::canlight_config config;
+    can::can_config config;
     can::CANlight::canx_config canx_config;
    
     // Initialize CAN driver
