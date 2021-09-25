@@ -1,4 +1,5 @@
 #include "transaction.h"
+#include "StateMachine.h"
 
 using namespace BSP;
 
@@ -110,6 +111,11 @@ void transaction( void *pvParameters )
 
             // spi finished
             lastMessage = xTaskGetTickCount();
+
+            // somewhere here call state machine to keep track of rx from spi
+            // TODO: find a way to pass through which bms board of 5
+            StateMachine::setSPIRX(0, 0, rx);
+            StateMachine::setSPIRX(0, 1, rx);
 
             if(receiveCommand.c.combb == combbRx){
                 if(checkPECS(rx, length, receiveCommand.num)){  // check error case?
