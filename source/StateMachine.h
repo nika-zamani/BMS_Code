@@ -12,18 +12,16 @@ typedef struct {
    uint16_t THERMISTOR_VALUES;  // tbd
    uint8_t SPI_RX;   // tbd
    uint16_t CELL_VOLTAGES;   // tbd
+   // maybe add current, add whatever the SPI message collects
    int BMSNumber;
-}  BMSCollectObject;
+}  BMSCollectStruct;
 
 class BMSCollect {
 
    public:
-      BMSCollectObject o;
-      uint16_t THERMISTOR_VALUES;  // tbd
-      uint8_t SPI_RX;   // tbd
-      uint16_t CELL_VOLTAGES;   // tbd
-      int BMSNumber;
-      BMSCollect(BMSCollectObject);
+      BMSCollectStruct o;
+
+      BMSCollect(BMSCollectStruct);
 };
 
 typedef struct {
