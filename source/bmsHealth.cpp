@@ -197,6 +197,7 @@ void getTempuratures(uint8_t md, uint8_t pin) {
     StateMachine::setTHERMISTORVALUES(pin, 0, (RETURN_DATA[0] & (RETURN_DATA[1]<<8)));
     StateMachine::setTHERMISTORVALUES(pin, 1, (RETURN_DATA[2] & (RETURN_DATA[3]<<8)));
     
+    // currently commented out
     // _THERMISTOR_VALUES[2*pin] = RETURN_DATA[0] & (RETURN_DATA[1]<<8);
     // _THERMISTOR_VALUES[2*pin + 1] = RETURN_DATA[2] & (RETURN_DATA[3]<<8);
 }
