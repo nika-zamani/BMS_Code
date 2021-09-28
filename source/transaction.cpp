@@ -114,8 +114,8 @@ void transaction( void *pvParameters )
 
             // somewhere here call state machine to keep track of rx from spi
             // TODO: find a way to pass through which bms board of 5
-            StateMachine::setSPIRX(0, 0, rx);
-            StateMachine::setSPIRX(0, 1, rx);
+            // StateMachine::setSPIRX(0, 0, rx);
+            // StateMachine::setSPIRX(0, 1, rx);
 
             if(receiveCommand.c.combb == combbRx){
                 if(checkPECS(rx, length, receiveCommand.num)){  // check error case?
@@ -123,6 +123,7 @@ void transaction( void *pvParameters )
                 } else {
                     for(int i = 0; i < receiveCommand.num; i++){
                         memcpy(receiveCommand.data+(i*6), rx+4+(i*8), 6);
+                        StateMachine::setSPIRX(i, rx+4+(i*8));
                     }
                 }
             } 

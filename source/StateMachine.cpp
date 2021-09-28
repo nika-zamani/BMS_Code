@@ -63,21 +63,39 @@ BMSCollectArray StateMachine::getBMSCollect() {
    return state->BMSCollection;
 }
 
-void StateMachine::setTHERMISTORVALUES(int boardNum, int index, uint16_t data) {
+void StateMachine::setTHERMISTORVALUES(int boardNum, uint16_t data) {
    StateMachine *state = getInstance();
-   state->BMSCollection.bmscollect[boardNum]->o.THERMISTOR_VALUES = data;
+   // state->BMSCollection.bmscollect[boardNum]->o.THERMISTOR_VALUES = data;
+   memcpy(&(state->BMSCollection.bmscollect[boardNum]->o.THERMISTOR_VALUES), &data, 6);
 }
 
-void StateMachine::setSPIRX(int boardNum, int index, uint8_t *data) {
+void StateMachine::setSPIRX(int boardNum, uint8_t *data) {
    StateMachine *state = getInstance();
-   state->BMSCollection.bmscollect[boardNum]->o.SPI_RX = *data;
+   memcpy(&(state->BMSCollection.bmscollect[boardNum]->o.SPI_RX), data, 6);
+   // state->BMSCollection.bmscollect[boardNum]->o.SPI_RX = *data;
 }
 
-void StateMachine::setCELLVOLTAGES(int boardNum, int index, uint16_t data) {
+void StateMachine::setCELLVOLTAGES(int boardNum, uint16_t data) {
    StateMachine *state = getInstance();
-   state->BMSCollection.bmscollect[boardNum]->o.CELL_VOLTAGES = data;   // need to figure out layout for voltages
+   // state->BMSCollection.bmscollect[boardNum]->o.CELL_VOLTAGES = data;   // need to figure out layout for voltages
+   memcpy(&(state->BMSCollection.bmscollect[boardNum]->o.THERMISTOR_VALUES), &data, 6);
 }
 
 void StateMachine::calculateBMSOK() {
    StateMachine *state = getInstance();
+}
+
+uint8_t StateMachine::getSPIRX(int boardNum) {
+   StateMachine *state = getInstance();
+   return state->BMSCollection.bmscollect[boardNum]->o.SPI_RX;
+}
+
+uint16_t StateMachine::getTHERMISTORVALUES(int boardNum) {
+   StateMachine *state = getInstance();
+   return state->BMSCollection.bmscollect[boardNum]->o.THERMISTOR_VALUES;
+}
+
+uint16_t StateMachine::getCELLVOLTAGES(int boardNum) {
+   StateMachine *state = getInstance();
+   return state->BMSCollection.bmscollect[boardNum]->o.CELL_VOLTAGES;
 }

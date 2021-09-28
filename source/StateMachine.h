@@ -3,11 +3,6 @@
 
 #define NUMBER_BMS_BOARDS 10   // there are 5 pairs of bms boards, but 10 "devices" in general for the LTC chip
 
-// typedef struct {
-//    BMSCollect *BMSpair[2];
-// }  BMSCollectPair;
-
-
 typedef struct {
    uint16_t THERMISTOR_VALUES;  // tbd
    uint8_t SPI_RX;   // tbd
@@ -17,15 +12,13 @@ typedef struct {
 }  BMSCollectStruct;
 
 class BMSCollect {
-
    public:
       BMSCollectStruct o;
-
       BMSCollect(BMSCollectStruct);
 };
 
 typedef struct {
-   BMSCollect *bmscollect[10];
+   BMSCollect *bmscollect[NUMBER_BMS_BOARDS];
 }  BMSCollectArray;
 
 class StateMachine {
@@ -34,10 +27,13 @@ class StateMachine {
       static StateMachine *instance;
       static StateMachine *getInstance();
       static BMSCollectArray getBMSCollect();
-      static void setTHERMISTORVALUES(int boardNum, int index, uint16_t data);
-      static void setSPIRX(int boardNum, int index, uint8_t *data);
-      static void setCELLVOLTAGES(int boardNum, int index, uint16_t data);
+      static void setTHERMISTORVALUES(int boardNum, uint16_t data);
+      static void setSPIRX(int boardNum, uint8_t *data);
+      static void setCELLVOLTAGES(int boardNum, uint16_t data);
       static void calculateBMSOK();
+      static uint8_t getSPIRX(int boardNum);
+      static uint16_t getTHERMISTORVALUES(int boardNum);
+      static uint16_t getCELLVOLTAGES(int boardNum);
       BMSCollectArray BMSCollection;
 };
 
