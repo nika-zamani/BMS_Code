@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <string.h>
 #include "transaction.h"
 #include "StateMachine.h"
 
@@ -5,6 +7,7 @@ using namespace BSP;
 
 static QueueHandle_t commandQueue = NULL;
 static SemaphoreHandle_t cbSemaphore, pushSemaphore;
+// bmscommand_t receiveCommand;
 
 // Check to make sure received PECs are correct.
 // Returns 0 on success, >0 on failure
@@ -62,7 +65,6 @@ void transaction( void *pvParameters )
 
     for (;;)
     {
-
         xQueueReceive(commandQueue, (void*) &receiveCommand, portMAX_DELAY);
 
         // always do full wakeup on first time through
@@ -101,7 +103,6 @@ void transaction( void *pvParameters )
 
 
         //TODO: Ensure that the semaphore is working properly
-
         //send spi messaage
         spi.mastertx(0, tx, rx, length);
 
@@ -113,17 +114,14 @@ void transaction( void *pvParameters )
             lastMessage = xTaskGetTickCount();
 
             // somewhere here call state machine to keep track of rx from spi
-            // TODO: find a way to pass through which bms board of 5
-            // StateMachine::setSPIRX(0, 0, rx);
-            // StateMachine::setSPIRX(0, 1, rx);
-
+            // making sure that statemachine is being set
             if(receiveCommand.c.combb == combbRx){
-                if(checkPECS(rx, length, receiveCommand.num)){  // check error case?
+                int64_t val = checkPECS(rx, length, receiveCommand.num);
+                if(val){  // check error case?
                     *(receiveCommand.error) = 1;
                 } else {
                     for(int i = 0; i < receiveCommand.num; i++){
                         memcpy(receiveCommand.data+(i*6), rx+4+(i*8), 6);
-                        StateMachine::setSPIRX(i, rx+4+(i*8));
                     }
                 }
             } 

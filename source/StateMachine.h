@@ -26,14 +26,14 @@ class StateMachine {
       StateMachine();
       static StateMachine *instance;
       static StateMachine *getInstance();
-      static BMSCollectArray getBMSCollect();
-      static void setTHERMISTORVALUES(int boardNum, uint16_t data);
+      // static BMSCollectArray getBMSCollect();
+      // static void setTHERMISTORVALUES(int boardNum, uint16_t data);
       static void setSPIRX(int boardNum, uint8_t *data);
-      static void setCELLVOLTAGES(int boardNum, uint16_t data);
-      static void calculateBMSOK();
-      static uint8_t getSPIRX(int boardNum);
-      static uint16_t getTHERMISTORVALUES(int boardNum);
-      static uint16_t getCELLVOLTAGES(int boardNum);
+      // static void setCELLVOLTAGES(int boardNum, uint16_t data);
+      // static void calculateBMSOK();
+      // static uint8_t getSPIRX(int boardNum);
+      // static uint16_t getTHERMISTORVALUES(int boardNum);
+      // static uint16_t getCELLVOLTAGES(int boardNum);
       BMSCollectArray BMSCollection;
 };
 

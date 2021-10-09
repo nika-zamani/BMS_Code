@@ -194,12 +194,8 @@ void getTempuratures(uint8_t md, uint8_t pin) {
         error = pushCommand(RDAUXA, SLAVE_COUNT, RETURN_DATA);
     }
 
-    StateMachine::setTHERMISTORVALUES(pin, (RETURN_DATA[0] & (RETURN_DATA[1]<<8)));
-    StateMachine::setTHERMISTORVALUES(pin, (RETURN_DATA[2] & (RETURN_DATA[3]<<8)));
-    
-    // currently commented out
-    // _THERMISTOR_VALUES[2*pin] = RETURN_DATA[0] & (RETURN_DATA[1]<<8);
-    // _THERMISTOR_VALUES[2*pin + 1] = RETURN_DATA[2] & (RETURN_DATA[3]<<8);
+    _THERMISTOR_VALUES[2*pin] = RETURN_DATA[0] & (RETURN_DATA[1]<<8);
+    _THERMISTOR_VALUES[2*pin + 1] = RETURN_DATA[2] & (RETURN_DATA[3]<<8);
 }
 
 void monitorBMSHealth( void *pvParameters )
@@ -217,10 +213,10 @@ void monitorBMSHealth( void *pvParameters )
     {
         // perform diagnostic tests
 
-        //getVoltages(1);
+        getVoltages(1);
         //_SELF_TEST_FLAGS = selfTest(_MD,_ST);
         //wireOpen = wiresOpen();
-        getTempuratures(1, 0);
+        //getTempuratures(1, 0);
         vTaskDelayUntil( &xLastWakeTime, xFrequency );
     }
 }
