@@ -1,96 +1,112 @@
-// look at pedal box 2020
 
-// Build 8 byte can messages from fault bits
-// 29 bits of adress space
-//#include <iostream>
-//#include <cmath>
-#include "clock_config.h"
-#include "can.h"
-#include "Scheduler.h"
-#include "pin_mux.h"
-#include "MKE18F16.h"
 #include "CanMessage.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "can.h"
+#include "main.h"
+#include "../CanMessageStructs/canmessagestructs.h"
+
+// #include "StateMachine.h"
 
 using namespace BSP;
 
 CanMessage* CanMessage::instance;
 
-CanMessage::CanMessage(){
-    
-}
+CanMessage::CanMessage(){}
 
-CanMessage* CanMessage::getInstance(){
+CanMessage* CanMessage::getInstance() {
     if(instance == 0){
         instance = new CanMessage();
-        instance->initCAN();
-        
+        instance->initCan();
     }
     return instance;
 }
 
-// void CanMessage::setBitTrue(BitLocation bl){
-//     int frameNum = floor(int(bl) / 64.0);
-//     int byteNum = floor((int(bl) % 64)/8);
-//     int bitNum = bl % 8;
-//     frame[frameNum].faultsArray[byteNum] = 
-//      frame[frameNum].faultsArray[byteNum] | ( 0x01 << bitNum);
-// }
 
-// void CanMessage::setBitFalse(BitLocation bl){
-//     int frameNum = (int) floor(bl / 64.0);
-//     int byteNum = (int) floor((bl % 64)/8);
-//     int bitNum = bl % 8;
-//     frame[frameNum].faultsArray[byteNum] = 
-//      frame[frameNum].faultsArray[byteNum] & (~ ( 0x01 << bitNum));
-// }
-
-// void CanMessage::set16(BitLocation bl, uint16_t data){
-//     int frameNum = (int) floor(bl / 64.0);
-//     int byteNum = (int) floor((bl % 64)/16);
-//     frame[frameNum].dataArray[byteNum] = data;
-// }
-
-// void CanMessage::set64(BitLocation bl, uint16_t data){
-//     int frameNum = (int) floor(bl / 64.0);
-//     frame[frameNum].faults = data;
-// }
-
-void CanMessage::initCAN() {
-    // Zero Can Message
-    memset(&(this->frame), 0, sizeof(this->frame));
-
-    // Setup CAN Config
+void CanMessage::initCan() {
     can::can_config config;
     can::CANlight::canx_config canx_config;
-   
+
     // Initialize CAN driver
     can::CANlight::ConstructStatic(&config);
     can::CANlight &can = can::CANlight::StaticClass();
-    
+
     // Configure CAN bus
     canx_config.baudRate = CAN_BAUD_RATE;
     can.init(CAN_BUS, &canx_config);
 }
 
-// sends a CAN message on the specified bus
-void CanMessage::send(uint32_t address, uint8_t *data) {
+
+void CanMessage::sendVoltageHelper(uint16_t cellVoltage[12], int id) {
+    
+    BmsVoltageStruct voltageCanstruct0;
+    BmsVoltageStruct voltageCanstruct1;
+
+    voltageCanstruct0.voltage0 = cellVoltage[0];    // first 4 cells
+    voltageCanstruct0.voltage1 = cellVoltage[1];
+    voltageCanstruct0.voltage2 = cellVoltage[2];
+    voltageCanstruct0.voltage3 = cellVoltage[3];
+
+    voltageCanstruct1.voltage0 = cellVoltage[4];    // last 4 cells
+    voltageCanstruct1.voltage1 = cellVoltage[5];
+    voltageCanstruct1.voltage2 = cellVoltage[6];
+    voltageCanstruct1.voltage3 = cellVoltage[7];
+
     can::CANlight &can = can::CANlight::StaticClass();
     can::CANlight::frame frame;
-
-    frame.id = address;
+    frame.id = VOLTAGE_ID + (2 * id);
     frame.ext = 1;
     frame.dlc = 8;
-    memcpy(frame.data, data, sizeof(frame.data));
 
-    // Only one bus
+    memcpy(frame.data, &voltageCanstruct0, sizeof(BmsVoltageStruct));
+    can.tx(CAN_BUS, frame);
+
+    frame.id = VOLTAGE_ID + (2 * id) + 1;
+    memcpy(frame.data, &voltageCanstruct1, sizeof(BmsVoltageStruct));
     can.tx(CAN_BUS, frame);
 }
 
-//Send all CAN messages
-void CanMessage::fullSend(){
-    send(PEDDLE_BOX_ID, CanMessage::frame[0].faultsArray);
-    send(PEDDLE_BOX_ID+1, CanMessage::frame[1].faultsArray);
-    send(PEDDLE_BOX_ID+2, CanMessage::frame[2].faultsArray);
-    send(PEDDLE_BOX_ID+3, CanMessage::frame[3].faultsArray);
-    send(PEDDLE_BOX_ID+4, CanMessage::frame[4].faultsArray);
+void CanMessage::sendTempHelper(uint16_t thermistorValues[16], int id) {
+    
+    BmsTempStruct temperatureCanstruct0;
+    BmsTempStruct temperatureCanstruct1;
+
+    temperatureCanstruct0.voltage0 = thermistorValues[0];
+    temperatureCanstruct0.voltage1 = thermistorValues[2];
+    temperatureCanstruct0.voltage2 = thermistorValues[4];
+    temperatureCanstruct0.voltage3 = thermistorValues[6];
+
+    temperatureCanstruct1.voltage0 = thermistorValues[8];
+    temperatureCanstruct1.voltage1 = thermistorValues[10];
+    temperatureCanstruct1.voltage2 = thermistorValues[12];
+    temperatureCanstruct1.voltage3 = thermistorValues[14];
+
+    can::CANlight &can1 = can::CANlight::StaticClass();
+    can::CANlight::frame frame1;
+    frame1.id = TEMP_ID + (2 * id);
+    frame1.ext = 1;
+    frame1.dlc = 8;
+    memcpy(frame1.data, &temperatureCanstruct0, sizeof(BmsTempStruct));
+    can1.tx(CAN_BUS, frame1);
+
+    can::CANlight &can2 = can::CANlight::StaticClass();
+    can::CANlight::frame frame2;
+    frame2.id = TEMP_ID + (2 * id) + 1;
+    frame2.ext = 1;
+    frame2.dlc = 8;
+    memcpy(frame2.data, &temperatureCanstruct1, sizeof(BmsTempStruct));
+    can2.tx(CAN_BUS, frame2);
+
+}
+
+void CanMessage::sendVoltage(uint16_t cellVoltage[12], int id) {
+    CanMessage *c = CanMessage::getInstance();
+    c->sendVoltageHelper(cellVoltage, id);
+}
+
+// bools take up 1 byte
+
+void CanMessage::sendTemp(uint16_t thermistorValues[16], int id) {
+    CanMessage *c = CanMessage::getInstance();
+    c->sendTempHelper(thermistorValues, id);
 }

@@ -1,16 +1,31 @@
 #include "bmsHealth.h"
 #include "StateMachine.h"
+#include "gpio.h"
+#include "can.h"
+#include "CanMessage.h"
+
+
+using namespace BSP;
 
 uint8_t RETURN_DATA[6];
+// 10 boards, either nested array or put into one whole
+
+uint8_t BMS_OK = 1; // signal for -- All cell votlages within limits, All cell temps within limits, No fuses open aka wires open (will be added later most likley)
+// 0 is false, 1 is true; 
+// need to output this to gpio
 
 uint16_t _CELLPU[12]; //TODO: check if number of cells will always be 12 and change this to a const
 uint16_t _CELLPD[12];
 int32_t _CELLDELTA[12];
 
-uint16_t _CELL_VOLTAGES[12];
+// uint16_t _CELL_VOLTAGES[12];
+uint16_t _CELL_VOLTAGES[10][12];
 uint16_t _SUM_CELL_VOLTAGES = 0;
 
-uint16_t _THERMISTOR_VALUES[16];
+uint16_t _THERMISTOR_VALUES[10][16];
+uint16_t _THERMISTOR_CALCULATE = 0;
+uint16_t _THERMISTOR_VOLTAGE = 0;
+// uint16_t _THERMISTOR_VALUES[28];
 
 uint8_t _SELF_TEST_FLAGS = 0;
 
@@ -165,37 +180,85 @@ void getVoltages(uint8_t md) {
     pushCommand(ADCVSC, SLAVE_COUNT, RETURN_DATA, md, _DCP);
 
     //wait for some time?
+    for (int i = 0; i < 10; i++) {
+        error = pushCommand(RDCVA, SLAVE_COUNT, RETURN_DATA);
+        memcpy(&_CELL_VOLTAGES[i], RETURN_DATA, 6);    // return_data is array size 6 of uint8_t and each cell_voltage is array size of 12 of uint16_t
+        error = pushCommand(RDCVB, SLAVE_COUNT, RETURN_DATA);
+        memcpy(&_CELL_VOLTAGES[i][3], RETURN_DATA, 6); // so each return_data takes up 3 spaces of 12 in cell_voltage
+        error = pushCommand(RDCVC, SLAVE_COUNT, RETURN_DATA);
+        memcpy(&_CELL_VOLTAGES[i][6], RETURN_DATA, 6);
+        error = pushCommand(RDCVD, SLAVE_COUNT, RETURN_DATA);
+        // memcpy(&_CELL_VOLTAGES[9], RETURN_DATA, 6);    
 
+        error = pushCommand(RDSTATA, SLAVE_COUNT, RETURN_DATA);
+
+    }
     //read voltages
     //TODO: ensure that these bytes copy correctly
-    error = pushCommand(RDCVA, SLAVE_COUNT, RETURN_DATA);
-    memcpy(&_CELL_VOLTAGES, RETURN_DATA, 6);
-    error = pushCommand(RDCVB, SLAVE_COUNT, RETURN_DATA);
-    memcpy(&_CELL_VOLTAGES[3], RETURN_DATA, 6);
-    error = pushCommand(RDCVC, SLAVE_COUNT, RETURN_DATA);
-    memcpy(&_CELL_VOLTAGES[6], RETURN_DATA, 6);
-    error = pushCommand(RDCVD, SLAVE_COUNT, RETURN_DATA);
-    memcpy(&_CELL_VOLTAGES[9], RETURN_DATA, 6);    
+    // error = pushCommand(RDCVA, SLAVE_COUNT, RETURN_DATA);
+    // memcpy(&_CELL_VOLTAGES, RETURN_DATA, 6);    // return_data is array size 6 of uint8_t and each cell_voltage is array size of 12 of uint16_t
+    // error = pushCommand(RDCVB, SLAVE_COUNT, RETURN_DATA);
+    // memcpy(&_CELL_VOLTAGES[3], RETURN_DATA, 6); // so each return_data takes up 3 spaces of 12 in cell_voltage
+    // error = pushCommand(RDCVC, SLAVE_COUNT, RETURN_DATA);
+    // memcpy(&_CELL_VOLTAGES[6], RETURN_DATA, 6);
+    // error = pushCommand(RDCVD, SLAVE_COUNT, RETURN_DATA);
+    // // memcpy(&_CELL_VOLTAGES[9], RETURN_DATA, 6);    
 
-    error = pushCommand(RDSTATA, SLAVE_COUNT, RETURN_DATA);
-    memcpy(&_SUM_CELL_VOLTAGES, RETURN_DATA, 2);
+    // error = pushCommand(RDSTATA, SLAVE_COUNT, RETURN_DATA);
+    // memcpy(&_SUM_CELL_VOLTAGES, RETURN_DATA, 2);
 }
 
 /*  Gets and returns the raw tempurature for each thermistor
  */
-void getTempuratures(uint8_t md, uint8_t pin) {
+
+void getTempuraturesHelper() {
     int error;
 
-    muxSet(0, pin);
-    muxSet(1, pin);
-    
-    error = pushCommand(ADCVAX, SLAVE_COUNT, RETURN_DATA, md);
-    for (int i = 0; i < 15; i++) {
-        error = pushCommand(RDAUXA, SLAVE_COUNT, RETURN_DATA);
-    }
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 7; j++) {
+                muxSet(0, j);
+                muxSet(1, j);
+                
+                error = pushCommand(ADCVAX, SLAVE_COUNT, RETURN_DATA, 1);
+                for (int k = 0; k < 15; k++) {
+                    error = pushCommand(RDAUXA, SLAVE_COUNT, RETURN_DATA);
+                }
 
-    _THERMISTOR_VALUES[2*pin] = RETURN_DATA[0] & (RETURN_DATA[1]<<8);
-    _THERMISTOR_VALUES[2*pin + 1] = RETURN_DATA[2] & (RETURN_DATA[3]<<8);
+                //when it errors dont push data; if result hasnt been sent in a while, throw a fault
+                
+                //check spec sheet for how many thermistor sensors
+                _THERMISTOR_VALUES[i][2*j] = RETURN_DATA[0] | RETURN_DATA[1]<<8;   // add 4 when it is collected; store raw data for now
+                _THERMISTOR_VALUES[i][2*j + 1] = RETURN_DATA[2] | (RETURN_DATA[3]<<8);
+            }
+
+    }
+}
+
+// void calculateThermistorValues() {
+//     uint16_t thermistor_calc = 0;
+//     uint16_t thermistor_Voltage = _THERMISTOR_VALUES[0] * .0001;
+//     _THERMISTOR_VOLTAGE = thermistor_Voltage;
+//     thermistor_calc = (16.69 * thermistor_Voltage * thermistor_Voltage * thermistor_Voltage) - (75.529 * thermistor_Voltage * thermistor_Voltage) + (146.8 * thermistor_Voltage) - 81.292 + 4;
+//     _THERMISTOR_CALCULATE = thermistor_calc;
+// }
+
+void calculateBMS_OK() {
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 8; j++) {
+            if (_CELL_VOLTAGES[i][j] < 28000 | _CELL_VOLTAGES[i][j] > 50000) {
+                BMS_OK = 0;
+                BSP::gpio::GPIO gpio = BSP::gpio::GPIO();
+                gpio.set(gpio::PortD, 15);  // port, pin -- tbd need to ask for later
+                // put pin in a header file, constants.h/pins.h 
+            }
+    }
+    }
+    
+    // lower limit voltage = 2.8V for now
+
+    // for (int i = 0; i < 14; i++) {
+    //     if (_THERMISTOR_VALUES[2*i])
+    // }
 }
 
 void monitorBMSHealth( void *pvParameters )
@@ -214,9 +277,21 @@ void monitorBMSHealth( void *pvParameters )
         // perform diagnostic tests
 
         getVoltages(1);
+        for (int id = 0; id < 10; id++) {
+            CanMessage::sendVoltage(_CELL_VOLTAGES[id], id);
+        }
+        // CanMessage::sendVoltage(_CELL_VOLTAGES, 0);
         //_SELF_TEST_FLAGS = selfTest(_MD,_ST);
         //wireOpen = wiresOpen();
-        //getTempuratures(1, 0);
+        // getTempuratures(1, 0);
+        getTempuraturesHelper();
+        for (int id = 0; id < 10; id++) {
+            CanMessage::sendTemp(_THERMISTOR_VALUES[id], id);
+        }
+
+        // calculate BMS-OK
+        calculateBMS_OK();
+
         vTaskDelayUntil( &xLastWakeTime, xFrequency );
     }
 }

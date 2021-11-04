@@ -32,4 +32,11 @@ const unsigned char ucExpectedInterruptStackValues[] = { 0xCC, 0xCC, 0xCC, 0xCC,
 
 #define STACK_SIZE 100
 
+// can
+#define VOLTAGE_ID 0x300
+#define TEMP_ID 0x400
+
+#define CAN_BUS 0
+#define CAN_BAUD_RATE 1000000
+
 #endif
