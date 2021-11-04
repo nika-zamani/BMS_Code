@@ -34,7 +34,8 @@ const unsigned char ucExpectedInterruptStackValues[] = { 0xCC, 0xCC, 0xCC, 0xCC,
 
 // can
 #define VOLTAGE_ID 0x300
-#define TEMP_ID 0x400
+#define TEMP_ID 0x314
+#define OK_ID 0x334
 
 #define CAN_BUS 0
 #define CAN_BAUD_RATE 1000000

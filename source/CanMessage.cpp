@@ -52,18 +52,21 @@ void CanMessage::sendVoltageHelper(uint16_t cellVoltage[12], int id) {
     voltageCanstruct1.voltage2 = cellVoltage[6];
     voltageCanstruct1.voltage3 = cellVoltage[7];
 
-    can::CANlight &can = can::CANlight::StaticClass();
-    can::CANlight::frame frame;
-    frame.id = VOLTAGE_ID + (2 * id);
-    frame.ext = 1;
-    frame.dlc = 8;
+    can::CANlight &can1 = can::CANlight::StaticClass();
+    can::CANlight::frame frame1;
+    frame1.id = VOLTAGE_ID + (2 * id);
+    frame1.ext = 1;
+    frame1.dlc = 8;
+    memcpy(frame1.data, &voltageCanstruct0, sizeof(BmsTempStruct));
+    can1.tx(CAN_BUS, frame1);
 
-    memcpy(frame.data, &voltageCanstruct0, sizeof(BmsVoltageStruct));
-    can.tx(CAN_BUS, frame);
-
-    frame.id = VOLTAGE_ID + (2 * id) + 1;
-    memcpy(frame.data, &voltageCanstruct1, sizeof(BmsVoltageStruct));
-    can.tx(CAN_BUS, frame);
+    can::CANlight &can2 = can::CANlight::StaticClass();
+    can::CANlight::frame frame2;
+    frame2.id = VOLTAGE_ID + (2 * id) + 1;
+    frame2.ext = 1;
+    frame2.dlc = 8;
+    memcpy(frame2.data, &voltageCanstruct1, sizeof(BmsTempStruct));
+    can2.tx(CAN_BUS, frame2);
 }
 
 void CanMessage::sendTempHelper(uint16_t thermistorValues[16], int id) {
@@ -96,7 +99,29 @@ void CanMessage::sendTempHelper(uint16_t thermistorValues[16], int id) {
     frame2.dlc = 8;
     memcpy(frame2.data, &temperatureCanstruct1, sizeof(BmsTempStruct));
     can2.tx(CAN_BUS, frame2);
+}
 
+void CanMessage::sendImdBmsOkHelper(uint8_t BMS_OK, uint8_t IMD_OK) {
+    // bool of imd ok and bms ok
+    BmsOkStruct okStruct;
+
+    okStruct.bms_ok = BMS_OK;
+    okStruct.imd_ok = IMD_OK;
+
+    can::CANlight &can = can::CANlight::StaticClass();
+    can::CANlight::frame frame;
+
+    frame.id = OK_ID;
+    frame.ext = 1;
+    frame.dlc = 8;
+    memcpy(frame.data, &okStruct, sizeof(BmsOkStruct));
+    can.tx(CAN_BUS, frame);
+
+}
+
+void CanMessage::sendImdBmsOk(uint8_t BMS_OK, uint8_t IMD_OK) {
+    CanMessage *c = CanMessage::getInstance();
+    c->sendImdBmsOkHelper(BMS_OK, IMD_OK);
 }
 
 void CanMessage::sendVoltage(uint16_t cellVoltage[12], int id) {

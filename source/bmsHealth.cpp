@@ -10,9 +10,10 @@ using namespace BSP;
 uint8_t RETURN_DATA[6];
 // 10 boards, either nested array or put into one whole
 
-uint8_t BMS_OK = 1; // signal for -- All cell votlages within limits, All cell temps within limits, No fuses open aka wires open (will be added later most likley)
+uint8_t BMS_OK = true; // signal for -- All cell votlages within limits, All cell temps within limits, No fuses open aka wires open (will be added later most likley)
 // 0 is false, 1 is true; 
 // need to output this to gpio
+uint8_t IMD_OK = true;
 
 uint16_t _CELLPU[12]; //TODO: check if number of cells will always be 12 and change this to a const
 uint16_t _CELLPD[12];
@@ -245,17 +246,15 @@ void getTempuraturesHelper() {
 void calculateBMS_OK() {
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 8; j++) {
-            if (_CELL_VOLTAGES[i][j] < 28000 | _CELL_VOLTAGES[i][j] > 50000) {
-                BMS_OK = 0;
+            if (_CELL_VOLTAGES[i][j] < 28000 | _CELL_VOLTAGES[i][j] > 50000) {    // lower limit voltage = 2.8V for now
+                BMS_OK = false;
                 BSP::gpio::GPIO gpio = BSP::gpio::GPIO();
                 gpio.set(gpio::PortD, 15);  // port, pin -- tbd need to ask for later
                 // put pin in a header file, constants.h/pins.h 
             }
+        }
     }
-    }
-    
-    // lower limit voltage = 2.8V for now
-
+    CanMessage::sendImdBmsOk(BMS_OK, IMD_OK);
     // for (int i = 0; i < 14; i++) {
     //     if (_THERMISTOR_VALUES[2*i])
     // }
