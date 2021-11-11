@@ -1,9 +1,10 @@
 #include "bmsHealth.h"
-#include "StateMachine.h"
 #include "gpio.h"
 #include "can.h"
 #include "CanMessage.h"
-
+#include "adc.h"
+#include "adcObject.h"
+#include "main.h"
 
 using namespace BSP;
 
@@ -21,6 +22,7 @@ int32_t _CELLDELTA[12];
 
 // uint16_t _CELL_VOLTAGES[12];
 uint16_t _CELL_VOLTAGES[10][12];
+// ten maybe sums
 uint16_t _SUM_CELL_VOLTAGES = 0;
 
 uint16_t _THERMISTOR_VALUES[10][16];
@@ -194,19 +196,6 @@ void getVoltages(uint8_t md) {
         error = pushCommand(RDSTATA, SLAVE_COUNT, RETURN_DATA);
 
     }
-    //read voltages
-    //TODO: ensure that these bytes copy correctly
-    // error = pushCommand(RDCVA, SLAVE_COUNT, RETURN_DATA);
-    // memcpy(&_CELL_VOLTAGES, RETURN_DATA, 6);    // return_data is array size 6 of uint8_t and each cell_voltage is array size of 12 of uint16_t
-    // error = pushCommand(RDCVB, SLAVE_COUNT, RETURN_DATA);
-    // memcpy(&_CELL_VOLTAGES[3], RETURN_DATA, 6); // so each return_data takes up 3 spaces of 12 in cell_voltage
-    // error = pushCommand(RDCVC, SLAVE_COUNT, RETURN_DATA);
-    // memcpy(&_CELL_VOLTAGES[6], RETURN_DATA, 6);
-    // error = pushCommand(RDCVD, SLAVE_COUNT, RETURN_DATA);
-    // // memcpy(&_CELL_VOLTAGES[9], RETURN_DATA, 6);    
-
-    // error = pushCommand(RDSTATA, SLAVE_COUNT, RETURN_DATA);
-    // memcpy(&_SUM_CELL_VOLTAGES, RETURN_DATA, 2);
 }
 
 /*  Gets and returns the raw tempurature for each thermistor
@@ -243,21 +232,41 @@ void getTempuraturesHelper() {
 //     _THERMISTOR_CALCULATE = thermistor_calc;
 // }
 
+void readIMD_OK() {
+    gpio::GPIO::StaticClass().read(gpio::PortD, 15);
+}
+
 void calculateBMS_OK() {
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 8; j++) {
             if (_CELL_VOLTAGES[i][j] < 28000 | _CELL_VOLTAGES[i][j] > 50000) {    // lower limit voltage = 2.8V for now
                 BMS_OK = false;
-                BSP::gpio::GPIO gpio = BSP::gpio::GPIO();
-                gpio.set(gpio::PortD, 15);  // port, pin -- tbd need to ask for later
+                gpio::GPIO::StaticClass().set(gpio::PortD, 15); // port, pin -- tbd need to ask for later
                 // put pin in a header file, constants.h/pins.h 
             }
         }
     }
-    CanMessage::sendImdBmsOk(BMS_OK, IMD_OK);
+
+    // imd is gpio out - true false gpio signal
+    // false when things are bad, true when things are good
+
+    // memset 0 for the bytes in can struct
+
     // for (int i = 0; i < 14; i++) {
     //     if (_THERMISTOR_VALUES[2*i])
     // }
+    // 0 C min, 70 C max for now
+}
+
+void measureSendVoltageCurrent() {
+    adcObject *voltageMeasure = new adcObject(VOLTAGE_ADC, VOLTAGE_ADC_CHANNEL);
+    adcObject *currentMeasure = new adcObject(CURRENT_ADC, CURRENT_ADC_CHANNEL);
+    
+    voltageMeasure->adcRead();
+    currentMeasure->adcRead();
+
+    CanMessage::sendMainVoltageCurrent(voltageMeasure->adc_data, currentMeasure->adc_data);
+
 }
 
 void monitorBMSHealth( void *pvParameters )
@@ -277,19 +286,21 @@ void monitorBMSHealth( void *pvParameters )
 
         getVoltages(1);
         for (int id = 0; id < 10; id++) {
-            CanMessage::sendVoltage(_CELL_VOLTAGES[id], id);
+            CanMessage::sendVoltage(_CELL_VOLTAGES[id], id);    // 10 Hz
         }
-        // CanMessage::sendVoltage(_CELL_VOLTAGES, 0);
-        //_SELF_TEST_FLAGS = selfTest(_MD,_ST);
-        //wireOpen = wiresOpen();
-        // getTempuratures(1, 0);
         getTempuraturesHelper();
         for (int id = 0; id < 10; id++) {
-            CanMessage::sendTemp(_THERMISTOR_VALUES[id], id);
+            CanMessage::sendTemp(_THERMISTOR_VALUES[id], id);   // 15 Hz
         }
 
-        // calculate BMS-OK
+        // // calculate BMS-OK
         calculateBMS_OK();
+        readIMD_OK();
+        CanMessage::sendImdBmsOk(BMS_OK, IMD_OK);
+
+
+        // // get and send main voltage and current 
+        // measureSendVoltageCurrent();
 
         vTaskDelayUntil( &xLastWakeTime, xFrequency );
     }

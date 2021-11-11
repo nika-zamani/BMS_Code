@@ -104,6 +104,7 @@ void CanMessage::sendTempHelper(uint16_t thermistorValues[16], int id) {
 void CanMessage::sendImdBmsOkHelper(uint8_t BMS_OK, uint8_t IMD_OK) {
     // bool of imd ok and bms ok
     BmsOkStruct okStruct;
+    memset(&okStruct, 0, sizeof(BmsOkStruct));
 
     okStruct.bms_ok = BMS_OK;
     okStruct.imd_ok = IMD_OK;
@@ -117,6 +118,29 @@ void CanMessage::sendImdBmsOkHelper(uint8_t BMS_OK, uint8_t IMD_OK) {
     memcpy(frame.data, &okStruct, sizeof(BmsOkStruct));
     can.tx(CAN_BUS, frame);
 
+}
+
+void CanMessage::sendMainVoltageCurrentHelper(uint16_t voltage, uint16_t current) {
+    BmsMainVoltageCurrentStruct mainVoltageCurrentStruct;
+    memset(&mainVoltageCurrentStruct, 0, sizeof(BmsMainVoltageCurrentStruct));
+
+    mainVoltageCurrentStruct.voltage = voltage;
+    mainVoltageCurrentStruct.current = current;
+
+    can::CANlight &can = can::CANlight::StaticClass();
+    can::CANlight::frame frame;
+
+    frame.id = MAIN_ID;
+    frame.ext = 1;
+    frame.dlc = 8;
+    memcpy(frame.data, &mainVoltageCurrentStruct, sizeof(BmsMainVoltageCurrentStruct));
+    can.tx(CAN_BUS, frame);
+
+}
+
+void CanMessage::sendMainVoltageCurrent(uint16_t voltage, uint16_t current) {
+    CanMessage *c = CanMessage::getInstance();
+    c->sendMainVoltageCurrentHelper(voltage, current);
 }
 
 void CanMessage::sendImdBmsOk(uint8_t BMS_OK, uint8_t IMD_OK) {

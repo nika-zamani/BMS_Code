@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "transaction.h"
-#include "StateMachine.h"
 
 using namespace BSP;
 
