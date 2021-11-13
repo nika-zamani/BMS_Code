@@ -8,9 +8,7 @@
 
 #include "adcObject.h"
 
-
 using namespace BSP;
-
 
 adcObject::adcObject(ADC_Type *adc, int channel) {
    this->adc = adc;

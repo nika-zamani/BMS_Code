@@ -216,7 +216,6 @@ void getTempuraturesHelper() {
 
                 //when it errors dont push data; if result hasnt been sent in a while, throw a fault
                 
-                //check spec sheet for how many thermistor sensors
                 _THERMISTOR_VALUES[i][2*j] = RETURN_DATA[0] | RETURN_DATA[1]<<8;   // add 4 when it is collected; store raw data for now
                 _THERMISTOR_VALUES[i][2*j + 1] = RETURN_DATA[2] | (RETURN_DATA[3]<<8);
             }
@@ -252,10 +251,7 @@ void calculateBMS_OK() {
 
     // memset 0 for the bytes in can struct
 
-    // for (int i = 0; i < 14; i++) {
-    //     if (_THERMISTOR_VALUES[2*i])
-    // }
-    // 0 C min, 70 C max for now
+    // 0 C min, 70 C max for now for thermistor limits
 }
 
 void measureSendVoltageCurrent() {
@@ -293,13 +289,12 @@ void monitorBMSHealth( void *pvParameters )
             CanMessage::sendTemp(_THERMISTOR_VALUES[id], id);   // 15 Hz
         }
 
-        // // calculate BMS-OK
+        // calculate BMS-OK
         calculateBMS_OK();
         readIMD_OK();
-        CanMessage::sendImdBmsOk(BMS_OK, IMD_OK);
+        CanMessage::sendImdBmsOk(BMS_OK, IMD_OK);   // send bms ok and imd ok
 
-
-        // // get and send main voltage and current 
+        // get and send main voltage and current 
         // measureSendVoltageCurrent();
 
         vTaskDelayUntil( &xLastWakeTime, xFrequency );
