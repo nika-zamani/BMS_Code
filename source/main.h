@@ -47,4 +47,7 @@ const unsigned char ucExpectedInterruptStackValues[] = { 0xCC, 0xCC, 0xCC, 0xCC,
 #define CURRENT_ADC ADC1
 #define CURRENT_ADC_CHANNEL 13
 
+// gpio -- figure pins out on altium
+
+
 #endif

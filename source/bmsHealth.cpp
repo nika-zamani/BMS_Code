@@ -238,9 +238,10 @@ void readIMD_OK() {
 void calculateBMS_OK() {
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 8; j++) {
+            // change later maybe for rows of cells
             if (_CELL_VOLTAGES[i][j] < 28000 | _CELL_VOLTAGES[i][j] > 50000) {    // lower limit voltage = 2.8V for now
                 BMS_OK = false;
-                gpio::GPIO::StaticClass().set(gpio::PortD, 15); // port, pin -- tbd need to ask for later
+                gpio::GPIO::StaticClass().clear(gpio::PortD, 15); // port, pin -- tbd need to ask for later
                 // put pin in a header file, constants.h/pins.h 
             }
         }

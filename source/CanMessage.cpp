@@ -22,6 +22,30 @@ CanMessage* CanMessage::getInstance() {
     return instance;
 }
 
+void cb0(void)
+{
+    BmsAirsStruct AirsCanstruct;
+    can::CANlight::frame f = can::CANlight::StaticClass().readrx(0);
+    memcpy(&AirsCanstruct, &f, sizeof(BmsAirsStruct));
+
+    // closed is true (1), open is false(0)
+    if (AirsCanstruct.airs_positive == 0) {
+        gpio::GPIO::StaticClass().clear(gpio::PortD, 15);
+    }
+    else {
+        gpio::GPIO::StaticClass().set(gpio::PortD, 15);
+    }
+    if (AirsCanstruct.airs_negative == 0) {
+        gpio::GPIO::StaticClass().clear(gpio::PortD, 15);
+    }
+    else {
+        gpio::GPIO::StaticClass().set(gpio::PortD, 15);
+    }
+
+
+    // check id (AIRS_ID = correct thing)
+    // deal with gpio in here
+}
 
 void CanMessage::initCan() {
     can::can_config config;
@@ -30,6 +54,8 @@ void CanMessage::initCan() {
     // Initialize CAN driver
     can::CANlight::ConstructStatic(&config);
     can::CANlight &can = can::CANlight::StaticClass();
+
+    canx_config.callback = cb0;
 
     // Configure CAN bus
     canx_config.baudRate = CAN_BAUD_RATE;
