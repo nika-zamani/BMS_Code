@@ -14,7 +14,7 @@ void bmsCommandInit(bmscommand_t *c, bmscom_t com, int num, uint8_t *data, uint8
     } else if(com.combb == combbDir){
         c->len = 4;
     } else if(com.combb == combbClk){
-        c->len = 4 + ((3 * (*data))); // TODO: check this
+        c->len = 4 + ((3 * (*data))); // TODO: check this (gives you the extra 24 cy)
     } else {
         c->len = 0;
     }

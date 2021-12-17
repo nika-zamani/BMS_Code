@@ -224,8 +224,8 @@ void getTempuraturesHelper() {
 
     for (int j = 0; j < 8; j++) {
         
-        muxSet(0, 7);
-        muxSet(1, 7);
+        muxSet(0, j);
+        muxSet(1, j);
         error = pushCommand(ADCVAX, SLAVE_COUNT, RETURN_DATA, 1);
         vTaskDelay(50);
         error = pushCommand(RDAUXA, SLAVE_COUNT, RETURN_DATA);
