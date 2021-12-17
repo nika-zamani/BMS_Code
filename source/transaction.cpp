@@ -235,7 +235,7 @@ uint8_t pushCommand(uint8_t comn, int num, uint8_t *data,
 /* Set a multiplexer to the pin provided
  *
  *  @param mux: The number of the multiplexer to set (0 or 1)
- *  @param pin: The pin to set the multiplexer to (0 - 3)
+ *  @param pin: The pin to set the multiplexer to (0 - 3) -- (0 - 7)
  * 
  *  @return error code, true if command acknowlaged false if not //NONFUNCTIONAL
 */

@@ -79,6 +79,8 @@ extern "C" {
 
     void vApplicationIdleHook( void )
     {
+        // measure clock cycles when its not doing other stuff
+        
         /* vApplicationIdleHook() will only be called if configUSE_IDLE_HOOK is set
          * to 1 in FreeRTOSConfig.h.  It will be called on each iteration of the idle
          * task.  It is essential that code added to this hook function never attempts
