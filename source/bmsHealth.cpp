@@ -220,23 +220,26 @@ void getTempuraturesHelper() {
     int error = 0;
     memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
     int i = 0;
-    // for (int i = 0; i < SLAVE_COUNT; i++) {
+    
 
-        for (int j = 0; j < 8; j++) {
-            muxSet(0, j);
-            muxSet(1, j);
-            error = pushCommand(ADCVAX, SLAVE_COUNT, RETURN_DATA, 1);
-            // vTaskDelay(50);
-            error = pushCommand(RDAUXA, SLAVE_COUNT, RETURN_DATA);
-            // for (int i = 0; i < SLAVE_COUNT; i++) {
-                    // memcpy(&_THERMISTOR_VALUES[i], (RETURN_DATA + (i * 6)), 6);
-            // }
+    for (int j = 0; j < 8; j++) {
         
-            // when it errors dont push data; if result hasnt been sent in a while, throw a fault
-            
-            _THERMISTOR_VALUES[i][2*j] = RETURN_DATA[0] | RETURN_DATA[1]<<8;   // add 4 when it is collected; store raw data for now
-            _THERMISTOR_VALUES[i][2*j + 1] = RETURN_DATA[2] | (RETURN_DATA[3]<<8);
+        muxSet(0, 7);
+        muxSet(1, 7);
+        error = pushCommand(ADCVAX, SLAVE_COUNT, RETURN_DATA, 1);
+        vTaskDelay(50);
+        error = pushCommand(RDAUXA, SLAVE_COUNT, RETURN_DATA);
+        
+    
+        // when it errors dont push data; if result hasnt been sent in a while, throw a fault
+        for (int i = 0; i < SLAVE_COUNT; i++) {
+        
+            _THERMISTOR_VALUES[i][2*j] = RETURN_DATA[i*6] | RETURN_DATA[i*6+1]<<8;   // add 4 when it is collected; store raw data for now
+            _THERMISTOR_VALUES[i][2*j + 1] = RETURN_DATA[i*6+2] | (RETURN_DATA[i*6+3]<<8);
+
+
         }
+    }
     // }
 }
 
@@ -286,6 +289,12 @@ void monitorBMSHealth( void *pvParameters )
 
     // Initialise the xLastWakeTime variable with the current time.
     xLastWakeTime = xTaskGetTickCount();
+
+
+    uint8_t confdat[6*SLAVE_COUNT];
+    memset(confdat, 0, 6*SLAVE_COUNT);
+    for(uint8_t i = 0; i < SLAVE_COUNT; i++) confdat[6*i] = 0xFC;
+    pushCommand(WRCFGA, SLAVE_COUNT, confdat);
 
     for (;;)
     {
