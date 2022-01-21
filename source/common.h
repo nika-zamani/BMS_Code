@@ -6,7 +6,7 @@
 
 #include <string.h>
 
-#define SLAVE_COUNT 2
+#define SLAVE_COUNT 1
 // change this for daisy chain -> 10
 
 #define ltccsport BSP::gpio::PortA

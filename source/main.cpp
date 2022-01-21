@@ -40,11 +40,13 @@ int main( void ) {
     // interrupt lower than freeRTOS so that it works :)
     NVIC->IP[26] |= 6 << 4;
 
+    // transInit();
+
     //TODO: check if commandQueue is NULL as this means it was not created
     //TODO: check for memory leaks
 
     xTaskCreate(transaction, "transaction", STACK_SIZE, NULL, configMAX_PRIORITIES-1, NULL );
-    xTaskCreate(monitorBMSHealth, "monitorbmshlth", STACK_SIZE, NULL, 1, NULL );
+    xTaskCreate(monitorBMSHealth, "monitorbmshlth", 1000, NULL, 1, NULL );
 
     // Start the rtos scheduler, this function should never return as the
     // execution context is changed to the task.

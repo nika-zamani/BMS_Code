@@ -3,7 +3,9 @@
 
 
 #include "can.h"
+#include "taskManager.h"
 
+QueueHandle_t msg_queue = xQueueCreate(20, sizeof(can::CANlight::frame));
 
 class CanMessage {
 

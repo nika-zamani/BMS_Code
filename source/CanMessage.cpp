@@ -22,44 +22,72 @@ CanMessage* CanMessage::getInstance() {
     return instance;
 }
 
-void cb0(void)
-{
-    BmsAirsStruct AirsCanstruct;
-    can::CANlight::frame f = can::CANlight::StaticClass().readrx(0);
-    memcpy(&AirsCanstruct, &f, sizeof(BmsAirsStruct));
+void cb1(void) {
+    can::CANlight::frame out;
+    can::CANlight::frame f = can::CANlight::StaticClass().readrx(1); // or is it readrx(0)?
 
-    // closed is true (1), open is false(0)
-    if (AirsCanstruct.airs_positive == 0) {
-        gpio::GPIO::StaticClass().clear(gpio::PortD, 15);
-    }
-    else {
-        gpio::GPIO::StaticClass().set(gpio::PortD, 15);
-    }
-    if (AirsCanstruct.airs_negative == 0) {
-        gpio::GPIO::StaticClass().clear(gpio::PortD, 15);
-    }
-    else {
-        gpio::GPIO::StaticClass().set(gpio::PortD, 15);
-    }
+    /* Loop through structs */
+    xQueueSendFromISR(msg_queue, &f, pdFALSE);
 
-
-    // check id (AIRS_ID = correct thing)
-    // deal with gpio in here
 }
 
+// moved to taskManager.cpp
+// void canAirs() {
+//     BmsAirsStruct AirsCanstruct;
+//     can::CANlight::frame f = can::CANlight::StaticClass().readrx(0);
+//     memcpy(&AirsCanstruct, &f, sizeof(BmsAirsStruct));
+
+//     // closed is true (1), open is false(0)
+//     if (AirsCanstruct.airs_positive == 0) {
+//         gpio::GPIO::StaticClass().clear(gpio::PortD, 15);
+//     }
+//     else {
+//         gpio::GPIO::StaticClass().set(gpio::PortD, 15);
+//     }
+//     if (AirsCanstruct.airs_negative == 0) {
+//         gpio::GPIO::StaticClass().clear(gpio::PortD, 15);
+//     }
+//     else {
+//         gpio::GPIO::StaticClass().set(gpio::PortD, 15);
+//     }
+
+
+//     // check id (AIRS_ID = correct thing)
+//     // deal with gpio in here
+// }
+
 void CanMessage::initCan() {
+    if (msg_queue == NULL) {
+        int bll = 0;
+    }
+
+    // Fix can priority to allow RTOS interupts during can callbacks
+    NVIC->IP[78] |= 6 << 4;
+    NVIC->IP[79] |= 6 << 4;
+    NVIC->IP[80] |= 6 << 4;
+    NVIC->IP[81] |= 6 << 4;
+
+    NVIC->IP[85] |= 6 << 4;
+    NVIC->IP[86] |= 6 << 4;
+    NVIC->IP[87] |= 6 << 4;
+    NVIC->IP[88] |= 6 << 4;
+
     can::can_config config;
-    can::CANlight::canx_config canx_config;
+    can::CANlight::canx_config can0_config;
 
     // Initialize CAN driver
     can::CANlight::ConstructStatic(&config);
     can::CANlight &can = can::CANlight::StaticClass();
 
-    canx_config.callback = cb0;
+    can0_config.callback = cb1;
+    can0_config.baudRate = CAN_BAUD_RATE;
+    can.init(CAN_BUS, &can0_config);
 
-    // Configure CAN bus
-    canx_config.baudRate = CAN_BAUD_RATE;
-    can.init(CAN_BUS, &canx_config);
+    // can0_config.callback = cb0;
+
+    // // Configure CAN bus
+    // can0_config.baudRate = CAN_BAUD_RATE;
+    // can.init(CAN_BUS, &can0_config);
 }
 
 
