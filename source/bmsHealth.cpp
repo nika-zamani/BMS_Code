@@ -256,8 +256,9 @@ void SControl () {
 
 /*  Gets and returns the raw tempurature for each thermistor
  */
-void getTempuraturesHelper() {
+void getTempuraturesHelper(uint8_t md) {
     int error = 0;
+    uint8_t CHG = 0b000;
     memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
     int i = 0;
     
@@ -266,7 +267,9 @@ void getTempuraturesHelper() {
         
         muxSet(0, j);
         muxSet(1, j);
-        error = pushCommand(ADCVAX, SLAVE_COUNT, RETURN_DATA, 1);
+
+        error = pushCommand(ADCVAX, SLAVE_COUNT, RETURN_DATA, md);
+        //error = pushCommand(ADAX, SLAVE_COUNT, RETURN_DATA, md, CHG);
         vTaskDelay(50);
         error = pushCommand(RDAUXA, SLAVE_COUNT, RETURN_DATA);
         
@@ -333,20 +336,20 @@ void monitorBMSHealth( void *pvParameters )
 
     uint8_t confdat[6*SLAVE_COUNT];
     memset(confdat, 0, 6*SLAVE_COUNT);
-    for(uint8_t i = 0; i < SLAVE_COUNT; i++) confdat[6*i] = 0xFC;
+    for(uint8_t i = 0; i < SLAVE_COUNT; i++) confdat[6*i] = 0b001111100;
     pushCommand(WRCFGA, SLAVE_COUNT, confdat);
 
     for (;;)
     {
         // perform diagnostic tests
         // SControl();
-        getVoltages(1);
+        getVoltages(0b10);
         
         // for (int id = 0; id < SLAVE_COUNT; id++) {
         //     CanMessage::sendVoltage(_CELL_VOLTAGES[id], id);    // 10 Hz
         // }
 
-        // getTempuraturesHelper();
+        getTempuraturesHelper(0b10);
         // for (int i = 0; i < SLAVE_COUNT; i++) {
         //     getTempuratures(i + 1, i);
         // }

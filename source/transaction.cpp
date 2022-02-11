@@ -244,12 +244,24 @@ uint8_t muxSet(uint8_t mux, uint8_t pin){
     uint8_t ack_mask = 0x08;
     uint8_t addr = 0x90 | (mux<<1);
     uint8_t comm = 0x08 | pin;
-    uint8_t data[6] = { 0x60, 0x08, 0x00, 0x09, 0x70, 0x09}; //0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    uint8_t data_buff[6] = { 0x03, 0x00, 0x00, 0x00, 0x00, 0x00}; //, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00};
-    data[0] |= (addr>>4)&0x0f;
-    data[1] |= (addr<<4)&0xf0;
-    data[3] |= (comm<<4)&0xf0;
-    // memccpy(data+6, data, 6, 8);
+    uint8_t base_data[6] = { 0x60, 0x08, 0x00, 0x09, 0x70, 0x09};//, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    uint8_t base_data_buff[6] = { 0x03, 0x00, 0x00, 0x00, 0x00, 0x00};//, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00};
+    base_data[0] |= (addr>>4)&0x0f;
+    base_data[1] |= (addr<<4)&0xf0;
+    base_data[3] |= (comm<<4)&0xf0;
+    
+    uint8_t* data = (uint8_t*) malloc(SLAVE_COUNT*6 * sizeof(uint8_t));
+    for (int i = 0; i < SLAVE_COUNT; i++) {
+        memccpy(data+(i*6), base_data, 6, 8); 
+    }
+
+    uint8_t* data_buff = (uint8_t*) malloc(SLAVE_COUNT*6 * sizeof(uint8_t));
+    for (int i = 0; i < SLAVE_COUNT; i++) {
+        memccpy(data_buff+(i*6), base_data_buff, 6, 8); 
+    }
+    
+
+
 
     //taskENTER_CRITICAL(); //force thread safety if multiple i2c commands are sent in close proximity
     error = pushCommand(WRCOMM, SLAVE_COUNT, data);
