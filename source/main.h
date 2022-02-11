@@ -10,6 +10,7 @@
 
 #include "bmsCommand.h"
 #include "transaction.h"
+#include "taskManager.h"
 
 #include "testroutines.h"
 #include "bmsHealth.h"

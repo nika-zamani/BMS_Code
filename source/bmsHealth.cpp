@@ -10,6 +10,7 @@
 using namespace BSP;
 
 uint8_t RETURN_DATA[6 * SLAVE_COUNT];
+uint8_t SCONTROL_DATA[6 * SLAVE_COUNT];
 // uint16_t RETURN_DATA_TEMP[6 * SLAVE_COUNT];
 // uint8_t RETURNED[6 * SLAVE_COUNT];
 //uint8_t TEMP[15][6 * SLAVE_COUNT];
@@ -187,6 +188,8 @@ bool testPattern(uint8_t data[6], uint16_t pattern, uint8_t testLength = 6) {
 void getVoltages(uint8_t md) {
     int error = 0;
     memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
+    error = pushCommand(CLRSCTRL, SLAVE_COUNT, RETURN_DATA);
+
     pushCommand(ADCVSC, SLAVE_COUNT, RETURN_DATA, md, _DCP);
 
     // wait for some time?
@@ -211,6 +214,43 @@ void getVoltages(uint8_t md) {
 
 
     error = pushCommand(RDSTATA, SLAVE_COUNT, RETURN_DATA);
+
+}
+
+void SControl () {
+
+    int error = 0;
+    memset(SCONTROL_DATA, 0, sizeof(SCONTROL_DATA));
+    memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
+    error = pushCommand(CLRSCTRL, SLAVE_COUNT, RETURN_DATA);
+    pushCommand(ADCVSC, SLAVE_COUNT, RETURN_DATA, 1, _DCP);
+    SCONTROL_DATA[0] = 0b10000000;
+    SCONTROL_DATA[1] = 0b10001000;
+    SCONTROL_DATA[2] = 0b10001000;
+    SCONTROL_DATA[3] = 0b10000000;
+    SCONTROL_DATA[4] = 0b10001000;
+    SCONTROL_DATA[5] = 0b10001000;
+    // for (int i = 0; i<6; i++) {
+    //     uint8_t temp = SCONTROL_DATA[5];
+    //     SCONTROL_DATA[5] = SCONTROL_DATA[4];
+    //     SCONTROL_DATA[4] = SCONTROL_DATA[3];
+    //     SCONTROL_DATA[3] = SCONTROL_DATA[2];
+    //     SCONTROL_DATA[2] = SCONTROL_DATA[1];
+    //     SCONTROL_DATA[1] = SCONTROL_DATA[0];
+    //     SCONTROL_DATA[0] = temp;
+    //     memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
+    //     error = pushCommand(WRSCTRL, SLAVE_COUNT, SCONTROL_DATA);
+    //     vTaskDelay(50);
+    //     error = pushCommand(RDSCTRL, SLAVE_COUNT, RETURN_DATA);
+    // }
+    // pushCommand(STSCTRL, SLAVE_COUNT, RETURN_DATA);
+
+    memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
+    error = pushCommand(WRSCTRL, SLAVE_COUNT, SCONTROL_DATA);
+    error = pushCommand(STSCTRL, SLAVE_COUNT, RETURN_DATA);
+
+    vTaskDelay(100);
+    error = pushCommand(RDSCTRL, SLAVE_COUNT, RETURN_DATA);
 
 }
 
@@ -299,13 +339,14 @@ void monitorBMSHealth( void *pvParameters )
     for (;;)
     {
         // perform diagnostic tests
-
-        // getVoltages(1);
+        // SControl();
+        getVoltages(1);
+        
         // for (int id = 0; id < SLAVE_COUNT; id++) {
         //     CanMessage::sendVoltage(_CELL_VOLTAGES[id], id);    // 10 Hz
         // }
 
-        getTempuraturesHelper();
+        // getTempuraturesHelper();
         // for (int i = 0; i < SLAVE_COUNT; i++) {
         //     getTempuratures(i + 1, i);
         // }

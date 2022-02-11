@@ -45,14 +45,14 @@ const bmscom_t bmscom[44] {
     {RDAUXD, {0x00, 0x0F}, combbRx},
     {RDSTATA, {0x00, 0x10}, combbRx},
     {RDSTATB, {0x00, 0x12}, combbRx},
-    {WRSCTRL, {0x00, 0x14}, NULL}, //TODO: all NULL combb defs
+    {WRSCTRL, {0x00, 0x14}, combbTx}, //TODO: all NULL combb defs
     {WRPWM, {0x00, 0x20}, NULL},
     {WRPSB, {0x00, 0x1C}, NULL},
     {RDSCTRL, {0x00, 0x16}, combbRx},
     {RDPWM, {0x00, 0x22}, combbRx},
     {RDPSB, {0x00, 0x1E}, combbRx},
-    {STSCTRL, {0x00, 0x19}, NULL},
-    {CLRSCTRL, {0x00, 0x18}, NULL},
+    {STSCTRL, {0x00, 0x19}, combbDir},
+    {CLRSCTRL, {0x00, 0x18}, combbDir},
     {ADCV, {0x02, 0x60}, combbDir},
     {ADOW, {0x02, 0x28}, combbDir},
     {CVST, {0x02, 0x07}, combbDir},
