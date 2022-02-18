@@ -45,6 +45,12 @@ const uint8_t _DCP = 0; // discharge not permited
 const uint8_t _CH = 0;  // all cells
 const uint8_t _ADCOPT = 0; // the default value
 
+uint32_t calcVoltFromTemp(uint16_t temperature) {
+    // 9*(10^-5)*(x^4)-3*(10^-2)*(x^3)+9*(10^-1)*(x^2)+262*x+8266
+    uint32_t v1 = (.00009 * temperature * temperature * temperature * temperature) - (.03 * temperature * temperature * temperature) + (.9 * temperature * temperature) + (262 * temperature) + 8266;
+    return v1;
+}
+
 uint16_t getSelfTestOutputPatern(uint8_t adcopt, uint8_t md, uint8_t st) {
     if (md == 1) {
         if (adcopt == 1) {
@@ -230,27 +236,27 @@ void SControl () {
     SCONTROL_DATA[3] = 0b10000000;
     SCONTROL_DATA[4] = 0b10001000;
     SCONTROL_DATA[5] = 0b10001000;
-    // for (int i = 0; i<6; i++) {
-    //     uint8_t temp = SCONTROL_DATA[5];
-    //     SCONTROL_DATA[5] = SCONTROL_DATA[4];
-    //     SCONTROL_DATA[4] = SCONTROL_DATA[3];
-    //     SCONTROL_DATA[3] = SCONTROL_DATA[2];
-    //     SCONTROL_DATA[2] = SCONTROL_DATA[1];
-    //     SCONTROL_DATA[1] = SCONTROL_DATA[0];
-    //     SCONTROL_DATA[0] = temp;
-    //     memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
-    //     error = pushCommand(WRSCTRL, SLAVE_COUNT, SCONTROL_DATA);
-    //     vTaskDelay(50);
-    //     error = pushCommand(RDSCTRL, SLAVE_COUNT, RETURN_DATA);
-    // }
-    // pushCommand(STSCTRL, SLAVE_COUNT, RETURN_DATA);
+    for (int i = 0; i<6; i++) {
+        uint8_t temp = SCONTROL_DATA[5];
+        SCONTROL_DATA[5] = SCONTROL_DATA[4];
+        SCONTROL_DATA[4] = SCONTROL_DATA[3];
+        SCONTROL_DATA[3] = SCONTROL_DATA[2];
+        SCONTROL_DATA[2] = SCONTROL_DATA[1];
+        SCONTROL_DATA[1] = SCONTROL_DATA[0];
+        SCONTROL_DATA[0] = temp;
+        memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
+        error = pushCommand(WRSCTRL, SLAVE_COUNT, SCONTROL_DATA);
+        vTaskDelay(50);
+        error = pushCommand(RDSCTRL, SLAVE_COUNT, RETURN_DATA);
+    }
+    pushCommand(STSCTRL, SLAVE_COUNT, RETURN_DATA);
 
-    memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
-    error = pushCommand(WRSCTRL, SLAVE_COUNT, SCONTROL_DATA);
-    error = pushCommand(STSCTRL, SLAVE_COUNT, RETURN_DATA);
+    // memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
+    // error = pushCommand(WRSCTRL, SLAVE_COUNT, SCONTROL_DATA);
+    // error = pushCommand(STSCTRL, SLAVE_COUNT, RETURN_DATA);
 
-    vTaskDelay(100);
-    error = pushCommand(RDSCTRL, SLAVE_COUNT, RETURN_DATA);
+    // vTaskDelay(100);
+    // error = pushCommand(RDSCTRL, SLAVE_COUNT, RETURN_DATA);
 
 }
 
@@ -277,31 +283,36 @@ void getTempuraturesHelper(uint8_t md) {
         // when it errors dont push data; if result hasnt been sent in a while, throw a fault
         for (int i = 0; i < SLAVE_COUNT; i++) {
         
-            _THERMISTOR_VALUES[i][2*j] = RETURN_DATA[i*6] | RETURN_DATA[i*6+1]<<8;   // add 4 when it is collected; store raw data for now
-            _THERMISTOR_VALUES[i][2*j + 1] = RETURN_DATA[i*6+2] | (RETURN_DATA[i*6+3]<<8);
+            _THERMISTOR_VALUES[i][j] = RETURN_DATA[i*6] | RETURN_DATA[i*6+1]<<8;   // add 4 when it is collected; store raw data for now
+            _THERMISTOR_VALUES[i][j + 8] = RETURN_DATA[i*6+2] | (RETURN_DATA[i*6+3]<<8);
 
 
         }
     }
-    // }
 }
 
 void readIMD_OK() {
     gpio::GPIO::StaticClass().read(gpio::PortD, 15);
 }
 
-void calculateBMS_OK() {
-    for (int i = 0; i < 10; i++) {
+uint8_t calculateBMS_OK(uint32_t voltTempLimit) {
+    for (int i = 0; i < SLAVE_COUNT; i++) {
         for (int j = 0; j < 8; j++) {
             // change later maybe for rows of cells
             if (_CELL_VOLTAGES[i][j] < 28000 | _CELL_VOLTAGES[i][j] > 50000) {    // lower limit voltage = 2.8V for now
                 BMS_OK = false;
-                gpio::GPIO::StaticClass().clear(gpio::PortD, 15); // port, pin -- tbd need to ask for later
+                return 1;
+                // gpio::GPIO::StaticClass().clear(gpio::PortD, 15); // port, pin -- tbd need to ask for later
                 // put pin in a header file, constants.h/pins.h 
             }
+            if (_THERMISTOR_VALUES[i][j] > voltTempLimit) {
+                BMS_OK = false;
+                return 1;
+            }
+
         }
     }
-
+    return 0;
     // imd is gpio out - true false gpio signal
     // false when things are bad, true when things are good
 
@@ -339,6 +350,10 @@ void monitorBMSHealth( void *pvParameters )
     for(uint8_t i = 0; i < SLAVE_COUNT; i++) confdat[6*i] = 0b001111100;
     pushCommand(WRCFGA, SLAVE_COUNT, confdat);
 
+    uint32_t maxVoltTemp = calcVoltFromTemp(29);
+
+    gpio::GPIO::StaticClass().clear(gpio::PortD, 2);
+
     for (;;)
     {
         // perform diagnostic tests
@@ -348,20 +363,18 @@ void monitorBMSHealth( void *pvParameters )
         // for (int id = 0; id < SLAVE_COUNT; id++) {
         //     CanMessage::sendVoltage(_CELL_VOLTAGES[id], id);    // 10 Hz
         // }
-
         getTempuraturesHelper(0b10);
-        // for (int i = 0; i < SLAVE_COUNT; i++) {
-        //     getTempuratures(i + 1, i);
-        // }
-
+        uint8_t res = calculateBMS_OK(maxVoltTemp);
+        if (res == 1) {
+            gpio::GPIO::StaticClass().set(gpio::PortD, 2);
+        }
+        
         // for (int id = 0; id < 10; id++) {
         //     CanMessage::sendTemp(_THERMISTOR_VALUES[id], id);   // 15 Hz
         // }
 
-        // calculate BMS-OK
-        // calculateBMS_OK();
-        // readIMD_OK();
-        // CanMessage::sendImdBmsOk(BMS_OK, IMD_OK);   // send bms ok and imd ok
+        readIMD_OK();
+        CanMessage::sendImdBmsOk(BMS_OK, IMD_OK);   // send bms ok and imd ok
 
         // get and send main voltage and current 
         // measureSendVoltageCurrent();

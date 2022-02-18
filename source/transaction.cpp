@@ -249,26 +249,24 @@ uint8_t muxSet(uint8_t mux, uint8_t pin){
     base_data[0] |= (addr>>4)&0x0f;
     base_data[1] |= (addr<<4)&0xf0;
     base_data[3] |= (comm<<4)&0xf0;
-    
-    uint8_t* data = (uint8_t*) malloc(SLAVE_COUNT*6 * sizeof(uint8_t));
-    for (int i = 0; i < SLAVE_COUNT; i++) {
-        memccpy(data+(i*6), base_data, 6, 8); 
-    }
+    // uint8_t data[6*SLAVE_COUNT];
+    // uint8_t data_buff[6*SLAVE_COUNT];
 
+    uint8_t* data = (uint8_t*) malloc(SLAVE_COUNT*6 * sizeof(uint8_t));
     uint8_t* data_buff = (uint8_t*) malloc(SLAVE_COUNT*6 * sizeof(uint8_t));
     for (int i = 0; i < SLAVE_COUNT; i++) {
+        memccpy(data+(i*6), base_data, 6, 8); 
         memccpy(data_buff+(i*6), base_data_buff, 6, 8); 
     }
     
-
-
-
     //taskENTER_CRITICAL(); //force thread safety if multiple i2c commands are sent in close proximity
     error = pushCommand(WRCOMM, SLAVE_COUNT, data);
     error = pushCommand(STCOMM, SLAVE_COUNT, data_buff);
     error = pushCommand(RDCOMM, SLAVE_COUNT, data_buff);
     //taskEXIT_CRITICAL();
 
+    free(data);
+    free(data_buff);    
 
     //Check ack/nack from buff
     //return !(data_buff[1] & ack_mask) && !(data_buff[3] & ack_mask) && !(data_buff[5] & ack_mask));
