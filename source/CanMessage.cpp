@@ -174,12 +174,12 @@ void CanMessage::sendImdBmsOkHelper(uint8_t BMS_OK, uint8_t IMD_OK) {
 
 }
 
-void CanMessage::sendMainVoltageCurrentHelper(uint16_t voltage, uint16_t current) {
-    BmsMainVoltageCurrentStruct mainVoltageCurrentStruct;
-    memset(&mainVoltageCurrentStruct, 0, sizeof(BmsMainVoltageCurrentStruct));
+void CanMessage::sendMainVoltageTempHelper(uint16_t voltage, uint16_t maxTemp) {
+    BmsMainVoltageTempStruct mainVoltageTempStruct;
+    memset(&mainVoltageTempStruct, 0, sizeof(BmsMainVoltageTempStruct));
 
-    mainVoltageCurrentStruct.voltage = voltage;
-    mainVoltageCurrentStruct.current = current;
+    mainVoltageTempStruct.voltage = voltage;
+    mainVoltageTempStruct.maxTemp = maxTemp;
 
     can::CANlight &can = can::CANlight::StaticClass();
     can::CANlight::frame frame;
@@ -187,14 +187,14 @@ void CanMessage::sendMainVoltageCurrentHelper(uint16_t voltage, uint16_t current
     frame.id = MAIN_ID;
     frame.ext = 1;
     frame.dlc = 8;
-    memcpy(frame.data, &mainVoltageCurrentStruct, sizeof(BmsMainVoltageCurrentStruct));
+    memcpy(frame.data, &mainVoltageTempStruct, sizeof(mainVoltageTempStruct));
     can.tx(CAN_BUS, frame);
 
 }
 
-void CanMessage::sendMainVoltageCurrent(uint16_t voltage, uint16_t current) {
+void CanMessage::sendMainVoltageTemp(uint16_t voltage, uint16_t maxTemp) {
     CanMessage *c = CanMessage::getInstance();
-    c->sendMainVoltageCurrentHelper(voltage, current);
+    c->sendMainVoltageTempHelper(voltage, maxTemp);
 }
 
 void CanMessage::sendImdBmsOk(uint8_t BMS_OK, uint8_t IMD_OK) {

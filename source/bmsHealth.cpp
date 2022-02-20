@@ -28,11 +28,10 @@ int32_t _CELLDELTA[12];
 // uint16_t _CELL_VOLTAGES[12];
 uint16_t _CELL_VOLTAGES[SLAVE_COUNT][12];
 // ten maybe sums
-uint16_t _SUM_CELL_VOLTAGES = 0;
+uint32_t _SUM_CELL_VOLTAGES = 0;
 
 
 uint16_t _THERMISTOR_VALUES[SLAVE_COUNT][16];
-uint16_t _THERM[SLAVE_COUNT][16];
 uint16_t _THERMISTOR_CALCULATE = 0;
 uint16_t _THERMISTOR_VOLTAGE = 0;
 // uint16_t _THERMISTOR_VALUES[28];
@@ -49,6 +48,37 @@ uint32_t calcVoltFromTemp(uint16_t temperature) {
     // 9*(10^-5)*(x^4)-3*(10^-2)*(x^3)+9*(10^-1)*(x^2)+262*x+8266
     uint32_t v1 = (.00009 * temperature * temperature * temperature * temperature) - (.03 * temperature * temperature * temperature) + (.9 * temperature * temperature) + (262 * temperature) + 8266;
     return v1;
+}
+
+uint16_t calcTempFromVolt(uint16_t voltage) {
+    // y = -0.0002x^2 + 0.0358x + 0.7128
+    // uint16_t t1 = (100.0 * -0.0002 * voltage * voltage) + (100.0 * 0.0358 * voltage) + (100.0 * 0.7128);
+    float vFloat = voltage * 0.0001;
+    float t1 = ((-0.0002 * vFloat * vFloat) + (0.0358 * vFloat) + (0.7128)) * 100;
+
+    return t1*100;
+}
+
+uint16_t getMaxTemp() {
+    uint16_t tempMax = 0;
+    for (int i = 0; i < SLAVE_COUNT; i++) {
+        for (int j = 0; j < 16; j++) {
+            if (tempMax < _THERMISTOR_VALUES[i][j]) {
+                tempMax = _THERMISTOR_VALUES[i][j];
+            }
+        }
+    }
+    return tempMax;
+}
+
+uint32_t getSumVoltage() {
+    uint32_t sumVoltage = 0;
+    for (int i = 0; i < SLAVE_COUNT; i++) {
+        for (int j = 0; j < 8; j++) {
+            sumVoltage += _CELL_VOLTAGES[i][j];
+        }
+    }
+    return sumVoltage;
 }
 
 uint16_t getSelfTestOutputPatern(uint8_t adcopt, uint8_t md, uint8_t st) {
@@ -229,13 +259,14 @@ void SControl () {
     memset(SCONTROL_DATA, 0, sizeof(SCONTROL_DATA));
     memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
     error = pushCommand(CLRSCTRL, SLAVE_COUNT, RETURN_DATA);
-    pushCommand(ADCVSC, SLAVE_COUNT, RETURN_DATA, 1, _DCP);
+    error = pushCommand(ADCVSC, SLAVE_COUNT, RETURN_DATA, 1, _DCP); // is this needed?
     SCONTROL_DATA[0] = 0b10000000;
     SCONTROL_DATA[1] = 0b10001000;
     SCONTROL_DATA[2] = 0b10001000;
     SCONTROL_DATA[3] = 0b10000000;
     SCONTROL_DATA[4] = 0b10001000;
     SCONTROL_DATA[5] = 0b10001000;
+    pushCommand(STSCTRL, SLAVE_COUNT, RETURN_DATA); // put this here?????
     for (int i = 0; i<6; i++) {
         uint8_t temp = SCONTROL_DATA[5];
         SCONTROL_DATA[5] = SCONTROL_DATA[4];
@@ -246,10 +277,10 @@ void SControl () {
         SCONTROL_DATA[0] = temp;
         memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
         error = pushCommand(WRSCTRL, SLAVE_COUNT, SCONTROL_DATA);
-        vTaskDelay(50);
+        vTaskDelay(100); // check ticks
         error = pushCommand(RDSCTRL, SLAVE_COUNT, RETURN_DATA);
     }
-    pushCommand(STSCTRL, SLAVE_COUNT, RETURN_DATA);
+    // pushCommand(STSCTRL, SLAVE_COUNT, RETURN_DATA);
 
     // memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
     // error = pushCommand(WRSCTRL, SLAVE_COUNT, SCONTROL_DATA);
@@ -299,7 +330,7 @@ uint8_t calculateBMS_OK(uint32_t voltTempLimit) {
     for (int i = 0; i < SLAVE_COUNT; i++) {
         for (int j = 0; j < 8; j++) {
             // change later maybe for rows of cells
-            if (_CELL_VOLTAGES[i][j] < 28000 | _CELL_VOLTAGES[i][j] > 50000) {    // lower limit voltage = 2.8V for now
+            if (_CELL_VOLTAGES[i][j] < 28000 | _CELL_VOLTAGES[i][j] > 45000) {    // lower limit voltage = 2.8V for now
                 BMS_OK = false;
                 return 1;
                 // gpio::GPIO::StaticClass().clear(gpio::PortD, 15); // port, pin -- tbd need to ask for later
@@ -322,14 +353,13 @@ uint8_t calculateBMS_OK(uint32_t voltTempLimit) {
     // rules say max temp 60 C
 }
 
-void measureSendVoltageCurrent() {
-    adcObject *voltageMeasure = new adcObject(VOLTAGE_ADC, VOLTAGE_ADC_CHANNEL);
-    adcObject *currentMeasure = new adcObject(CURRENT_ADC, CURRENT_ADC_CHANNEL);
-    
-    voltageMeasure->adcRead();
-    currentMeasure->adcRead();
+void measureSendVoltageTemp() {
+    uint32_t sumVoltage = getSumVoltage();
 
-    CanMessage::sendMainVoltageCurrent(voltageMeasure->adc_data, currentMeasure->adc_data);
+    uint16_t maxTemp = getMaxTemp();
+    uint16_t maxTempC = calcTempFromVolt(maxTemp);
+
+    CanMessage::sendMainVoltageTemp(sumVoltage, maxTempC);
 
 }
 
@@ -340,6 +370,7 @@ void monitorBMSHealth( void *pvParameters )
 
     uint8_t testResults;
     uint8_t wireOpen;
+    uint16_t tempC = 0;
 
     // Initialise the xLastWakeTime variable with the current time.
     xLastWakeTime = xTaskGetTickCount();
@@ -350,7 +381,7 @@ void monitorBMSHealth( void *pvParameters )
     for(uint8_t i = 0; i < SLAVE_COUNT; i++) confdat[6*i] = 0b001111100;
     pushCommand(WRCFGA, SLAVE_COUNT, confdat);
 
-    uint32_t maxVoltTemp = calcVoltFromTemp(29);
+    uint32_t maxVoltTemp = calcVoltFromTemp(35);
 
     gpio::GPIO::StaticClass().clear(gpio::PortD, 2);
 
@@ -368,16 +399,19 @@ void monitorBMSHealth( void *pvParameters )
         if (res == 1) {
             gpio::GPIO::StaticClass().set(gpio::PortD, 2);
         }
+        tempC = calcTempFromVolt(_THERMISTOR_VALUES[0][0]);
+
+        measureSendVoltageTemp();
         
         // for (int id = 0; id < 10; id++) {
         //     CanMessage::sendTemp(_THERMISTOR_VALUES[id], id);   // 15 Hz
         // }
 
-        readIMD_OK();
-        CanMessage::sendImdBmsOk(BMS_OK, IMD_OK);   // send bms ok and imd ok
+        // readIMD_OK();
+        // CanMessage::sendImdBmsOk(BMS_OK, IMD_OK);   // send bms ok and imd ok
 
         // get and send main voltage and current 
-        // measureSendVoltageCurrent();
+        // measureSendVoltageCurrentTemp();
 
         vTaskDelayUntil( &xLastWakeTime, xFrequency );
     }
