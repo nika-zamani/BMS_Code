@@ -6,11 +6,11 @@
 
 #include <string.h>
 
-#define SLAVE_COUNT 3
+#define SLAVE_COUNT 1
 // change this for daisy chain -> 10
 
-#define ltccsport BSP::gpio::PortA
-#define ltccspin 2
+#define ltccsport BSP::gpio::PortB
+#define ltccspin 0
 #define ltcbaud 500000U
 
 #define tick_ms(x) (x*10)

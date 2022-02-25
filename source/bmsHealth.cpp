@@ -383,7 +383,7 @@ void monitorBMSHealth( void *pvParameters )
 
     uint32_t maxVoltTemp = calcVoltFromTemp(35);
 
-    gpio::GPIO::StaticClass().clear(gpio::PortD, 2);
+    // gpio::GPIO::StaticClass().clear(gpio::PortD, 2);
 
     for (;;)
     {
@@ -397,7 +397,7 @@ void monitorBMSHealth( void *pvParameters )
         getTempuraturesHelper(0b10);
         uint8_t res = calculateBMS_OK(maxVoltTemp);
         if (res == 1) {
-            gpio::GPIO::StaticClass().set(gpio::PortD, 2);
+            // gpio::GPIO::StaticClass().set(gpio::PortD, 2);
         }
         tempC = calcTempFromVolt(_THERMISTOR_VALUES[0][0]);
 
