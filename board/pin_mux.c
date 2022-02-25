@@ -38,8 +38,8 @@ BOARD_InitPins:
 - options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
 - pin_list:
   - {pin_num: '1', peripheral: GPIOD, signal: 'GPIO, 1', pin_signal: ADC2_SE1/PTD1/FTM0_CH3/LPSPI1_SIN/FTM2_CH1/FXIO_D1/TRGMUX_OUT2}
-  - {pin_num: '14', peripheral: GPIOD, signal: 'GPIO, 16', pin_signal: ACMP2_IN0/PTD16/FTM0_CH1}
   - {pin_num: '15', peripheral: GPIOD, signal: 'GPIO, 15', pin_signal: ACMP2_IN1/PTD15/FTM0_CH0}
+  - {pin_num: '19', peripheral: LPSPI0, signal: SOUT, pin_signal: ACMP1_IN2/PTB4/FTM0_CH4/LPSPI0_SOUT/TRGMUX_IN1}
   - {pin_num: '20', peripheral: CAN0, signal: TX, pin_signal: ADC0_SE11/ACMP0_IN4/EXTAL32/PTC3/FTM0_CH3/CAN0_TX}
   - {pin_num: '21', peripheral: CAN0, signal: RX, pin_signal: ADC0_SE10/ACMP0_IN5/XTAL32/PTC2/FTM0_CH2/CAN0_RX}
   - {pin_num: '25', peripheral: ADC0, signal: 'SE, 9', pin_signal: ADC0_SE9/ACMP1_IN3/PTC1/FTM0_CH1/FTM1_CH7}
@@ -51,14 +51,14 @@ BOARD_InitPins:
   - {pin_num: '42', peripheral: GPIOB, signal: 'GPIO, 13', pin_signal: ADC1_SE8/ADC2_SE8/PTB13/FTM0_CH1/FTM3_FLT1}
   - {pin_num: '48', peripheral: GPIOA, signal: 'GPIO, 2', pin_signal: ADC1_SE0/PTA2/FTM3_CH0/LPI2C0_SDA/EWM_OUT_b/LPUART0_RX}
   - {pin_num: '52', peripheral: GPIOC, signal: 'GPIO, 6', pin_signal: ADC1_SE4/PTC6/LPUART1_RX/CAN1_RX/FTM3_CH2}
+  - {pin_num: '58', peripheral: JTAG, signal: TDO, pin_signal: PTA10/FTM1_CH4/LPUART0_TX/FXIO_D0/JTAG_TDO/noetm_Trace_SWO}
   - {pin_num: '60', peripheral: ADC2, signal: 'SE, 7', pin_signal: ADC2_SE7/PTE0/LPSPI0_SCK/TCLK1/LPI2C1_SDA/FTM1_FLT2}
   - {pin_num: '61', peripheral: JTAG, signal: TDI, pin_signal: PTC5/FTM2_CH0/RTC_CLKOUT/LPI2C1_HREQ/FTM2_QD_PHB/JTAG_TDI}
   - {pin_num: '62', peripheral: JTAG, signal: JTAG_TCLK_SWD_CLK, pin_signal: ACMP0_IN2/PTC4/FTM1_CH0/RTC_CLKOUT/EWM_IN/FTM1_QD_PHB/JTAG_TCLK/SWD_CLK}
   - {pin_num: '63', peripheral: JTAG, signal: TRST, pin_signal: PTA5/TCLK1/JTAG_TRST_b/RESET_b}
   - {pin_num: '64', peripheral: JTAG, signal: JTAG_TMS_SWD_DIO, pin_signal: PTA4/ACMP0_OUT/EWM_OUT_b/JTAG_TMS/SWD_DIO}
-  - {pin_num: '58', peripheral: JTAG, signal: TDO, pin_signal: PTA10/FTM1_CH4/LPUART0_TX/FXIO_D0/JTAG_TDO/noetm_Trace_SWO}
-  - {pin_num: '19', peripheral: LPSPI0, signal: SOUT, pin_signal: ACMP1_IN2/PTB4/FTM0_CH4/LPSPI0_SOUT/TRGMUX_IN1}
   - {pin_num: '34', peripheral: GPIOB, signal: 'GPIO, 0', pin_signal: ADC0_SE4/ADC1_SE14/PTB0/LPUART0_RX/LPSPI0_PCS0/LPTMR0_ALT3/PWT_IN3}
+  - {pin_num: '14', peripheral: GPIOD, signal: 'GPIO, 16', pin_signal: ACMP2_IN0/PTD16/FTM0_CH1}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
