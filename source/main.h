@@ -33,22 +33,6 @@ const unsigned char ucExpectedInterruptStackValues[] = { 0xCC, 0xCC, 0xCC, 0xCC,
 
 #define STACK_SIZE 100
 
-// can
-#define VOLTAGE_ID 0x300
-#define TEMP_ID 0x314
-#define OK_ID 0x334
-#define MAIN_ID 0x335
-
-#define CAN_BUS 0
-#define CAN_BAUD_RATE 1000000
-
-// measure voltage and current -- tbd
-#define VOLTAGE_ADC ADC1
-#define VOLTAGE_ADC_CHANNEL 13
-#define CURRENT_ADC ADC1
-#define CURRENT_ADC_CHANNEL 13
-
-// gpio -- figure pins out on altium
 
 
 #endif

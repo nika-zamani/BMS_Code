@@ -1,4 +1,5 @@
 #include "main.h"
+#include "CanMessage.h"
 
 using namespace BSP;
 
@@ -16,6 +17,8 @@ static void prvSetupHardware( void ) {
     BOARD_InitBootPins();
 
     gpio::GPIO::ConstructStatic();
+
+    CanMessage::getInstance();
 
     spi::spi_config conf;
     conf.callbacks[0] = bmsspicb;
@@ -40,7 +43,7 @@ int main( void ) {
     // interrupt lower than freeRTOS so that it works :)
     NVIC->IP[26] |= 6 << 4;
 
-    // transInit();
+    transInit();
 
     //TODO: check if commandQueue is NULL as this means it was not created
     //TODO: check for memory leaks

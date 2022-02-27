@@ -1,7 +1,7 @@
 #include "../CanMessageStructs/canmessagestructs.h"
 #include "CanMessage.h"
 #include "taskManager.h"
-
+#include "common.h"
 void not_found_id() {}
 
 void canAirs(can::CANlight::frame *f) {
@@ -11,16 +11,16 @@ void canAirs(can::CANlight::frame *f) {
 
     // closed is true (1), open is false(0)
     if (AirsCanstruct.airs_positive == 0) {
-        gpio::GPIO::StaticClass().clear(gpio::PortD, 15);
+        gpio::GPIO::StaticClass().clear(GPIO_BMS_AIRS_PORT, GPIO_BMS_AIRS_CH);
     }
     else {
-        gpio::GPIO::StaticClass().set(gpio::PortD, 15);
+        gpio::GPIO::StaticClass().set(GPIO_BMS_AIRS_PORT, GPIO_BMS_AIRS_CH);
     }
     if (AirsCanstruct.airs_negative == 0) {
-        gpio::GPIO::StaticClass().clear(gpio::PortD, 15);
+        gpio::GPIO::StaticClass().clear(GPIO_BMS_AIRS_PORT, GPIO_BMS_AIRS_CH);
     }
     else {
-        gpio::GPIO::StaticClass().set(gpio::PortD, 15);
+        gpio::GPIO::StaticClass().set(GPIO_BMS_AIRS_PORT, GPIO_BMS_AIRS_CH);
     }
 
 
@@ -31,10 +31,10 @@ void canAirs(can::CANlight::frame *f) {
 void trans (void *pvParameters) {
     can::CANlight::frame receiveCommand;
     for(;;) {
-        xQueueReceiveFromISR(msg_queue, (void *)&receiveCommand, pdFALSE);
+       xQueueReceiveFromISR(msg_queue, (void *)&receiveCommand, pdFALSE);
         int i = 1;
-        switch (receiveCommand.id) {
-            case 0x0336: //change according to can message definitions google sheet
+        switch (receiveCommand.id & 0xFFF) {
+            case AIRS_ID: //change according to can message definitions google sheet
                 canAirs(&receiveCommand);
                 //airs unpack here and check
                 break;

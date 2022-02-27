@@ -32,6 +32,7 @@ uint32_t _SUM_CELL_VOLTAGES = 0;
 
 
 uint16_t _THERMISTOR_VALUES[SLAVE_COUNT][16];
+uint8_t _THERMISTOR_INDEXES[8] = {0, 3, 4, 6, 7, 9, 10, 13};
 uint16_t _THERMISTOR_CALCULATE = 0;
 uint16_t _THERMISTOR_VOLTAGE = 0;
 // uint16_t _THERMISTOR_VALUES[28];
@@ -62,9 +63,9 @@ uint16_t calcTempFromVolt(uint16_t voltage) {
 uint16_t getMaxTemp() {
     uint16_t tempMax = 0;
     for (int i = 0; i < SLAVE_COUNT; i++) {
-        for (int j = 0; j < 16; j++) {
-            if (tempMax < _THERMISTOR_VALUES[i][j]) {
-                tempMax = _THERMISTOR_VALUES[i][j];
+        for (int j = 0; j < 8; j++) {
+            if (tempMax < _THERMISTOR_VALUES[i][_THERMISTOR_INDEXES[j]]) {
+                tempMax = _THERMISTOR_VALUES[i][_THERMISTOR_INDEXES[j]];
             }
         }
     }
@@ -323,7 +324,7 @@ void getTempuraturesHelper(uint8_t md) {
 }
 
 void readIMD_OK() {
-    gpio::GPIO::StaticClass().read(gpio::PortD, 15);
+    gpio::GPIO::StaticClass().read(GPIO_IMD_OK_PORT, GPIO_IMD_OK_CH);
 }
 
 uint8_t calculateBMS_OK(uint32_t voltTempLimit) {
@@ -336,7 +337,7 @@ uint8_t calculateBMS_OK(uint32_t voltTempLimit) {
                 // gpio::GPIO::StaticClass().clear(gpio::PortD, 15); // port, pin -- tbd need to ask for later
                 // put pin in a header file, constants.h/pins.h 
             }
-            if (_THERMISTOR_VALUES[i][j] > voltTempLimit) {
+            if (_THERMISTOR_VALUES[i][_THERMISTOR_INDEXES[j]] > voltTempLimit) {
                 BMS_OK = false;
                 return 1;
             }
@@ -353,13 +354,23 @@ uint8_t calculateBMS_OK(uint32_t voltTempLimit) {
     // rules say max temp 60 C
 }
 
-void measureSendVoltageTemp() {
+uint16_t measureCurrent() {
+    adc::ADC &adc = adc::ADC::StaticClass();
+    uint16_t currentADC = adc.read(ADC_CURRENT_BASE, ADC_CURRENT_CH); // 10-11mV per 5A
+    currentADC = ((currentADC * 5) / 0.0105) * 100; // (current) * (5A/10.5mV) * (1mV/.001V)
+    return currentADC;
+}
+
+void measureSendVoltageTempCurrent() {
     uint32_t sumVoltage = getSumVoltage();
 
     uint16_t maxTemp = getMaxTemp();
     uint16_t maxTempC = calcTempFromVolt(maxTemp);
 
-    CanMessage::sendMainVoltageTemp(sumVoltage, maxTempC);
+    // adc::ADC &adc = adc::ADC::StaticClass();
+    //uint16_t current = measureCurrent(); // 10-11mV per 5A /// FIXXXXXXXXXXXXXXXXXXXXXXXXXXXxxxXXXXXXXXXXXXXXX
+
+    CanMessage::sendMainVoltageTempCurrent(sumVoltage, maxTempC, 0);
 
 }
 
@@ -381,7 +392,7 @@ void monitorBMSHealth( void *pvParameters )
     for(uint8_t i = 0; i < SLAVE_COUNT; i++) confdat[6*i] = 0b001111100;
     pushCommand(WRCFGA, SLAVE_COUNT, confdat);
 
-    uint32_t maxVoltTemp = calcVoltFromTemp(35);
+    // uint32_t maxVoltTemp = calcVoltFromTemp(35);
 
     // gpio::GPIO::StaticClass().clear(gpio::PortD, 2);
 
@@ -389,26 +400,32 @@ void monitorBMSHealth( void *pvParameters )
     {
         // perform diagnostic tests
         // SControl();
-        getVoltages(0b10);
+
+        // getVoltages(0b10);
         
         // for (int id = 0; id < SLAVE_COUNT; id++) {
         //     CanMessage::sendVoltage(_CELL_VOLTAGES[id], id);    // 10 Hz
         // }
-        getTempuraturesHelper(0b10);
-        uint8_t res = calculateBMS_OK(maxVoltTemp);
-        if (res == 1) {
-            // gpio::GPIO::StaticClass().set(gpio::PortD, 2);
-        }
-        tempC = calcTempFromVolt(_THERMISTOR_VALUES[0][0]);
 
-        measureSendVoltageTemp();
+        // getTempuraturesHelper(0b10);
+        // uint8_t res = calculateBMS_OK(maxVoltTemp);
+        // if (res == 1) {
+        //     BMS_OK = false;
+        //     // gpio::GPIO::StaticClass().set(gpio::PortD, 2);
+        // }
         
-        // for (int id = 0; id < 10; id++) {
-        //     CanMessage::sendTemp(_THERMISTOR_VALUES[id], id);   // 15 Hz
+        measureSendVoltageTempCurrent();
+        
+        // for (int id = 0; id < SLAVE_COUNT; id++) {
+        //     uint16_t _THERMISTOR_VALUES_PER[8];
+        //     for (int j = 0; j < 8; j++) {
+        //         _THERMISTOR_VALUES_PER[j] = _THERMISTOR_VALUES[id][_THERMISTOR_INDEXES[j]];
+        //     }
+        //     CanMessage::sendTemp(_THERMISTOR_VALUES_PER, id);   // 15 Hz
         // }
 
-        // readIMD_OK();
-        // CanMessage::sendImdBmsOk(BMS_OK, IMD_OK);   // send bms ok and imd ok
+        readIMD_OK();
+        CanMessage::sendImdBmsOk(BMS_OK, IMD_OK);   // send bms ok and imd ok
 
         // get and send main voltage and current 
         // measureSendVoltageCurrentTemp();

@@ -22,9 +22,9 @@ CanMessage* CanMessage::getInstance() {
     return instance;
 }
 
-void cb1(void) {
-    can::CANlight::frame out;
-    can::CANlight::frame f = can::CANlight::StaticClass().readrx(1); // or is it readrx(0)?
+void cb(void) {
+    can::CANlight &can = can::CANlight::StaticClass();
+    can::CANlight::frame f = can.readrx(CAN_BUS); // or is it readrx(0)?
 
     /* Loop through structs */
     xQueueSendFromISR(msg_queue, &f, pdFALSE);
@@ -57,9 +57,7 @@ void cb1(void) {
 // }
 
 void CanMessage::initCan() {
-    if (msg_queue == NULL) {
-        int bll = 0;
-    }
+    
 
     // Fix can priority to allow RTOS interupts during can callbacks
     NVIC->IP[78] |= 6 << 4;
@@ -72,26 +70,19 @@ void CanMessage::initCan() {
     NVIC->IP[87] |= 6 << 4;
     NVIC->IP[88] |= 6 << 4;
 
-    can::can_config config;
-    can::CANlight::canx_config can0_config;
+    can::can_config c;
+	can::CANlight::ConstructStatic(&c);
+	can::CANlight& can = can::CANlight::StaticClass();
+    
+	can::CANlight::canx_config cx;
+    cx.callback = cb;
+    cx.baudRate = CAN_BAUD_RATE;
+    can.init(0, &cx);
 
-    // Initialize CAN driver
-    can::CANlight::ConstructStatic(&config);
-    can::CANlight &can = can::CANlight::StaticClass();
-
-    can0_config.callback = cb1;
-    can0_config.baudRate = CAN_BAUD_RATE;
-    can.init(CAN_BUS, &can0_config);
-
-    // can0_config.callback = cb0;
-
-    // // Configure CAN bus
-    // can0_config.baudRate = CAN_BAUD_RATE;
-    // can.init(CAN_BUS, &can0_config);
 }
 
 
-void CanMessage::sendVoltageHelper(uint16_t cellVoltage[12], int id) {
+void CanMessage::sendVoltageHelper(uint16_t cellVoltage[8], int id) {
     
     BmsVoltageStruct voltageCanstruct0;
     BmsVoltageStruct voltageCanstruct1;
@@ -108,7 +99,7 @@ void CanMessage::sendVoltageHelper(uint16_t cellVoltage[12], int id) {
 
     can::CANlight &can1 = can::CANlight::StaticClass();
     can::CANlight::frame frame1;
-    frame1.id = VOLTAGE_ID + (2 * id);
+    frame1.id = (VOLTAGE_ID + (2 * id)) | MEDIUM_CAN_PRIORITY;
     frame1.ext = 1;
     frame1.dlc = 8;
     memcpy(frame1.data, &voltageCanstruct0, sizeof(BmsTempStruct));
@@ -116,31 +107,31 @@ void CanMessage::sendVoltageHelper(uint16_t cellVoltage[12], int id) {
 
     can::CANlight &can2 = can::CANlight::StaticClass();
     can::CANlight::frame frame2;
-    frame2.id = VOLTAGE_ID + (2 * id) + 1;
+    frame2.id = (VOLTAGE_ID + (2 * id) + 1) | MEDIUM_CAN_PRIORITY;
     frame2.ext = 1;
     frame2.dlc = 8;
     memcpy(frame2.data, &voltageCanstruct1, sizeof(BmsTempStruct));
     can2.tx(CAN_BUS, frame2);
 }
 
-void CanMessage::sendTempHelper(uint16_t thermistorValues[16], int id) {
+void CanMessage::sendTempHelper(uint16_t thermistorValues[8], int id) {
     
     BmsTempStruct temperatureCanstruct0;
     BmsTempStruct temperatureCanstruct1;
 
     temperatureCanstruct0.voltage0 = thermistorValues[0];
-    temperatureCanstruct0.voltage1 = thermistorValues[2];
-    temperatureCanstruct0.voltage2 = thermistorValues[4];
-    temperatureCanstruct0.voltage3 = thermistorValues[6];
+    temperatureCanstruct0.voltage1 = thermistorValues[1];
+    temperatureCanstruct0.voltage2 = thermistorValues[2];
+    temperatureCanstruct0.voltage3 = thermistorValues[3];
 
-    temperatureCanstruct1.voltage0 = thermistorValues[8];
-    temperatureCanstruct1.voltage1 = thermistorValues[10];
-    temperatureCanstruct1.voltage2 = thermistorValues[12];
-    temperatureCanstruct1.voltage3 = thermistorValues[14];
+    temperatureCanstruct1.voltage0 = thermistorValues[4];
+    temperatureCanstruct1.voltage1 = thermistorValues[5];
+    temperatureCanstruct1.voltage2 = thermistorValues[6];
+    temperatureCanstruct1.voltage3 = thermistorValues[7];
 
     can::CANlight &can1 = can::CANlight::StaticClass();
     can::CANlight::frame frame1;
-    frame1.id = TEMP_ID + (2 * id);
+    frame1.id = (TEMP_ID + (2 * id)) | MEDIUM_CAN_PRIORITY;
     frame1.ext = 1;
     frame1.dlc = 8;
     memcpy(frame1.data, &temperatureCanstruct0, sizeof(BmsTempStruct));
@@ -148,7 +139,7 @@ void CanMessage::sendTempHelper(uint16_t thermistorValues[16], int id) {
 
     can::CANlight &can2 = can::CANlight::StaticClass();
     can::CANlight::frame frame2;
-    frame2.id = TEMP_ID + (2 * id) + 1;
+    frame2.id = (TEMP_ID + (2 * id) + 1) | MEDIUM_CAN_PRIORITY;
     frame2.ext = 1;
     frame2.dlc = 8;
     memcpy(frame2.data, &temperatureCanstruct1, sizeof(BmsTempStruct));
@@ -166,7 +157,7 @@ void CanMessage::sendImdBmsOkHelper(uint8_t BMS_OK, uint8_t IMD_OK) {
     can::CANlight &can = can::CANlight::StaticClass();
     can::CANlight::frame frame;
 
-    frame.id = OK_ID;
+    frame.id = OK_ID | HIGH_CAN_PRIORITY | VCU_CAN_TARGET;
     frame.ext = 1;
     frame.dlc = 8;
     memcpy(frame.data, &okStruct, sizeof(BmsOkStruct));
@@ -174,27 +165,27 @@ void CanMessage::sendImdBmsOkHelper(uint8_t BMS_OK, uint8_t IMD_OK) {
 
 }
 
-void CanMessage::sendMainVoltageTempHelper(uint16_t voltage, uint16_t maxTemp) {
-    BmsMainVoltageTempStruct mainVoltageTempStruct;
-    memset(&mainVoltageTempStruct, 0, sizeof(BmsMainVoltageTempStruct));
+void CanMessage::sendMainVoltageTempCurrentHelper(uint16_t voltage, uint16_t maxTemp, uint16_t current) {
+    BmsMainVoltageTempCurrentStruct mainVoltageTempCurrentStruct;
+    memset(&mainVoltageTempCurrentStruct, 0, sizeof(BmsMainVoltageTempCurrentStruct));
 
-    mainVoltageTempStruct.voltage = voltage;
-    mainVoltageTempStruct.maxTemp = maxTemp;
+    mainVoltageTempCurrentStruct.voltage = voltage;
+    mainVoltageTempCurrentStruct.maxTemp = maxTemp;
+    mainVoltageTempCurrentStruct.current = current;
 
     can::CANlight &can = can::CANlight::StaticClass();
     can::CANlight::frame frame;
 
-    frame.id = MAIN_ID;
+    frame.id = MAIN_ID | CRITICAL_CAN_PRIORITY | VCU_CAN_TARGET;
     frame.ext = 1;
     frame.dlc = 8;
-    memcpy(frame.data, &mainVoltageTempStruct, sizeof(mainVoltageTempStruct));
+    memcpy(frame.data, &mainVoltageTempCurrentStruct, sizeof(mainVoltageTempCurrentStruct));
     can.tx(CAN_BUS, frame);
-
 }
 
-void CanMessage::sendMainVoltageTemp(uint16_t voltage, uint16_t maxTemp) {
+void CanMessage::sendMainVoltageTempCurrent(uint16_t voltage, uint16_t maxTemp, uint16_t current) {
     CanMessage *c = CanMessage::getInstance();
-    c->sendMainVoltageTempHelper(voltage, maxTemp);
+    c->sendMainVoltageTempCurrentHelper(voltage, maxTemp, current);
 }
 
 void CanMessage::sendImdBmsOk(uint8_t BMS_OK, uint8_t IMD_OK) {
@@ -202,14 +193,14 @@ void CanMessage::sendImdBmsOk(uint8_t BMS_OK, uint8_t IMD_OK) {
     c->sendImdBmsOkHelper(BMS_OK, IMD_OK);
 }
 
-void CanMessage::sendVoltage(uint16_t cellVoltage[12], int id) {
+void CanMessage::sendVoltage(uint16_t cellVoltage[8], int id) {
     CanMessage *c = CanMessage::getInstance();
     c->sendVoltageHelper(cellVoltage, id);
 }
 
 // bools take up 1 byte
 
-void CanMessage::sendTemp(uint16_t thermistorValues[16], int id) {
+void CanMessage::sendTemp(uint16_t thermistorValues[8], int id) {
     CanMessage *c = CanMessage::getInstance();
     c->sendTempHelper(thermistorValues, id);
 }
