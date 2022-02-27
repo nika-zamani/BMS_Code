@@ -398,6 +398,7 @@ void monitorBMSHealth( void *pvParameters )
 
     for (;;)
     {
+        xLastWakeTime = xTaskGetTickCount();
         // perform diagnostic tests
         // SControl();
 

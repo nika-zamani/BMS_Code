@@ -31,7 +31,7 @@ void canAirs(can::CANlight::frame *f) {
 void trans (void *pvParameters) {
     can::CANlight::frame receiveCommand;
     for(;;) {
-       xQueueReceiveFromISR(msg_queue, (void *)&receiveCommand, pdFALSE);
+       xQueueReceive(msg_queue, (void *)&receiveCommand, portMAX_DELAY);
         int i = 1;
         switch (receiveCommand.id & 0xFFF) {
             case AIRS_ID: //change according to can message definitions google sheet
@@ -40,7 +40,8 @@ void trans (void *pvParameters) {
                 break;
             default:
                 not_found_id();
-        }
+    }
+
     }
 }
 

@@ -75,7 +75,8 @@ void CanMessage::initCan() {
 	can::CANlight& can = can::CANlight::StaticClass();
     
 	can::CANlight::canx_config cx;
-    cx.callback = cb;
+    //cx.callback = cb;
+    cx.globalMaskValue = 0b00000010000000000000000000000;
     cx.baudRate = CAN_BAUD_RATE;
     can.init(0, &cx);
 
