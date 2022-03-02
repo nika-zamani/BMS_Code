@@ -18,7 +18,11 @@ static void prvSetupHardware( void ) {
 
     gpio::GPIO::ConstructStatic();
 
-    CanMessage::getInstance();
+    // initialize CAN
+    initCan();
+
+    // initialize ADC
+    adc::ADC::ConstructStatic(NULL);
 
     spi::spi_config conf;
     conf.callbacks[0] = bmsspicb;

@@ -17,6 +17,7 @@
 
 #include "gpio.h"
 #include "spi.h"
+#include "adc.h"
 
 
 /* The configCHECK_FOR_STACK_OVERFLOW setting in FreeRTOSConifg can be used to

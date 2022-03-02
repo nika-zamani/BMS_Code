@@ -3,7 +3,6 @@
 #include "can.h"
 #include "CanMessage.h"
 #include "adc.h"
-#include "adcObject.h"
 #include "main.h"
 #include "common.h"
 
@@ -11,33 +10,20 @@ using namespace BSP;
 
 uint8_t RETURN_DATA[6 * SLAVE_COUNT];
 uint8_t SCONTROL_DATA[6 * SLAVE_COUNT];
-// uint16_t RETURN_DATA_TEMP[6 * SLAVE_COUNT];
-// uint8_t RETURNED[6 * SLAVE_COUNT];
-//uint8_t TEMP[15][6 * SLAVE_COUNT];
-// 10 boards, either nested array or put into one whole
 
-uint8_t BMS_OK = true; // signal for -- All cell votlages within limits, All cell temps within limits, No fuses open aka wires open (will be added later most likley)
-// 0 is false, 1 is true; 
-// need to output this to gpio
+// TODO: check fuses open
+uint8_t BMS_OK = true;
 uint8_t IMD_OK = true;
 
 uint16_t _CELLPU[12]; //TODO: check if number of cells will always be 12 and change this to a const
 uint16_t _CELLPD[12];
 int32_t _CELLDELTA[12];
 
-// uint16_t _CELL_VOLTAGES[12];
 uint16_t _CELL_VOLTAGES[SLAVE_COUNT][12];
-// ten maybe sums
-uint32_t _SUM_CELL_VOLTAGES = 0;
 
 
 uint16_t _THERMISTOR_VALUES[SLAVE_COUNT][16];
 uint8_t _THERMISTOR_INDEXES[8] = {0, 3, 4, 6, 7, 9, 10, 13};
-uint16_t _THERMISTOR_CALCULATE = 0;
-uint16_t _THERMISTOR_VOLTAGE = 0;
-// uint16_t _THERMISTOR_VALUES[28];
-
-uint8_t _SELF_TEST_FLAGS = 0;
 
 const uint8_t _MD = 2;  // filtered mode
 const uint8_t _ST = 1;  // self test 1
@@ -53,7 +39,6 @@ uint32_t calcVoltFromTemp(uint16_t temperature) {
 
 uint16_t calcTempFromVolt(uint16_t voltage) {
     // y = -0.0002x^2 + 0.0358x + 0.7128
-    // uint16_t t1 = (100.0 * -0.0002 * voltage * voltage) + (100.0 * 0.0358 * voltage) + (100.0 * 0.7128);
     float vFloat = voltage * 0.0001;
     float t1 = ((-0.0002 * vFloat * vFloat) + (0.0358 * vFloat) + (0.7128)) * 100;
 
@@ -218,7 +203,7 @@ bool testPattern(uint8_t data[6], uint16_t pattern, uint8_t testLength = 6) {
  * THSD (STATB): Thermal Shutdown Status
 */
 
-/*  Gets the voltages for each cell and stores them in _CELL_VOLTAGES and the sum of cell voltages in _SUM_CELL_VOLTAGES
+/*  Gets the voltages for each cell and stores them in _CELL_VOLTAGES
  * 
  *  @param md: the mode to get the voltages with
  */
@@ -292,8 +277,6 @@ void SControl () {
 
 }
 
-/*  Gets and returns the raw tempurature for each thermistor
- */
 void getTempuraturesHelper(uint8_t md) {
     int error = 0;
     uint8_t CHG = 0b000;
@@ -307,35 +290,26 @@ void getTempuraturesHelper(uint8_t md) {
         muxSet(1, j);
 
         error = pushCommand(ADCVAX, SLAVE_COUNT, RETURN_DATA, md);
-        //error = pushCommand(ADAX, SLAVE_COUNT, RETURN_DATA, md, CHG);
         vTaskDelay(50);
         error = pushCommand(RDAUXA, SLAVE_COUNT, RETURN_DATA);
         
-    
-        // when it errors dont push data; if result hasnt been sent in a while, throw a fault
         for (int i = 0; i < SLAVE_COUNT; i++) {
-        
             _THERMISTOR_VALUES[i][j] = RETURN_DATA[i*6] | RETURN_DATA[i*6+1]<<8;   // add 4 when it is collected; store raw data for now
             _THERMISTOR_VALUES[i][j + 8] = RETURN_DATA[i*6+2] | (RETURN_DATA[i*6+3]<<8);
-
-
         }
     }
 }
 
 void readIMD_OK() {
-    gpio::GPIO::StaticClass().read(GPIO_IMD_OK_PORT, GPIO_IMD_OK_CH);
+    IMD_OK = gpio::GPIO::StaticClass().read(GPIO_IMD_OK_PORT, GPIO_IMD_OK_CH);
 }
 
 uint8_t calculateBMS_OK(uint32_t voltTempLimit) {
     for (int i = 0; i < SLAVE_COUNT; i++) {
         for (int j = 0; j < 8; j++) {
-            // change later maybe for rows of cells
-            if (_CELL_VOLTAGES[i][j] < 28000 | _CELL_VOLTAGES[i][j] > 45000) {    // lower limit voltage = 2.8V for now
+            if (_CELL_VOLTAGES[i][j] < 28000 | _CELL_VOLTAGES[i][j] > 45000) {
                 BMS_OK = false;
                 return 1;
-                // gpio::GPIO::StaticClass().clear(gpio::PortD, 15); // port, pin -- tbd need to ask for later
-                // put pin in a header file, constants.h/pins.h 
             }
             if (_THERMISTOR_VALUES[i][_THERMISTOR_INDEXES[j]] > voltTempLimit) {
                 BMS_OK = false;
@@ -345,13 +319,6 @@ uint8_t calculateBMS_OK(uint32_t voltTempLimit) {
         }
     }
     return 0;
-    // imd is gpio out - true false gpio signal
-    // false when things are bad, true when things are good
-
-    // memset 0 for the bytes in can struct
-
-    // 0 C min, 70 C max for now for thermistor limits
-    // rules say max temp 60 C
 }
 
 uint16_t measureCurrent() {
@@ -363,15 +330,10 @@ uint16_t measureCurrent() {
 
 void measureSendVoltageTempCurrent() {
     uint32_t sumVoltage = getSumVoltage();
-
     uint16_t maxTemp = getMaxTemp();
     uint16_t maxTempC = calcTempFromVolt(maxTemp);
-
-    // adc::ADC &adc = adc::ADC::StaticClass();
-    //uint16_t current = measureCurrent(); // 10-11mV per 5A /// FIXXXXXXXXXXXXXXXXXXXXXXXXXXXxxxXXXXXXXXXXXXXXX
-
-    CanMessage::sendMainVoltageTempCurrent(sumVoltage, maxTempC, 0);
-
+    uint16_t current = measureCurrent();
+    CanMessage::sendMainVoltageTempCurrent(sumVoltage, maxTempC, current);
 }
 
 void monitorBMSHealth( void *pvParameters )
@@ -381,25 +343,20 @@ void monitorBMSHealth( void *pvParameters )
 
     uint8_t testResults;
     uint8_t wireOpen;
-    uint16_t tempC = 0;
-
-    // Initialise the xLastWakeTime variable with the current time.
     xLastWakeTime = xTaskGetTickCount();
 
-
+    // do we need this??
     uint8_t confdat[6*SLAVE_COUNT];
     memset(confdat, 0, 6*SLAVE_COUNT);
     for(uint8_t i = 0; i < SLAVE_COUNT; i++) confdat[6*i] = 0b001111100;
     pushCommand(WRCFGA, SLAVE_COUNT, confdat);
 
-    // uint32_t maxVoltTemp = calcVoltFromTemp(35);
-
-    // gpio::GPIO::StaticClass().clear(gpio::PortD, 2);
+    uint32_t maxVoltTemp = calcVoltFromTemp(35);
 
     for (;;)
     {
         xLastWakeTime = xTaskGetTickCount();
-        // perform diagnostic tests
+
         // SControl();
 
         // getVoltages(0b10);

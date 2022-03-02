@@ -14,20 +14,15 @@ public:
     static void sendTemp(uint16_t thermistorValues[8], int id);
     static void sendImdBmsOk(uint8_t BMS_OK, uint8_t IMD_OK);
     static void sendMainVoltageTempCurrent(uint16_t voltage, uint16_t maxTemp, uint16_t current);
-
     static CanMessage *getInstance();
-private:
-    
-    void sendVoltageHelper(uint16_t cellVoltage[8], int id);
-    void sendTempHelper(uint16_t thermistorValues[8], int id);
-    void sendImdBmsOkHelper(uint8_t BMS_OK, uint8_t IMD_OK);
-    void sendMainVoltageTempCurrentHelper(uint16_t voltage, uint16_t maxTemp, uint16_t current);
-    void canSend(uint8_t bus, uint32_t addr, uint64_t *data);
 
+private:
     CanMessage();
-    void initCan();
     static CanMessage* instance;
 };
 
+void cb(void);
+void initCan();
+void canSend(uint8_t bus, uint32_t addr, uint64_t *data);
 
 #endif
