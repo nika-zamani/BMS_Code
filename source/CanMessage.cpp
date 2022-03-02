@@ -31,31 +31,6 @@ void cb(void) {
 
 }
 
-// moved to taskManager.cpp
-// void canAirs() {
-//     BmsAirsStruct AirsCanstruct;
-//     can::CANlight::frame f = can::CANlight::StaticClass().readrx(0);
-//     memcpy(&AirsCanstruct, &f, sizeof(BmsAirsStruct));
-
-//     // closed is true (1), open is false(0)
-//     if (AirsCanstruct.airs_positive == 0) {
-//         gpio::GPIO::StaticClass().clear(gpio::PortD, 15);
-//     }
-//     else {
-//         gpio::GPIO::StaticClass().set(gpio::PortD, 15);
-//     }
-//     if (AirsCanstruct.airs_negative == 0) {
-//         gpio::GPIO::StaticClass().clear(gpio::PortD, 15);
-//     }
-//     else {
-//         gpio::GPIO::StaticClass().set(gpio::PortD, 15);
-//     }
-
-
-//     // check id (AIRS_ID = correct thing)
-//     // deal with gpio in here
-// }
-
 void CanMessage::initCan() {
     
 
