@@ -16,6 +16,6 @@ using namespace BSP;
 
 #define STACK_SIZE 100
 
-void transInit();
+void taskInit();
 
 #endif

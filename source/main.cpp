@@ -47,7 +47,7 @@ int main( void ) {
     // interrupt lower than freeRTOS so that it works :)
     NVIC->IP[26] |= 6 << 4;
 
-    transInit();
+    taskInit();
 
     //TODO: check if commandQueue is NULL as this means it was not created
     //TODO: check for memory leaks

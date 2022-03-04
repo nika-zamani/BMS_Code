@@ -28,7 +28,7 @@ void unpackCanAirPrechargeDcdcEnable(can::CANlight::frame *f)
     data.dcdc_enable ? gpio.set(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH) : gpio.clear(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH);
 }
 
-void trans(void *pvParameters)
+void taskDequeueCan(void *pvParameters)
 {
     can::CANlight::frame receiveCommand;
     for (;;)
@@ -62,7 +62,7 @@ void readGpioIn()
     DCDC_FAULT = gpio.read(GPIO_DCDC_FAULT_PORT, GPIO_DCDC_FAULT_CH);
 }
 
-void taskStateMachineUpdate(void *)
+void taskIO(void *)
 {
     TickType_t xLastWakeTime;
     for (;;)
@@ -76,7 +76,9 @@ void taskStateMachineUpdate(void *)
     }
 }
 
-void transInit()
+void taskInit()
 {
-    xTaskCreate(trans, "trans", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
+    xTaskCreate(taskDequeueCan, "taskDequeueCan", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
+    xTaskCreate(taskIO, "taskIO", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
+
 }
