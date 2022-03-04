@@ -4,7 +4,7 @@ import os
 BSP_PATH = '../MKELibrary/'
 
 
-GNU_PATH = '/Users/baylorwhitehead/Desktop/Formula/gcc-arm-none/bin/'
+GNU_PATH = '/Users/meghantran/Desktop/Racing/ARM/bin/'
 
 compileTarget = 'bms'
 

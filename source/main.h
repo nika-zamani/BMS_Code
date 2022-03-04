@@ -1,8 +1,6 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include "common.h"
-
 /* Hardware specific includes */
 #include "MKE18F16.h"
 #include "clock_config.h"
@@ -14,6 +12,10 @@
 
 #include "testroutines.h"
 #include "bmsHealth.h"
+#include "bms.h"
+#include "CanMessage.h"
+#include "io.h"
+#include "common.h"
 
 #include "gpio.h"
 #include "spi.h"

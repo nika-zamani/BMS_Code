@@ -1,31 +1,11 @@
 #include "bmsHealth.h"
-#include "gpio.h"
-#include "can.h"
-#include "CanMessage.h"
-#include "adc.h"
-#include "main.h"
-#include "common.h"
-#include "canmessagestructs.h"
-
-using namespace BSP;
 
 uint8_t RETURN_DATA[6 * SLAVE_COUNT];
-uint8_t SCONTROL_DATA[6 * SLAVE_COUNT];
-
-uint16_t _CELLPU[12]; // TODO: check if number of cells will always be 12 and change this to a const
-uint16_t _CELLPD[12];
-int32_t _CELLDELTA[12];
-
-uint16_t _CELL_VOLTAGES[SLAVE_COUNT][12];
-
-uint16_t _THERMISTOR_VALUES[SLAVE_COUNT][16];
 uint8_t _THERMISTOR_INDEXES[8] = {0, 3, 4, 6, 7, 9, 10, 13};
-
-const uint8_t _MD = 2;     // filtered mode
-const uint8_t _ST = 1;     // self test 1
+uint8_t SCONTROL_DATA[6 * SLAVE_COUNT];
 const uint8_t _DCP = 0;    // discharge not permited
-const uint8_t _CH = 0;     // all cells
-const uint8_t _ADCOPT = 0; // the default value
+
+extern BMS bms;
 
 uint32_t calcVoltFromTemp(uint16_t temperature)
 {
@@ -50,9 +30,9 @@ uint16_t getMaxTemp()
     {
         for (int j = 0; j < 8; j++)
         {
-            if (tempMax < _THERMISTOR_VALUES[i][_THERMISTOR_INDEXES[j]])
+            if (tempMax < bms.input.thermistor_values[i][_THERMISTOR_INDEXES[j]])
             {
-                tempMax = _THERMISTOR_VALUES[i][_THERMISTOR_INDEXES[j]];
+                tempMax = bms.input.thermistor_values[i][_THERMISTOR_INDEXES[j]];
             }
         }
     }
@@ -66,155 +46,12 @@ uint32_t getSumVoltage()
     {
         for (int j = 0; j < 8; j++)
         {
-            sumVoltage += _CELL_VOLTAGES[i][j];
+            sumVoltage += bms.input.cell_voltages[i][j];
         }
     }
     return sumVoltage;
 }
 
-uint16_t getSelfTestOutputPatern(uint8_t adcopt, uint8_t md, uint8_t st)
-{
-    if (md == 1)
-    {
-        if (adcopt == 1)
-        {
-            return st == 1 ? 0x9565 : 0x6A9A;
-        }
-        return st == 1 ? 0x9553 : 0x6AAC;
-    }
-    return st == 2 ? 0x9555 : 0x6AAA;
-}
-
-bool testPattern(uint8_t data[6], uint16_t pattern, uint8_t testLength = 6)
-{
-    for (uint8_t i = 0; i < testLength; i += 2)
-    {
-        if (data[i] != (uint8_t)(pattern) || data[i + 1] != (uint8_t)(pattern >> 8))
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-// int wiresOpen() {
-//     int open = 0;
-//     int error = 0;
-//     /*1. Run the 12-cell command ADOW with PUP = 1 at least
-//     twice. Read the cell voltages for cells 1 through 12 once
-//     at the end and store them in array CELLPU(n).*/
-//     for(int i = 0; i < 100; i++) {
-//         error = pushCommand(ADOW, SLAVE_COUNT, RETURN_DATA, 3, 1 /*pup*/, _DCP, _CH);
-//     }
-
-//     error = pushCommand(RDCVA, SLAVE_COUNT, RETURN_DATA);
-//     memcpy(&_CELLPU, RETURN_DATA, 6);
-//     error = pushCommand(RDCVB, SLAVE_COUNT, RETURN_DATA);
-//     memcpy(&_CELLPU[3], RETURN_DATA, 6);
-//     error = pushCommand(RDCVC, SLAVE_COUNT, RETURN_DATA);
-//     memcpy(&_CELLPU[6], RETURN_DATA, 6);
-//     error = pushCommand(RDCVD, SLAVE_COUNT, RETURN_DATA);
-//     memcpy(&_CELLPU[9], RETURN_DATA, 6);
-
-//     /*2. Run the 12-cell command ADOW with PUP = 0 at least
-//     twice. Read the cell voltages for cells 1 through 12 once
-//     at the end and store them in array CELLPD(n).*/
-
-//     for(int i = 0; i < 100; i++) {
-//         error = pushCommand(ADOW, SLAVE_COUNT, RETURN_DATA, 3, 0 /*pup*/, _DCP, _CH);
-//     }
-
-//     error = pushCommand(RDCVA, SLAVE_COUNT, RETURN_DATA);
-//     memcpy(&_CELLPD, RETURN_DATA, 6);
-//     error = pushCommand(RDCVB, SLAVE_COUNT, RETURN_DATA);
-//     memcpy(&_CELLPD[3], RETURN_DATA, 6);
-//     error = pushCommand(RDCVC, SLAVE_COUNT, RETURN_DATA);
-//     memcpy(&_CELLPD[6], RETURN_DATA, 6);
-//     error = pushCommand(RDCVD, SLAVE_COUNT, RETURN_DATA);
-//     memcpy(&_CELLPD[9], RETURN_DATA, 6);
-
-//     /*3. Take the difference between the pull-up and pull-down
-//     measurements made in above steps for cells 2 to 12:
-//     CELLΔ(n) = CELLPU(n) – CELLPD(n).*/
-//     for(int i = 0; i < 150; i++) {
-//         _CELLDELTA[i] = _CELLPU[i] - _CELLPD[i];
-//     }
-//     /*4. For all values of n from 1 to 11: If CELLΔ(n+1) < –400mV,
-//     then C(n) is open. If CELLPU(1) = 0.0000, then C(0) is
-//     open. If CELLPD(12) = 0.0000, then C(12) is open.*/
-//     for( int i = 1; i < 11; i++) {
-//         if(_CELLDELTA[i+1] < -400) {
-//             open++;
-//         }
-//     }
-//     if(_CELLPU[0] == 0) {
-//         open++;
-//     }
-//     if(_CELLPD[11] == 0) {
-//         open++;
-//     }
-//     return open;
-// }
-
-// /*
-//  * Checks the results of a self test and compares them to the expected results
-//  *      given a mode and self test mode
-//  *
-//  *  @param md: the ADC mode to use in the check
-//  *  @param st: the self test mode to use in the check
-//  *
-//  *  @return: a uint8_t with bits set corresponding to error codes fron each self test register group
-//  *
-//  * Bits we check:
-//  * C1V - C12V (CVA, CVB, CVC, CVD): CVST Result
-//  * G1V - G5V (AUXA, AUXB): AXST Result
-//  * SC, ITMP, VA, VD (STATA, STATB): STATST Result
-// */
-// uint8_t selfTest(uint8_t md, uint8_t st) {
-//     int expect = getSelfTestOutputPatern(_ADCOPT, md, st);
-//     int error = 0;
-//     uint8_t error_flags = 0;
-
-//     memset(RETURN_DATA, 0, 6);
-
-//     error = pushCommand(CVST, SLAVE_COUNT, RETURN_DATA, md, st);
-
-//     error = pushCommand(RDCVA, SLAVE_COUNT, RETURN_DATA);
-//     if (!testPattern(RETURN_DATA,expect)) { error_flags |= ERR_CVA; /* SELF TEST FAILED IN CVA */ }
-//     error = pushCommand(RDCVB, SLAVE_COUNT, RETURN_DATA);
-//     if (!testPattern(RETURN_DATA,expect)) { error_flags |= ERR_CVB; /* SELF TEST FAILED IN CVB */ }
-//     error = pushCommand(RDCVC, SLAVE_COUNT, RETURN_DATA);
-//     if (!testPattern(RETURN_DATA,expect)) { error_flags |= ERR_CVC; /* SELF TEST FAILED IN CVC */ }
-//     error = pushCommand(RDCVD, SLAVE_COUNT, RETURN_DATA);
-//     if (!testPattern(RETURN_DATA,expect)) { error_flags |= ERR_CVD; /* SELF TEST FAILED IN CVD */ }
-
-//     error = pushCommand(AXST, SLAVE_COUNT, RETURN_DATA, md, st);
-
-//     error = pushCommand(RDAUXA, SLAVE_COUNT, RETURN_DATA);
-//     if (!testPattern(RETURN_DATA,expect)) { error_flags |= ERR_AUXA; /* SELF TEST FAILED IN AUXA */ }
-//     error = pushCommand(RDAUXB, SLAVE_COUNT, RETURN_DATA);
-//     if (!testPattern(RETURN_DATA,expect)) { error_flags |= ERR_AUXB; /* SELF TEST FAILED IN AUXB */ }
-
-//     error = pushCommand(STATST, SLAVE_COUNT, RETURN_DATA, md, st);
-
-//     error = pushCommand(RDSTATA, SLAVE_COUNT, RETURN_DATA);
-//     if (!testPattern(RETURN_DATA,expect)) { error_flags |= ERR_STATA; /* SELF TEST FAILED IN STATA */ }
-//     error = pushCommand(RDSTATB, SLAVE_COUNT, RETURN_DATA);
-//     if (!testPattern(RETURN_DATA,expect, 2)) { error_flags |= ERR_STATB; /* SELF TEST FAILED IN STATB */ }
-
-//     return error_flags;
-// }
-
-/* Other diagnostic data we may want to check:
- *
- * MUXFAIL (STATB): Multiplexer self test result
- * THSD (STATB): Thermal Shutdown Status
- */
-
-/*  Gets the voltages for each cell and stores them in _CELL_VOLTAGES
- *
- *  @param md: the mode to get the voltages with
- */
 void getVoltages(uint8_t md)
 {
     int error = 0;
@@ -223,25 +60,22 @@ void getVoltages(uint8_t md)
 
     pushCommand(ADCVSC, SLAVE_COUNT, RETURN_DATA, md, _DCP);
 
-    // wait for some time?
-    // SLAVE_COUNT constant
-
     error = pushCommand(RDCVA, SLAVE_COUNT, RETURN_DATA);
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
-        memcpy(&_CELL_VOLTAGES[i], (RETURN_DATA + (i * 6)), 6);
+        memcpy((void *)&bms.input.cell_voltages[i], (RETURN_DATA + (i * 6)), 6);
     }
     // return_data is array size 6 of uint8_t and each cell_voltage is array size of 12 of uint16_t
     error = pushCommand(RDCVB, SLAVE_COUNT, RETURN_DATA);
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
-        memcpy(&_CELL_VOLTAGES[i][3], (RETURN_DATA + (i * 6)), 6);
+        memcpy((void *)&bms.input.cell_voltages[i][3], (RETURN_DATA + (i * 6)), 6);
     }
     // so each return_data takes up 3 spaces of 12 in cell_voltage
     error = pushCommand(RDCVC, SLAVE_COUNT, RETURN_DATA);
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
-        memcpy(&_CELL_VOLTAGES[i][6], (RETURN_DATA + (i * 6)), 6);
+        memcpy((void *)&bms.input.cell_voltages[i][6], (RETURN_DATA + (i * 6)), 6);
     }
     error = pushCommand(RDCVD, SLAVE_COUNT, RETURN_DATA);
     // memcpy(&_CELL_VOLTAGES[9], RETURN_DATA, 6);
@@ -288,12 +122,11 @@ void SControl()
     // error = pushCommand(RDSCTRL, SLAVE_COUNT, RETURN_DATA);
 }
 
-void getTempuraturesHelper(uint8_t md)
+void getTempuratures(uint8_t md)
 {
     int error = 0;
     uint8_t CHG = 0b000;
     memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
-    int i = 0;
 
     for (int j = 0; j < 8; j++)
     {
@@ -307,48 +140,66 @@ void getTempuraturesHelper(uint8_t md)
 
         for (int i = 0; i < SLAVE_COUNT; i++)
         {
-            _THERMISTOR_VALUES[i][j] = RETURN_DATA[i * 6] | RETURN_DATA[i * 6 + 1] << 8; // add 4 when it is collected; store raw data for now
-            _THERMISTOR_VALUES[i][j + 8] = RETURN_DATA[i * 6 + 2] | (RETURN_DATA[i * 6 + 3] << 8);
+            bms.input.thermistor_values[i][j] = RETURN_DATA[i * 6] | RETURN_DATA[i * 6 + 1] << 8; // add 4 when it is collected; store raw data for now
+            bms.input.thermistor_values[i][j + 8] = RETURN_DATA[i * 6 + 2] | (RETURN_DATA[i * 6 + 3] << 8);
         }
     }
 }
 
-uint8_t calculateBMS_OK(uint32_t voltTempLimit)
+void calculateBMS_OK(uint32_t voltTempLimit)
 {
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
         for (int j = 0; j < 8; j++)
         {
-            if (_CELL_VOLTAGES[i][j]<28000 | _CELL_VOLTAGES[i][j]> 45000)
+            if ((bms.input.cell_voltages[i][j] < 28000) | (bms.input.cell_voltages[i][j]> 45000))
             {
-                BMS_OK = false;
-                return 1;
+                bms.output.bms_ok = false;
+                return;
             }
-            if (_THERMISTOR_VALUES[i][_THERMISTOR_INDEXES[j]] > voltTempLimit)
+            if (bms.input.thermistor_values[i][_THERMISTOR_INDEXES[j]] > voltTempLimit)
             {
-                BMS_OK = false;
-                return 1;
+                bms.output.bms_ok = false;
+                return;
             }
         }
     }
-    return 0;
-}
-
-uint16_t measureCurrent()
-{
-    adc::ADC &adc = adc::ADC::StaticClass();
-    uint16_t currentADC = adc.read(ADC_CURRENT_BASE, ADC_CURRENT_CH); // 10-11mV per 5A
-    currentADC = ((currentADC * 5) / 0.0105) * 100;                   // (current) * (5A/10.5mV) * (1mV/.001V)
-    return currentADC;
+    bms.output.bms_ok = true;
 }
 
 void measureSendVoltageTempCurrent()
 {
-    uint32_t sumVoltage = getSumVoltage();
-    uint16_t maxTemp = getMaxTemp();
-    uint16_t maxTempC = calcTempFromVolt(maxTemp);
-    uint16_t current = measureCurrent();
-    CanMessage::sendMainVoltageTempCurrent(sumVoltage, maxTempC, current);
+    bms.input.sum_voltage = getSumVoltage();
+    bms.input.max_temp = calcTempFromVolt(getMaxTemp());
+    bms.input.current_adc = measureCurrent();
+    sendMainVoltageTempCurrent(bms.input.sum_voltage, bms.input.max_temp, bms.input.current_adc);
+}
+
+void sendVoltages() 
+{
+    for (int id = 0; id < SLAVE_COUNT; id++) {
+        sendVoltage((uint16_t *)&bms.input.cell_voltages[id], id);
+    }
+}
+
+void sendTemperatures() 
+{
+    for (int id = 0; id < SLAVE_COUNT; id++) {
+        uint16_t _THERMISTOR_VALUES_PER[8];
+        for (int j = 0; j < 8; j++) {
+            _THERMISTOR_VALUES_PER[j] = bms.input.thermistor_values[id][_THERMISTOR_INDEXES[j]];
+        }
+        sendTemp(_THERMISTOR_VALUES_PER, id);
+    }
+}
+
+void bmsInit() 
+{
+    uint8_t confdat[6 * SLAVE_COUNT];
+    memset(confdat, 0, 6 * SLAVE_COUNT);
+    for (uint8_t i = 0; i < SLAVE_COUNT; i++)
+        confdat[6 * i] = 0b001111100;
+    pushCommand(WRCFGA, SLAVE_COUNT, confdat);
 }
 
 void monitorBMSHealth(void *pvParameters)
@@ -356,54 +207,11 @@ void monitorBMSHealth(void *pvParameters)
     TickType_t xLastWakeTime;
     const TickType_t period = tick_ms(1000);
 
-    uint8_t testResults;
-    uint8_t wireOpen;
-    xLastWakeTime = xTaskGetTickCount();
-
-    // do we need this??
-    uint8_t confdat[6 * SLAVE_COUNT];
-    memset(confdat, 0, 6 * SLAVE_COUNT);
-    for (uint8_t i = 0; i < SLAVE_COUNT; i++)
-        confdat[6 * i] = 0b001111100;
-    pushCommand(WRCFGA, SLAVE_COUNT, confdat);
-
-    uint32_t maxVoltTemp = calcVoltFromTemp(35);
-
-    gpio::GPIO &gpio = gpio::GPIO::StaticClass();
-
     for (;;)
     {
         xLastWakeTime = xTaskGetTickCount();
 
         // SControl();
-
-        getVoltages(0b10);
-
-        // for (int id = 0; id < SLAVE_COUNT; id++) {
-        //     CanMessage::sendVoltage(_CELL_VOLTAGES[id], id);    // 10 Hz
-        // }
-
-        getTempuraturesHelper(0b10);
-        uint8_t res = calculateBMS_OK(maxVoltTemp);
-        BMS_OK = res;
-        if (res == 1)
-        {
-            
-            gpio.set(GPIO_BMS_OK_PORT, GPIO_BMS_OK_CH);
-        }
-
-        measureSendVoltageTempCurrent();
-
-        // for (int id = 0; id < SLAVE_COUNT; id++) {
-        //     uint16_t _THERMISTOR_VALUES_PER[8];
-        //     for (int j = 0; j < 8; j++) {
-        //         _THERMISTOR_VALUES_PER[j] = _THERMISTOR_VALUES[id][_THERMISTOR_INDEXES[j]];
-        //     }
-        //     CanMessage::sendTemp(_THERMISTOR_VALUES_PER, id);   // 15 Hz
-        // }
-
-        // Get and send main voltage and current
-        measureSendVoltageTempCurrent();
 
         vTaskDelayUntil(&xLastWakeTime, period);
     }

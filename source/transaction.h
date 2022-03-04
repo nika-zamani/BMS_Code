@@ -36,13 +36,10 @@
 #ifndef TRANSACTION_H
 #define TRANSACTION_H
 
-#include "common.h"
-
 #include "bmsCommand.h"
 #include "transaction.h"
-
-#include "gpio.h"
-#include "spi.h"
+#include "common.h"
+#include "io.h"
 
 // timeouts defined in us
 #define t_SLEEP 100 // TODO: find this

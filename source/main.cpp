@@ -1,73 +1,23 @@
 #include "main.h"
-#include "CanMessage.h"
 
 using namespace BSP;
 
-void timeout( void *pvParameters )
-{
-
-}
-
-extern void bmsspicb();
-
-static void prvSetupHardware( void ) {
-
-    // Perform all hardare specific setup here
-    BOARD_InitBootClocks();
-    BOARD_InitBootPins();
-
-    gpio::GPIO::ConstructStatic();
-
-    // Initialize CAN
-    initCan();
-
-    // Initialize ADC
-    adc::ADC::ConstructStatic(NULL);
-
-    spi::spi_config conf;
-    conf.callbacks[0] = bmsspicb;
-    spi::SPI::ConstructStatic(&conf);
-    spi::SPI& spi = spi::SPI::StaticClass();
-
-    spi::SPI::masterConfig mconf;
-    // Parameterized in hardware.h
-    mconf.baudRate = ltcbaud/10;
-    mconf.csport = ltccsport;
-    mconf.cspin = ltccspin;
-    spi.initMaster(0, &mconf);
-
-}
-
+BMS bms;
 
 int main( void ) {
-    prvSetupHardware(); //MKELib hw setup
+    prvSetupHardware();
     transactionInit();
-
-    // reduce priority for lpspi interrupt
-    // interrupt lower than freeRTOS so that it works :)
+    
     NVIC->IP[26] |= 6 << 4;
 
-    transInit();
+    bmsInit();
 
-    //TODO: check if commandQueue is NULL as this means it was not created
-    //TODO: check for memory leaks
-
-    xTaskCreate(transaction, "transaction", STACK_SIZE, NULL, configMAX_PRIORITIES-1, NULL );
-    xTaskCreate(monitorBMSHealth, "monitorbmshlth", 1000, NULL, configMAX_PRIORITIES-2, NULL );
-
-    // Start the rtos scheduler, this function should never return as the
-    // execution context is changed to the task.
+    taskInit();
 
     vTaskStartScheduler();
 
-    // shouldn't get here!
     return 0;
 }
-
-
-/************************************************************************************/
-/*************************   RTOS CODE BEYOND THIS POINT   **************************/
-/************************************************************************************/
 
 extern "C" {
     void vApplicationMallocFailedHook( void )

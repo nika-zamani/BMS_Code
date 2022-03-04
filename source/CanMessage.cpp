@@ -5,16 +5,7 @@
 #include "main.h"
 #include "canmessagestructs.h"
 
-using namespace BSP;
-
-CanMessage *CanMessage::instance;
-
-CanMessage::CanMessage() {}
-
-CanMessage *CanMessage::getInstance()
-{
-    return instance;
-}
+extern BMS bms;
 
 void cb(void)
 {
@@ -25,7 +16,7 @@ void cb(void)
     xQueueSendFromISR(msg_queue, &f, pdFALSE);
 }
 
-void initCan()
+void canInit()
 {
     NVIC->IP[78] |= 6 << 4;
     NVIC->IP[79] |= 6 << 4;
@@ -61,7 +52,7 @@ void canSend(uint8_t bus, uint32_t address, uint64_t *data)
     can.tx(bus, frame);
 }
 
-void CanMessage::sendVoltage(uint16_t cellVoltage[8], int id)
+void sendVoltage(uint16_t cellVoltage[8], int id)
 {
     BmsVoltageStruct voltageCanstruct0;
     BmsVoltageStruct voltageCanstruct1;
@@ -80,7 +71,7 @@ void CanMessage::sendVoltage(uint16_t cellVoltage[8], int id)
     canSend(CAN_BUS, (VOLTAGE_ID + (2 * id) + 1) | MEDIUM_CAN_PRIORITY, (uint64_t *)&voltageCanstruct1);
 }
 
-void CanMessage::sendTemp(uint16_t thermistorValues[8], int id)
+void sendTemp(uint16_t thermistorValues[8], int id)
 {
 
     BmsTempStruct temperatureCanstruct0;
@@ -105,17 +96,17 @@ void sendBmsOkTsReadyTsLiveDcdcInfo(uint8_t bms_ok, uint8_t ts_ready, uint8_t ts
     BmsOkTSLiveDCDCStruct data;
     memset(&data, 0, sizeof(BmsOkTSLiveDCDCStruct));
 
-    data.bms_ok = BMS_OK;
-    data.ts_ready = ts_ready;
-    data.ts_live = ts_live;
-    data.dcdc_fault = dcdc_fault;
-    data.dcdc_temp = 
+    data.bms_ok = bms.output.bms_ok;
+    data.ts_ready = bms.input.ts_ready;
+    data.ts_live = bms.input.ts_live;
+    data.dcdc_fault = bms.input.dcdc_fault;
+    data.dcdc_temp = bms.input.dcdc_temp;
     data.unused0 = 0;
 
     canSend(CAN_BUS, OK_ID | HIGH_CAN_PRIORITY | VCU_CAN_TARGET, (uint64_t *)&data);
 }
 
-void CanMessage::sendMainVoltageTempCurrent(uint16_t voltage, uint16_t maxTemp, uint16_t current)
+void sendMainVoltageTempCurrent(uint16_t voltage, uint16_t maxTemp, uint16_t current)
 {
     BmsMainVoltageTempCurrentStruct mainVoltageTempCurrentStruct;
     memset(&mainVoltageTempCurrentStruct, 0, sizeof(BmsMainVoltageTempCurrentStruct));
