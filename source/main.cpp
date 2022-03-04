@@ -12,16 +12,16 @@ extern void bmsspicb();
 
 static void prvSetupHardware( void ) {
 
-    // perform all hardare specific setup here
+    // Perform all hardare specific setup here
     BOARD_InitBootClocks();
     BOARD_InitBootPins();
 
     gpio::GPIO::ConstructStatic();
 
-    // initialize CAN
+    // Initialize CAN
     initCan();
 
-    // initialize ADC
+    // Initialize ADC
     adc::ADC::ConstructStatic(NULL);
 
     spi::spi_config conf;
@@ -30,7 +30,7 @@ static void prvSetupHardware( void ) {
     spi::SPI& spi = spi::SPI::StaticClass();
 
     spi::SPI::masterConfig mconf;
-    // parameterized in hardware.h
+    // Parameterized in hardware.h
     mconf.baudRate = ltcbaud/10;
     mconf.csport = ltccsport;
     mconf.cspin = ltccspin;

@@ -1,9 +1,10 @@
-BSP_PATH = '../MKELibrary/'
+#!/bin/python
 
 import os
+BSP_PATH = '../MKELibrary/'
 
-# GNU_PATH = SConscript(BSP_PATH+'config.txt')
-GNU_PATH =  '/Users/meghantran/Desktop/Racing/ARM/bin/'
+
+GNU_PATH = '/Users/baylorwhitehead/Desktop/Formula/gcc-arm-none/bin/'
 
 compileTarget = 'bms'
 
@@ -49,6 +50,7 @@ includes = [
     'source',
     'source/test',
     'board',
+    'CanMessageStructs',
     BSP_PATH+'CMSIS',
     BSP_PATH+'drivers',
     BSP_PATH+'utilities',

@@ -16,24 +16,33 @@
 #define tick_ms(x) (x*10)
 #define tick_us(x) (x/100)
 
-
-// adc defines for current
+// ADC
 #define ADC_CURRENT_BASE ADC0
 #define ADC_CURRENT_CH 8
+#define ADC_DCDC_TEMP_BASE ADC2
+#define ADC_DCDC_TEMP_CH 7
 
-// gpio defines for imd ok
-#define GPIO_IMD_OK_PORT gpio::PortD
-#define GPIO_IMD_OK_CH 15
+// GPIO in
+#define GPIO_TS_LIVE_PORT gpio::PortC
+#define GPIO_TS_LIVE_CH 6
+#define GPIO_TS_READY_PORT gpio::PortA
+#define GPIO_TS_READY_CH 2
+#define GPIO_DCDC_FAULT_PORT gpio::PortD
+#define GPIO_DCDC_FAULT_CH 1
 
-// gpio defines for bms ok
+// GPIO out
 #define GPIO_BMS_OK_PORT gpio::PortD
 #define GPIO_BMS_OK_CH 15
+#define GPIO_AIR_POS_PORT gpio::PortC
+#define GPIO_AIR_POS_CH 15
+#define GPIO_AIR_NEG_PORT gpio::PortC
+#define GPIO_AIR_NEG_CH 14
+#define GPIO_PRECHARGE_PORT gpio::PortB
+#define GPIO_PRECHARGE_CH 13
+#define GPIO_DCDC_EN_PORT gpio::PortD
+#define GPIO_DCDC_EN_CH 16
 
-// gpio defines for bms airs
-#define GPIO_BMS_AIRS_PORT gpio::PortD
-#define GPIO_BMS_AIRS_CH 15
-
-// can
+// CAN
 #define VOLTAGE_ID 0x300
 #define TEMP_ID 0x314
 #define OK_ID 0x334

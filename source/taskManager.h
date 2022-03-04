@@ -11,12 +11,10 @@
 #include "clock_config.h"
 #include "pin_mux.h"
 
-
 #include "can.h"
 using namespace BSP;
 
 #define STACK_SIZE 100
-
 
 void transInit();
 
