@@ -4,7 +4,7 @@ extern BMS bms;
 
 extern void bmsspicb();
 
-void prvSetupHardware( void ) 
+void prvSetupHardware(void)
 {
 
     BOARD_InitBootClocks();
@@ -19,10 +19,10 @@ void prvSetupHardware( void )
     spi::spi_config conf;
     conf.callbacks[0] = bmsspicb;
     spi::SPI::ConstructStatic(&conf);
-    spi::SPI& spi = spi::SPI::StaticClass();
+    spi::SPI &spi = spi::SPI::StaticClass();
 
     spi::SPI::masterConfig mconf;
-    mconf.baudRate = ltcbaud/10;
+    mconf.baudRate = ltcbaud / 10;
     mconf.csport = ltccsport;
     mconf.cspin = ltccspin;
     spi.initMaster(0, &mconf);

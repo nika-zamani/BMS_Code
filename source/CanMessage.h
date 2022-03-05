@@ -11,7 +11,6 @@ using namespace BSP;
 
 QueueHandle_t msg_queue = xQueueCreate(20, sizeof(can::CANlight::frame));
 
-
 void cb(void);
 void canInit();
 void canSend(uint8_t bus, uint32_t addr, uint64_t *data);

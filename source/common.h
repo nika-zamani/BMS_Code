@@ -8,5 +8,5 @@
 
 #define SLAVE_COUNT 1
 
-#define tick_ms(x) (x*10)
-#define tick_us(x) (x/100)
+#define tick_ms(x) (x * 10)
+#define tick_us(x) (x / 100)

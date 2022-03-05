@@ -21,7 +21,6 @@
 #include "spi.h"
 #include "adc.h"
 
-
 /* The configCHECK_FOR_STACK_OVERFLOW setting in FreeRTOSConifg can be used to
  * check task stacks for overflows.  It does not however check the stack used by
  * interrupts.  This demo has a simple addition that will also check the stack used
@@ -31,11 +30,9 @@
  * tick interrupt next executes. */
 #define mainCHECK_INTERRUPT_STACK 0
 #if mainCHECK_INTERRUPT_STACK == 1
-const unsigned char ucExpectedInterruptStackValues[] = { 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC };
+const unsigned char ucExpectedInterruptStackValues[] = {0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC};
 #endif
 
 #define STACK_SIZE 100
-
-
 
 #endif

@@ -11,7 +11,6 @@ void taskBmsInfo(void *)
         xLastWakeTime = xTaskGetTickCount();
         uint32_t maxVoltTemp = calcVoltFromTemp(35);
 
-
         readGpioIn();
         getVoltages(0b10);
         getTempuratures(0b10);
@@ -32,7 +31,7 @@ void taskGetVoltages(void *)
 
         getVoltages(0b10);
         sendVoltages();
-        
+
         vTaskDelayUntil(&xLastWakeTime, period);
     }
 }
@@ -47,7 +46,7 @@ void taskGetTemperatures(void *)
 
         getTempuratures(0b10);
         sendTemperatures();
-        
+
         vTaskDelayUntil(&xLastWakeTime, period);
     }
 }
@@ -61,15 +60,14 @@ void taskMainVoltageTempCurrent(void *)
         xLastWakeTime = xTaskGetTickCount();
 
         measureSendVoltageTempCurrent();
-        
+
         vTaskDelayUntil(&xLastWakeTime, period);
     }
 }
 
-
 void taskInit()
 {
-    xTaskCreate(transaction, "transaction", STACK_SIZE, NULL, configMAX_PRIORITIES-1, NULL );
+    xTaskCreate(transaction, "transaction", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
 
     xTaskCreate(taskDequeueCan, "taskDequeueCan", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
     xTaskCreate(taskBmsInfo, "taskIO", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
@@ -78,6 +76,4 @@ void taskInit()
 
     xTaskCreate(taskGetVoltages, "taskGetVoltages", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
     xTaskCreate(taskGetTemperatures, "taskGetTemperatures", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
-
-
 }

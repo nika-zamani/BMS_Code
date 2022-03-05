@@ -3,7 +3,7 @@
 uint8_t RETURN_DATA[6 * SLAVE_COUNT];
 uint8_t _THERMISTOR_INDEXES[8] = {0, 3, 4, 6, 7, 9, 10, 13};
 uint8_t SCONTROL_DATA[6 * SLAVE_COUNT];
-const uint8_t _DCP = 0;    // discharge not permited
+const uint8_t _DCP = 0; // discharge not permited
 
 extern BMS bms;
 
@@ -152,7 +152,7 @@ void calculateBMS_OK(uint32_t voltTempLimit)
     {
         for (int j = 0; j < 8; j++)
         {
-            if ((bms.input.cell_voltages[i][j] < 28000) | (bms.input.cell_voltages[i][j]> 45000))
+            if ((bms.input.cell_voltages[i][j] < 28000) | (bms.input.cell_voltages[i][j] > 45000))
             {
                 bms.output.bms_ok = false;
                 return;
@@ -175,25 +175,28 @@ void measureSendVoltageTempCurrent()
     sendMainVoltageTempCurrent(bms.input.sum_voltage, bms.input.max_temp, bms.input.current_adc);
 }
 
-void sendVoltages() 
+void sendVoltages()
 {
-    for (int id = 0; id < SLAVE_COUNT; id++) {
+    for (int id = 0; id < SLAVE_COUNT; id++)
+    {
         sendVoltage((uint16_t *)&bms.input.cell_voltages[id], id);
     }
 }
 
-void sendTemperatures() 
+void sendTemperatures()
 {
-    for (int id = 0; id < SLAVE_COUNT; id++) {
+    for (int id = 0; id < SLAVE_COUNT; id++)
+    {
         uint16_t _THERMISTOR_VALUES_PER[8];
-        for (int j = 0; j < 8; j++) {
+        for (int j = 0; j < 8; j++)
+        {
             _THERMISTOR_VALUES_PER[j] = bms.input.thermistor_values[id][_THERMISTOR_INDEXES[j]];
         }
         sendTemp(_THERMISTOR_VALUES_PER, id);
     }
 }
 
-void bmsInit() 
+void bmsInit()
 {
     uint8_t confdat[6 * SLAVE_COUNT];
     memset(confdat, 0, 6 * SLAVE_COUNT);

@@ -1,4 +1,4 @@
-#ifndef IO_H 
+#ifndef IO_H
 #define IO_H
 
 #include "FreeRTOS.h"
@@ -60,13 +60,12 @@ using namespace BSP;
 #define CAN_BUS 0
 #define CAN_BAUD_RATE 1000000
 
-void prvSetupHardware( void );
+void prvSetupHardware(void);
 uint16_t measureCurrent();
 void unpackCanAirPrechargeDcdcEnable(can::CANlight::frame *f);
 void setDcdcTemp();
 void readGpioIn();
 void not_found_id();
 void taskDequeueCan(void *pvParameters);
-
 
 #endif

@@ -28,8 +28,4 @@ void measureSendVoltageTempCurrent();
 void bmsInit();
 void monitorBMSHealth(void *pvParameters);
 
-
-
 #endif // BMSHEALTH_H
-
-

@@ -4,7 +4,8 @@ using namespace BSP;
 
 BMS bms;
 
-int main( void ) {
+int main(void)
+{
     prvSetupHardware();
     transactionInit();
 
@@ -17,8 +18,9 @@ int main( void ) {
     return 0;
 }
 
-extern "C" {
-    void vApplicationMallocFailedHook( void )
+extern "C"
+{
+    void vApplicationMallocFailedHook(void)
     {
         /* vApplicationMallocFailedHook() will only be called if
          * configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h.  It is a hook
@@ -31,13 +33,14 @@ extern "C" {
          * to query the size of vPortFree heap space that remains (although it does not
          * provide information on how the remaining heap might be fragmented). */
         taskDISABLE_INTERRUPTS();
-        for( ;; );
+        for (;;)
+            ;
     }
 
-    void vApplicationIdleHook( void )
+    void vApplicationIdleHook(void)
     {
         // measure clock cycles when its not doing other stuff
-        
+
         /* vApplicationIdleHook() will only be called if configUSE_IDLE_HOOK is set
          * to 1 in FreeRTOSConfig.h.  It will be called on each iteration of the idle
          * task.  It is essential that code added to this hook function never attempts
@@ -49,19 +52,20 @@ extern "C" {
          * memory allocated by the kernel to any task that has since been deleted. */
     }
 
-    void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
+    void vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName)
     {
-        ( void ) pcTaskName;
-        ( void ) pxTask;
+        (void)pcTaskName;
+        (void)pxTask;
 
         /* Run time stack overflow checking is performed if
          * configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook
          * function is called if a stack overflow is detected. */
         taskDISABLE_INTERRUPTS();
-        for( ;; );
+        for (;;)
+            ;
     }
 
-    void vApplicationTickHook( void )
+    void vApplicationTickHook(void)
     {
 #if mainCHECK_INTERRUPT_STACK == 1
         extern unsigned long _pvHeapStart[];
@@ -76,8 +80,7 @@ extern "C" {
          * have not been overwritten.  Note - the task stacks are automatically
          * checked for overflow if configCHECK_FOR_STACK_OVERFLOW is set to 1 or 2
          * in FreeRTOSConifg.h, but the interrupt stack is not. */
-        configASSERT( memcmp( ( void * ) _pvHeapStart, ucExpectedInterruptStackValues, sizeof( ucExpectedInterruptStackValues ) ) == 0U );
+        configASSERT(memcmp((void *)_pvHeapStart, ucExpectedInterruptStackValues, sizeof(ucExpectedInterruptStackValues)) == 0U);
 #endif /* mainCHECK_INTERRUPT_STACK */
     }
 }
-
