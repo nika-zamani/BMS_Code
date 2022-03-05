@@ -7,8 +7,6 @@ BMS bms;
 int main( void ) {
     prvSetupHardware();
     transactionInit();
-    
-    NVIC->IP[26] |= 6 << 4;
 
     bmsInit();
 

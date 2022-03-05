@@ -26,6 +26,8 @@ void prvSetupHardware( void )
     mconf.csport = ltccsport;
     mconf.cspin = ltccspin;
     spi.initMaster(0, &mconf);
+
+    NVIC->IP[26] |= 6 << 4;
 }
 
 uint16_t measureCurrent()
