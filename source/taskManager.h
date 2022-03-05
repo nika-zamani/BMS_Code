@@ -25,7 +25,9 @@ using namespace BSP;
 #define STACK_SIZE 100
 
 void taskInit();
+void taskBmsInfo(void *);
 void taskGetVoltages(void *);
 void taskGetTemperatures(void *);
+void taskMainVoltageTempCurrent(void *);
 
 #endif

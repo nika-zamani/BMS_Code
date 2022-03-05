@@ -3,7 +3,7 @@
 
 extern BMS bms;
 
-void taskIO(void *)
+void taskBmsInfo(void *)
 {
     TickType_t xLastWakeTime;
     for (;;)
@@ -13,6 +13,8 @@ void taskIO(void *)
 
 
         readGpioIn();
+        getVoltages(0b10);
+        getTempuratures(0b10);
         calculateBMS_OK(maxVoltTemp);
         sendBmsOkTsReadyTsLiveDcdcInfo(bms.output.bms_ok, bms.input.ts_live, bms.input.ts_ready, bms.input.dcdc_fault, bms.input.dcdc_temp);
 
@@ -50,21 +52,6 @@ void taskGetTemperatures(void *)
     }
 }
 
-void taskBmsOk(void *)
-{
-    TickType_t xLastWakeTime;
-    const TickType_t period = tick_ms(1000);
-    for (;;)
-    {
-        xLastWakeTime = xTaskGetTickCount();
-
-        getTempuratures(0b10);
-        sendTemperatures();
-        
-        vTaskDelayUntil(&xLastWakeTime, period);
-    }
-}
-
 void taskMainVoltageTempCurrent(void *)
 {
     TickType_t xLastWakeTime;
@@ -85,9 +72,8 @@ void taskInit()
     xTaskCreate(transaction, "transaction", STACK_SIZE, NULL, configMAX_PRIORITIES-1, NULL );
 
     xTaskCreate(taskDequeueCan, "taskDequeueCan", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
-    xTaskCreate(taskIO, "taskIO", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
+    xTaskCreate(taskBmsInfo, "taskIO", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
 
-    xTaskCreate(taskBmsOk, "taskBmsOk", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
     xTaskCreate(taskMainVoltageTempCurrent, "taskMainVoltageTempCurrent", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
 
     xTaskCreate(taskGetVoltages, "taskGetVoltages", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
