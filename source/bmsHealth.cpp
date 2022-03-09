@@ -78,7 +78,6 @@ void getVoltages(uint8_t md)
         memcpy((void *)&bms.input.cell_voltages[i][6], (RETURN_DATA + (i * 6)), 6);
     }
     error = pushCommand(RDCVD, SLAVE_COUNT, RETURN_DATA);
-    // memcpy(&_CELL_VOLTAGES[9], RETURN_DATA, 6);
 
     error = pushCommand(RDSTATA, SLAVE_COUNT, RETURN_DATA);
 }

@@ -26,8 +26,6 @@ using namespace BSP;
 
 void taskInit();
 void taskBmsInfo(void *);
-void taskGetVoltages(void *);
-void taskGetTemperatures(void *);
 void taskMainVoltageTempCurrent(void *);
 
 #endif

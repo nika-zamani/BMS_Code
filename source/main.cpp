@@ -8,9 +8,7 @@ int main(void)
 {
     prvSetupHardware();
     transactionInit();
-
-    bmsInit();
-
+    
     taskInit();
 
     vTaskStartScheduler();
