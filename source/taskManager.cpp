@@ -17,6 +17,7 @@ void taskBmsInfo(void *)
         getVoltages(0b10);
         getTempuratures(0b10);
         calculateBMS_OK(maxVoltTemp);
+        setBMS_OK();
         sendVoltages();
         sendTemperatures();
         sendBmsOkTsReadyTsLiveDcdcInfo(bms.output.bms_ok, bms.input.ts_live, bms.input.ts_ready, bms.input.dcdc_fault, bms.input.dcdc_temp);

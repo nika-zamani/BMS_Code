@@ -11,6 +11,13 @@ void prvSetupHardware(void)
     BOARD_InitBootPins();
 
     gpio::GPIO::ConstructStatic();
+    gpio::GPIO &gpio = gpio::GPIO::StaticClass();
+    // Set out direction GPIO
+    gpio.out_dir(GPIO_BMS_OK_PORT, GPIO_BMS_OK_CH);
+    gpio.out_dir(GPIO_AIR_POS_PORT, GPIO_AIR_POS_CH);
+    gpio.out_dir(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH);
+    gpio.out_dir(GPIO_PRECHARGE_PORT, GPIO_PRECHARGE_CH);
+    gpio.out_dir(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH);
 
     canInit();
 
@@ -43,7 +50,7 @@ void unpackCanAirPrechargeDcdcEnable(can::CANlight::frame *f)
     BmsAirsPreChargeDCDCEnableStruct data;
     gpio::GPIO &gpio = gpio::GPIO::StaticClass();
 
-    memcpy(&data, &f, sizeof(BmsAirsPreChargeDCDCEnableStruct));
+    memcpy(&data, f->data, sizeof(BmsAirsPreChargeDCDCEnableStruct));
 
     bms.output.airs_positive = data.airs_positive;
     bms.output.airs_negative = data.airs_negative;
@@ -54,6 +61,12 @@ void unpackCanAirPrechargeDcdcEnable(can::CANlight::frame *f)
     data.airs_negative ? gpio.set(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH) : gpio.clear(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH);
     data.precharge ? gpio.set(GPIO_PRECHARGE_PORT, GPIO_PRECHARGE_CH) : gpio.clear(GPIO_PRECHARGE_PORT, GPIO_PRECHARGE_CH);
     data.dcdc_enable ? gpio.set(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH) : gpio.clear(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH);
+}
+
+void setBMS_OK(){
+    gpio::GPIO &gpio = gpio::GPIO::StaticClass();
+
+    bms.output.bms_ok  ? gpio.set(GPIO_BMS_OK_PORT, GPIO_BMS_OK_CH) : gpio.clear(GPIO_BMS_OK_PORT, GPIO_BMS_OK_CH);
 }
 
 void setDcdcTemp()

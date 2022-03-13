@@ -67,5 +67,6 @@ void setDcdcTemp();
 void readGpioIn();
 void not_found_id();
 void taskDequeueCan(void *pvParameters);
+void setBMS_OK();
 
 #endif
