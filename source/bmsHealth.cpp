@@ -204,6 +204,21 @@ void bmsInit()
     pushCommand(WRCFGA, SLAVE_COUNT, confdat);
 }
 
+void openFuseCheck()
+{
+    int vDrop = initResistance * bms.input.current_adc;
+    for (int i = 0; i < SLAVE_COUNT; i++)
+    {
+        for (int j = 0; j < 8; j++) 
+        {
+            if ((bms.input.cell_voltages[i][j] - vDrop) > vDropThresh) 
+            {
+                // do something
+            }
+        }
+    }
+}
+
 void monitorBMSHealth(void *pvParameters)
 {
     TickType_t xLastWakeTime;
