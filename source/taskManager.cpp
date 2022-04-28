@@ -8,35 +8,53 @@ void taskBmsInfo(void *)
     TickType_t xLastWakeTime;
     bmsInit();
 
+    // Delay to let boards go into standby
+    vTaskDelay(pdMS_TO_TICKS(2000));
+
     for (;;)
     {
         xLastWakeTime = xTaskGetTickCount();
-        uint32_t maxVoltTemp = calcVoltFromTemp(35);
 
-        readGpioIn();
+        // BMS 
         getVoltages(0b10);
         getTempuratures(0b10);
-        calculateBMS_OK(maxVoltTemp);
+        calculateBMS_OK();
         setBMS_OK();
         sendVoltages();
         sendTemperatures();
-        sendBmsOkTsReadyTsLiveDcdcInfo(bms.output.bms_ok, bms.input.ts_live, bms.input.ts_ready, bms.input.dcdc_fault, bms.input.dcdc_temp);
 
         vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(100));
     }
 }
 
+void taskCanGPIO(void *)
+{
+    TickType_t xLastWakeTime;
+
+    for (;;)
+    {
+        xLastWakeTime = xTaskGetTickCount();
+
+        readGpioIn();
+        sendBmsOkTsReadyTsLiveDcdcInfo();
+
+        vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(100));
+    }
+}
+
+
+
 void taskMainVoltageTempCurrent(void *)
 {
     TickType_t xLastWakeTime;
-    const TickType_t period = tick_ms(1000);
+
     for (;;)
     {
         xLastWakeTime = xTaskGetTickCount();
 
         measureSendVoltageTempCurrent();
 
-        vTaskDelayUntil(&xLastWakeTime, period);
+        vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(50));
     }
 }
 
@@ -46,6 +64,8 @@ void taskInit()
 
     xTaskCreate(taskDequeueCan, "taskDequeueCan", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
     xTaskCreate(taskBmsInfo, "taskBmsInfo", STACK_SIZE*2, NULL, configMAX_PRIORITIES - 1, NULL);
+    xTaskCreate(taskCanGPIO, "taskCanGPIO", STACK_SIZE*2, NULL, configMAX_PRIORITIES - 1, NULL);
+
 
     xTaskCreate(taskMainVoltageTempCurrent, "taskMainVoltageTempCurrent", STACK_SIZE*2, NULL, configMAX_PRIORITIES - 1, NULL);
 }

@@ -7,20 +7,25 @@ const uint8_t _DCP = 0; // discharge not permited
 
 extern BMS bms;
 
-uint32_t calcVoltFromTemp(uint16_t temperature)
+uint32_t calcTempToVolt(uint16_t temperature)
 {
     // 9*(10^-5)*(x^4)-3*(10^-2)*(x^3)+9*(10^-1)*(x^2)+262*x+8266
-    uint32_t v1 = (.00009 * temperature * temperature * temperature * temperature) - (.03 * temperature * temperature * temperature) + (.9 * temperature * temperature) + (262 * temperature) + 8266;
+    uint32_t v1 = (.00009 * temperature * temperature * temperature * temperature) 
+                  - (.03 * temperature * temperature * temperature) 
+                  + (.9 * temperature * temperature) 
+                  + (262 * temperature) 
+                  + 8266;
     return v1;
 }
 
-uint16_t calcTempFromVolt(uint16_t voltage)
+uint16_t calcVoltToTemp(uint16_t voltage)
 {
-    // y = -0.0002x^2 + 0.0358x + 0.7128
-    float vFloat = voltage * 0.0001;
-    float t1 = ((-0.0002 * vFloat * vFloat) + (0.0358 * vFloat) + (0.7128)) * 100;
+    float temp = -81.3 
+                 + (0.0147 * voltage)
+                 + (-0.000000755 * voltage * voltage)
+                 + (1.67 * pow(10, -11) * voltage * voltage * voltage);
 
-    return t1 * 100;
+    return temp * 100;
 }
 
 uint16_t getMaxTemp()
@@ -145,7 +150,7 @@ void getTempuratures(uint8_t md)
     }
 }
 
-void calculateBMS_OK(uint32_t voltTempLimit)
+void calculateBMS_OK()
 {
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
@@ -153,10 +158,12 @@ void calculateBMS_OK(uint32_t voltTempLimit)
         {
             if ((bms.input.cell_voltages[i][j] < 28000) | (bms.input.cell_voltages[i][j] > 45000))
             {
-                bms.output.bms_ok = false;
-                return;
+                if (i != 0){
+                    bms.output.bms_ok = false;
+                    return;
+                }
             }
-            if (bms.input.thermistor_values[i][_THERMISTOR_INDEXES[j]] > voltTempLimit)
+            if (bms.input.thermistor_values[i][_THERMISTOR_INDEXES[j]] > BATTERY_TEMP_VOLT_LIMIT)
             {
                 bms.output.bms_ok = false;
                 return;
@@ -169,7 +176,7 @@ void calculateBMS_OK(uint32_t voltTempLimit)
 void measureSendVoltageTempCurrent()
 {
     bms.input.sum_voltage = getSumVoltage();
-    bms.input.max_temp = calcTempFromVolt(getMaxTemp());
+    bms.input.max_temp = calcVoltToTemp(getMaxTemp());
     bms.input.current_adc = measureCurrent();
     sendMainVoltageTempCurrent(bms.input.sum_voltage, bms.input.max_temp, bms.input.current_adc);
 }
@@ -191,6 +198,7 @@ void sendTemperatures()
         {
             _THERMISTOR_VALUES_PER[j] = bms.input.thermistor_values[id][_THERMISTOR_INDEXES[j]];
         }
+        vTaskDelay(pdMS_TO_TICKS(1));
         sendTemp(_THERMISTOR_VALUES_PER, id);
     }
 }

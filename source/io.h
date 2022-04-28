@@ -26,7 +26,7 @@ using namespace BSP;
 
 // ADC
 #define ADC_CURRENT_BASE ADC0
-#define ADC_CURRENT_CH 8
+#define ADC_CURRENT_CH 9
 #define ADC_DCDC_TEMP_BASE ADC2
 #define ADC_DCDC_TEMP_CH 7
 

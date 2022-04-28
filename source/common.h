@@ -6,7 +6,7 @@
 
 #include <string.h>
 
-#define SLAVE_COUNT 1
+#define SLAVE_COUNT 10
 
 #define tick_ms(x) (x * 10)
 #define tick_us(x) (x / 100)

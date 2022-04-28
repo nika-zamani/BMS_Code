@@ -1,4 +1,5 @@
 #include "FreeRTOS.h"
+#include "semphr.h"
 #include "task.h"
 
 #include "CanMessage.h"
@@ -6,6 +7,8 @@
 #include "canmessagestructs.h"
 
 extern BMS bms;
+
+//static SemaphoreHandle_t canMutex;
 
 void cb(void)
 {
@@ -28,6 +31,10 @@ void canInit()
     NVIC->IP[87] |= 6 << 4;
     NVIC->IP[88] |= 6 << 4;
 
+    //canMutex = xSemaphoreCreateMutex();
+    // Take the mutex
+    //xSemaphoreTake(canMutex, portMAX_DELAY);
+
     can::can_config c;
     can::CANlight::ConstructStatic(&c);
     can::CANlight &can = can::CANlight::StaticClass();
@@ -49,7 +56,10 @@ void canSend(uint8_t bus, uint32_t address, uint64_t *data)
     frame.dlc = 8;
     memcpy(frame.data, data, sizeof(frame.data));
 
-    can.tx(bus, frame);
+    //if (xSemaphoreTake(canMutex, portMAX_DELAY) == pdTRUE){
+        can.tx(bus, frame);
+    //   xSemaphoreGive(canMutex);
+    //}
 }
 
 void sendVoltage(uint16_t cellVoltage[8], int id)
@@ -67,8 +77,8 @@ void sendVoltage(uint16_t cellVoltage[8], int id)
     voltageCanstruct1.voltage2 = cellVoltage[6];
     voltageCanstruct1.voltage3 = cellVoltage[7];
 
-    canSend(CAN_BUS, (VOLTAGE_ID + (2 * id)) | MEDIUM_CAN_PRIORITY, (uint64_t *)&voltageCanstruct0);
-    canSend(CAN_BUS, (VOLTAGE_ID + (2 * id) + 1) | MEDIUM_CAN_PRIORITY, (uint64_t *)&voltageCanstruct1);
+    canSend(CAN_BUS, (VOLTAGE_ID + (2 * id)) | NO_TARGET | MEDIUM_CAN_PRIORITY, (uint64_t *)&voltageCanstruct0);
+    canSend(CAN_BUS, (VOLTAGE_ID + (2 * id) + 1) | NO_TARGET | MEDIUM_CAN_PRIORITY, (uint64_t *)&voltageCanstruct1);
 }
 
 void sendTemp(uint16_t thermistorValues[8], int id)
@@ -87,11 +97,11 @@ void sendTemp(uint16_t thermistorValues[8], int id)
     temperatureCanstruct1.voltage2 = thermistorValues[6];
     temperatureCanstruct1.voltage3 = thermistorValues[7];
 
-    canSend(CAN_BUS, (TEMP_ID + (2 * id)) | MEDIUM_CAN_PRIORITY, (uint64_t *)&temperatureCanstruct0);
-    canSend(CAN_BUS, (TEMP_ID + (2 * id) + 1) | MEDIUM_CAN_PRIORITY, (uint64_t *)&temperatureCanstruct1);
+    canSend(CAN_BUS, (TEMP_ID + (2 * id)) | NO_TARGET |  MEDIUM_CAN_PRIORITY, (uint64_t *)&temperatureCanstruct0);
+    canSend(CAN_BUS, (TEMP_ID + (2 * id) + 1) | NO_TARGET |  MEDIUM_CAN_PRIORITY, (uint64_t *)&temperatureCanstruct1);
 }
 
-void sendBmsOkTsReadyTsLiveDcdcInfo(uint8_t bms_ok, uint8_t ts_ready, uint8_t ts_live, uint8_t dcdc_fault, uint16_t dcdc_temp)
+void sendBmsOkTsReadyTsLiveDcdcInfo()
 {
     BmsOkTSLiveDCDCStruct data;
     memset(&data, 0, sizeof(BmsOkTSLiveDCDCStruct));
@@ -103,10 +113,10 @@ void sendBmsOkTsReadyTsLiveDcdcInfo(uint8_t bms_ok, uint8_t ts_ready, uint8_t ts
     data.dcdc_temp = bms.input.dcdc_temp;
     data.unused0 = 0;
 
-    canSend(CAN_BUS, OK_ID | HIGH_CAN_PRIORITY | VCU_CAN_TARGET, (uint64_t *)&data);
+    canSend(CAN_BUS, OK_ID | CRITICAL_CAN_PRIORITY | VCU_CAN_TARGET, (uint64_t *)&data);
 }
 
-void sendMainVoltageTempCurrent(uint16_t voltage, uint16_t maxTemp, uint16_t current)
+void sendMainVoltageTempCurrent(uint32_t voltage, uint16_t maxTemp, uint16_t current)
 {
     BmsMainVoltageTempCurrentStruct mainVoltageTempCurrentStruct;
     memset(&mainVoltageTempCurrentStruct, 0, sizeof(BmsMainVoltageTempCurrentStruct));

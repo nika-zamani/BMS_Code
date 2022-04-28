@@ -1,6 +1,8 @@
 #ifndef BMSHEALTH_H
 #define BMSHEALTH_H
 
+#include <math.h>
+
 #include "common.h"
 #include "io.h"
 #include "bmsCommand.h"
@@ -16,13 +18,15 @@ const uint8_t ERR_CVA = 1, ERR_CVB = 2, ERR_CVC = 4, ERR_CVD = 8, ERR_AUXA = 16,
 #define initResistance 2
 #define vDropThresh 1.4
 
-uint32_t calcVoltFromTemp(uint16_t temperature);
-uint16_t calcTempFromVolt(uint16_t voltage);
+#define BATTERY_TEMP_VOLT_LIMIT calcTempToVolt(35) // Celcius
+
+uint32_t calcTempToVolt(uint16_t temperature);
+uint16_t calcVoltToTemp(uint16_t voltage);
 uint16_t getMaxTemp();
 uint32_t getSumVoltage();
 void getVoltages(uint8_t md);
 void getTempuratures(uint8_t md);
-void calculateBMS_OK(uint32_t voltTempLimit);
+void calculateBMS_OK();
 void sendVoltages();
 void sendTemperatures();
 void measureSendVoltageTempCurrent();
