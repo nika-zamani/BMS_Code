@@ -156,13 +156,13 @@ void calculateBMS_OK()
     {
         for (int j = 0; j < 8; j++)
         {
-            if ((bms.input.cell_voltages[i][j] < 28000) | (bms.input.cell_voltages[i][j] > 45000))
-            {
-                if (i != 0){
-                    bms.output.bms_ok = false;
-                    return;
-                }
-            }
+            // if ((bms.input.cell_voltages[i][j] < 28000) | (bms.input.cell_voltages[i][j] > 45000))
+            // {
+            //     if (i != 0 && i != 6){
+            //         bms.output.bms_ok = false;
+            //         return;
+            //     }
+            // }
             if (bms.input.thermistor_values[i][_THERMISTOR_INDEXES[j]] > BATTERY_TEMP_VOLT_LIMIT)
             {
                 bms.output.bms_ok = false;

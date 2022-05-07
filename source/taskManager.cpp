@@ -1,5 +1,6 @@
 
 #include "taskManager.h"
+#include "gpio.h"
 
 extern BMS bms;
 
@@ -27,7 +28,7 @@ void taskBmsInfo(void *)
     }
 }
 
-void taskCanGPIO(void *)
+void taskCanDataCollect(void *)
 {
     TickType_t xLastWakeTime;
 
@@ -35,7 +36,8 @@ void taskCanGPIO(void *)
     {
         xLastWakeTime = xTaskGetTickCount();
 
-        readGpioIn();
+        readGpioInputs();
+        readDcdcTemp();
         sendBmsOkTsReadyTsLiveDcdcInfo();
 
         vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(100));
@@ -64,7 +66,7 @@ void taskInit()
 
     xTaskCreate(taskDequeueCan, "taskDequeueCan", STACK_SIZE, NULL, configMAX_PRIORITIES - 1, NULL);
     xTaskCreate(taskBmsInfo, "taskBmsInfo", STACK_SIZE*2, NULL, configMAX_PRIORITIES - 1, NULL);
-    xTaskCreate(taskCanGPIO, "taskCanGPIO", STACK_SIZE*2, NULL, configMAX_PRIORITIES - 1, NULL);
+    xTaskCreate(taskCanDataCollect, "taskCanDataCollect", STACK_SIZE*2, NULL, configMAX_PRIORITIES - 1, NULL);
 
 
     xTaskCreate(taskMainVoltageTempCurrent, "taskMainVoltageTempCurrent", STACK_SIZE*2, NULL, configMAX_PRIORITIES - 1, NULL);

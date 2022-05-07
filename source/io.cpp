@@ -60,23 +60,23 @@ void unpackCanAirPrechargeDcdcEnable(can::CANlight::frame *f)
     data.airs_positive && bms.input.ts_ready ? gpio.set(GPIO_AIR_POS_PORT, GPIO_AIR_POS_CH) : gpio.clear(GPIO_AIR_POS_PORT, GPIO_AIR_POS_CH);
     data.airs_negative && bms.input.ts_ready ? gpio.set(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH) : gpio.clear(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH);
     data.precharge && bms.input.ts_ready ? gpio.set(GPIO_PRECHARGE_PORT, GPIO_PRECHARGE_CH) : gpio.clear(GPIO_PRECHARGE_PORT, GPIO_PRECHARGE_CH);
-    data.dcdc_enable && bms.input.ts_ready ? gpio.set(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH) : gpio.clear(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH);
+    data.dcdc_enable && bms.input.ts_ready && !bms.input.dcdc_fault ? gpio.set(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH) : gpio.clear(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH);
 }
 
 void setBMS_OK(){
     gpio::GPIO &gpio = gpio::GPIO::StaticClass();
 
-    bms.output.bms_ok  ? gpio.set(GPIO_BMS_OK_PORT, GPIO_BMS_OK_CH) : gpio.clear(GPIO_BMS_OK_PORT, GPIO_BMS_OK_CH);
+    bms.output.bms_ok ? gpio.set(GPIO_BMS_OK_PORT, GPIO_BMS_OK_CH) : gpio.clear(GPIO_BMS_OK_PORT, GPIO_BMS_OK_CH);
 }
 
-void setDcdcTemp()
+void readDcdcTemp()
 {
     adc::ADC &adc = adc::ADC::StaticClass();
     uint16_t tempADC = adc.read(ADC_DCDC_TEMP_BASE, ADC_DCDC_TEMP_CH);
     bms.input.dcdc_temp = ((tempADC / 4095.0 * 5.0)) * 50.76142 * 1000;
 }
 
-void readGpioIn()
+void readGpioInputs()
 {
     gpio::GPIO &gpio = gpio::GPIO::StaticClass();
 
