@@ -32,5 +32,6 @@ void sendTemperatures();
 void measureSendVoltageTempCurrent();
 void bmsInit();
 void monitorBMSHealth(void *pvParameters);
+void SControl();
 
 #endif 

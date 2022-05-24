@@ -17,12 +17,14 @@ void taskBmsInfo(void *)
         xLastWakeTime = xTaskGetTickCount();
 
         // BMS 
-        getVoltages(0b10);
-        getTempuratures(0b10);
-        calculateBMS_OK();
-        setBMS_OK();
-        sendVoltages();
-        sendTemperatures();
+       //getVoltages(0b10);
+       // getTempuratures(0b10);
+       // calculateBMS_OK();
+        //setBMS_OK();
+       // sendVoltages();
+       // sendTemperatures();
+    SControl();
+
 
         vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(100));
     }

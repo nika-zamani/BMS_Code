@@ -3,6 +3,7 @@
 uint8_t RETURN_DATA[6 * SLAVE_COUNT];
 uint8_t _THERMISTOR_INDEXES[8] = {0, 3, 4, 6, 7, 9, 10, 13};
 uint8_t SCONTROL_DATA[6 * SLAVE_COUNT];
+uint8_t TEST_DATA[6 * SLAVE_COUNT];
 const uint8_t _DCP = 0; // discharge not permited
 
 extern BMS bms;
@@ -93,14 +94,30 @@ void SControl()
     int error = 0;
     memset(SCONTROL_DATA, 0, sizeof(SCONTROL_DATA));
     memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
+    memset(TEST_DATA, 0, sizeof(TEST_DATA));
+
+    // Clears control
     error = pushCommand(CLRSCTRL, SLAVE_COUNT, RETURN_DATA);
+    // ??
     error = pushCommand(ADCVSC, SLAVE_COUNT, RETURN_DATA, 1, _DCP); // is this needed?
+
     SCONTROL_DATA[0] = 0b10000000;
     SCONTROL_DATA[1] = 0b10001000;
     SCONTROL_DATA[2] = 0b10001000;
     SCONTROL_DATA[3] = 0b10000000;
     SCONTROL_DATA[4] = 0b10001000;
     SCONTROL_DATA[5] = 0b10001000;
+
+    // Read config reg
+    pushCommand(RDCFGA, SLAVE_COUNT, TEST_DATA);
+
+    TEST_DATA[4] = 0b11111111;
+    TEST_DATA[5] = TEST_DATA[5] | 0b1111;
+
+    pushCommand(WRCFGA, SLAVE_COUNT, TEST_DATA);
+    
+    
+    // "Start S Control Pulsing and Poll Status"
     pushCommand(STSCTRL, SLAVE_COUNT, RETURN_DATA); // put this here?????
     for (int i = 0; i < 6; i++)
     {
