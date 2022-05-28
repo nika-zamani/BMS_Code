@@ -3,7 +3,7 @@
 uint8_t RETURN_DATA[6 * SLAVE_COUNT];
 uint8_t _THERMISTOR_INDEXES[8] = {0, 3, 4, 6, 7, 9, 10, 13};
 uint8_t SCONTROL_DATA[6 * SLAVE_COUNT];
-uint8_t TEST_DATA[6 * SLAVE_COUNT];
+uint8_t DCC_DATA[6 * SLAVE_COUNT];
 const uint8_t _DCP = 0; // discharge not permited
 
 extern BMS bms;
@@ -90,49 +90,79 @@ void getVoltages(uint8_t md)
 
 void SControl()
 {
+    if (!bms.output.bms_ok){
+        return;
+    }
 
     int error = 0;
-    memset(SCONTROL_DATA, 0, sizeof(SCONTROL_DATA));
-    memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
-    memset(TEST_DATA, 0, sizeof(TEST_DATA));
+    memset(DCC_DATA, 0, sizeof(DCC_DATA));
 
-    // Clears control
-    error = pushCommand(CLRSCTRL, SLAVE_COUNT, RETURN_DATA);
-    // ??
+    uint8_t discharge_channels[SLAVE_COUNT];
+
+    // // Clears control
+    // error = pushCommand(CLRSCTRL, SLAVE_COUNT, RETURN_DATA);
+    // // ??
     error = pushCommand(ADCVSC, SLAVE_COUNT, RETURN_DATA, 1, _DCP); // is this needed?
 
-    SCONTROL_DATA[0] = 0b10000000;
-    SCONTROL_DATA[1] = 0b10001000;
-    SCONTROL_DATA[2] = 0b10001000;
-    SCONTROL_DATA[3] = 0b10000000;
-    SCONTROL_DATA[4] = 0b10001000;
-    SCONTROL_DATA[5] = 0b10001000;
+    // SCONTROL_DATA[0] = 0b10000000;
+    // SCONTROL_DATA[1] = 0b00000000;
+    // SCONTROL_DATA[2] = 0b00000000;
+    // SCONTROL_DATA[3] = 0b00000000;
+    // SCONTROL_DATA[4] = 0b00000000;
+    // SCONTROL_DATA[5] = 0b00000000;
 
     // Read config reg
-    pushCommand(RDCFGA, SLAVE_COUNT, TEST_DATA);
+    error = pushCommand(RDCFGA, SLAVE_COUNT, DCC_DATA);
 
-    TEST_DATA[4] = 0b11111111;
-    TEST_DATA[5] = TEST_DATA[5] | 0b1111;
-
-    pushCommand(WRCFGA, SLAVE_COUNT, TEST_DATA);
-    
-    
-    // "Start S Control Pulsing and Poll Status"
-    pushCommand(STSCTRL, SLAVE_COUNT, RETURN_DATA); // put this here?????
-    for (int i = 0; i < 6; i++)
+    u_int16_t lowest = 0;
+    for (int i = 0; i < SLAVE_COUNT; i++)
     {
-        uint8_t temp = SCONTROL_DATA[5];
-        SCONTROL_DATA[5] = SCONTROL_DATA[4];
-        SCONTROL_DATA[4] = SCONTROL_DATA[3];
-        SCONTROL_DATA[3] = SCONTROL_DATA[2];
-        SCONTROL_DATA[2] = SCONTROL_DATA[1];
-        SCONTROL_DATA[1] = SCONTROL_DATA[0];
-        SCONTROL_DATA[0] = temp;
-        memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
-        error = pushCommand(WRSCTRL, SLAVE_COUNT, SCONTROL_DATA);
-        vTaskDelay(100); // check ticks
-        error = pushCommand(RDSCTRL, SLAVE_COUNT, RETURN_DATA);
+        lowest = 0xFFFF;
+
+        // Find lowest voltage out of 8
+        for (int j = 0; j < 8; j++)
+        {
+            if (bms.input.cell_voltages[i][j] < lowest){
+                lowest = bms.input.cell_voltages[i][j];
+            }
+           
+        }
+
+        // Clear DCC values 
+        DCC_DATA[(i * 6) + 4] = 0;
+
+        // Set cells not withing .1 volts to discharge
+        for (int j = 0; j < 8; j++)
+        {
+            // Check which ones off by .1 volt
+            if ((bms.input.cell_voltages[i][j] - lowest) > 500){
+                // If so discharge
+                DCC_DATA[(i * 6) + 4] |= (1 << j);
+            }
+        }
+        
     }
+    
+    // Push DCC changes
+    error = pushCommand(WRCFGA, SLAVE_COUNT, DCC_DATA);
+    
+    
+    // // "Start S Control Pulsing and Poll Status"
+    // pushCommand(STSCTRL, SLAVE_COUNT, RETURN_DATA); // put this here?????
+    // for (int i = 0; i < 6; i++)
+    // {
+    //     uint8_t temp = SCONTROL_DATA[5];
+    //     SCONTROL_DATA[5] = SCONTROL_DATA[4];
+    //     SCONTROL_DATA[4] = SCONTROL_DATA[3];
+    //     SCONTROL_DATA[3] = SCONTROL_DATA[2];
+    //     SCONTROL_DATA[2] = SCONTROL_DATA[1];
+    //     SCONTROL_DATA[1] = SCONTROL_DATA[0];
+    //     SCONTROL_DATA[0] = temp;
+    //     memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
+    //     error = pushCommand(WRSCTRL, SLAVE_COUNT, SCONTROL_DATA);
+    //     vTaskDelay(100); // check ticks
+    //     error = pushCommand(RDSCTRL, SLAVE_COUNT, RETURN_DATA);
+    // }
     // pushCommand(STSCTRL, SLAVE_COUNT, RETURN_DATA);
 
     // memset(RETURN_DATA, 0, sizeof(RETURN_DATA));
@@ -173,13 +203,11 @@ void calculateBMS_OK()
     {
         for (int j = 0; j < 8; j++)
         {
-            // if ((bms.input.cell_voltages[i][j] < 28000) | (bms.input.cell_voltages[i][j] > 45000))
-            // {
-            //     if (i != 0 && i != 6){
-            //         bms.output.bms_ok = false;
-            //         return;
-            //     }
-            // }
+            if ((bms.input.cell_voltages[i][j] < 28000) | (bms.input.cell_voltages[i][j] > 45000))
+            {
+                bms.output.bms_ok = false;
+                return;
+            }
             if (bms.input.thermistor_values[i][_THERMISTOR_INDEXES[j]] > BATTERY_TEMP_VOLT_LIMIT)
             {
                 bms.output.bms_ok = false;
