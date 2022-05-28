@@ -13,12 +13,16 @@
 
 using namespace BSP;
 
+#define VOLTS_TO_BAT_VOLT(V) (V*10000)
+
 const uint8_t ERR_CVA = 1, ERR_CVB = 2, ERR_CVC = 4, ERR_CVD = 8, ERR_AUXA = 16, ERR_AUXB = 32, ERR_STATA = 64, ERR_STATB = 128;
 
 #define initResistance 2
 #define vDropThresh 1.4
 
 #define BATTERY_TEMP_VOLT_LIMIT calcTempToVolt(35) // Celcius
+
+#define DISHARGE_THRESHOLD VOLTS_TO_BAT_VOLT(.1)
 
 uint32_t calcTempToVolt(uint16_t temperature);
 uint16_t calcVoltToTemp(uint16_t voltage);

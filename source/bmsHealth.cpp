@@ -91,6 +91,17 @@ void getVoltages(uint8_t md)
 void SControl()
 {
     if (!bms.output.bms_ok){
+        pushCommand(RDCFGA, SLAVE_COUNT, DCC_DATA);
+
+        for (int i = 0; i < SLAVE_COUNT; i++)
+        {
+            // Clear DCC values 
+            DCC_DATA[(i * 6) + 4] = 0;
+        }
+
+        // Push DCC changes
+        pushCommand(WRCFGA, SLAVE_COUNT, DCC_DATA);
+
         return;
     }
 
@@ -115,7 +126,7 @@ void SControl()
     error = pushCommand(RDCFGA, SLAVE_COUNT, DCC_DATA);
 
     u_int16_t lowest = 0;
-    for (int i = 0; i < SLAVE_COUNT; i++)
+    for (int i = 0; i < SLAVE_COUNT; i=i+2)
     {
         lowest = 0xFFFF;
 
@@ -125,19 +136,31 @@ void SControl()
             if (bms.input.cell_voltages[i][j] < lowest){
                 lowest = bms.input.cell_voltages[i][j];
             }
+
+            if (bms.input.cell_voltages[i+1][j] < lowest){
+                lowest = bms.input.cell_voltages[i+1][j];
+            }
            
         }
 
         // Clear DCC values 
-        DCC_DATA[(i * 6) + 4] = 0;
+        DCC_DATA[((SLAVE_COUNT-1-i) * 6) + 4] = 0;
+        DCC_DATA[((SLAVE_COUNT-1-(i+1)) * 6) + 4] = 0;
 
         // Set cells not withing .1 volts to discharge
         for (int j = 0; j < 8; j++)
         {
             // Check which ones off by .1 volt
-            if ((bms.input.cell_voltages[i][j] - lowest) > 500){
+            if ((bms.input.cell_voltages[i][j] - lowest) > DISHARGE_THRESHOLD){
                 // If so discharge
-                DCC_DATA[(i * 6) + 4] |= (1 << j);
+                uint8_t tempaa = ((SLAVE_COUNT-1-i) * 6) + 4;
+                DCC_DATA[((SLAVE_COUNT-1-i) * 6) + 4] |= (1 << j);
+            }
+            // Check which ones off by .1 volt
+            if ((bms.input.cell_voltages[i+1][j] - lowest) > DISHARGE_THRESHOLD){
+                // If so discharge
+                uint8_t tempaa = ((SLAVE_COUNT-1-(i+1)) * 6) + 4;
+                DCC_DATA[((SLAVE_COUNT-1-(i+1)) * 6) + 4] |= (1 << j);
             }
         }
         
