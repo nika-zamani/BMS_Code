@@ -71,13 +71,14 @@ void sendVoltage(uint16_t cellVoltage[8], int id)
     voltageCanstruct0.voltage1 = cellVoltage[1];
     voltageCanstruct0.voltage2 = cellVoltage[2];
     voltageCanstruct0.voltage3 = cellVoltage[3];
+    canSend(CAN_BUS, (VOLTAGE_ID + (2 * id)) | NO_TARGET | MEDIUM_CAN_PRIORITY, (uint64_t *)&voltageCanstruct0);
+
 
     voltageCanstruct1.voltage0 = cellVoltage[4]; // last 4 cells
     voltageCanstruct1.voltage1 = cellVoltage[5];
     voltageCanstruct1.voltage2 = cellVoltage[6];
     voltageCanstruct1.voltage3 = cellVoltage[7];
 
-    canSend(CAN_BUS, (VOLTAGE_ID + (2 * id)) | NO_TARGET | MEDIUM_CAN_PRIORITY, (uint64_t *)&voltageCanstruct0);
     canSend(CAN_BUS, (VOLTAGE_ID + (2 * id) + 1) | NO_TARGET | MEDIUM_CAN_PRIORITY, (uint64_t *)&voltageCanstruct1);
 }
 
@@ -91,13 +92,13 @@ void sendTemp(uint16_t thermistorValues[8], int id)
     temperatureCanstruct0.voltage1 = thermistorValues[1];
     temperatureCanstruct0.voltage2 = thermistorValues[2];
     temperatureCanstruct0.voltage3 = thermistorValues[3];
+    canSend(CAN_BUS, (TEMP_ID + (2 * id)) | NO_TARGET |  MEDIUM_CAN_PRIORITY, (uint64_t *)&temperatureCanstruct0);
 
     temperatureCanstruct1.voltage0 = thermistorValues[4];
     temperatureCanstruct1.voltage1 = thermistorValues[5];
     temperatureCanstruct1.voltage2 = thermistorValues[6];
     temperatureCanstruct1.voltage3 = thermistorValues[7];
 
-    canSend(CAN_BUS, (TEMP_ID + (2 * id)) | NO_TARGET |  MEDIUM_CAN_PRIORITY, (uint64_t *)&temperatureCanstruct0);
     canSend(CAN_BUS, (TEMP_ID + (2 * id) + 1) | NO_TARGET |  MEDIUM_CAN_PRIORITY, (uint64_t *)&temperatureCanstruct1);
 }
 
