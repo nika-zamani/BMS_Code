@@ -92,6 +92,7 @@ void sendTemp(uint16_t thermistorValues[8], int id)
     temperatureCanstruct0.voltage1 = thermistorValues[1];
     temperatureCanstruct0.voltage2 = thermistorValues[2];
     temperatureCanstruct0.voltage3 = thermistorValues[3];
+    uint32_t tenp = (TEMP_ID + (2 * id)) | NO_TARGET |  MEDIUM_CAN_PRIORITY;
     canSend(CAN_BUS, (TEMP_ID + (2 * id)) | NO_TARGET |  MEDIUM_CAN_PRIORITY, (uint64_t *)&temperatureCanstruct0);
 
     temperatureCanstruct1.voltage0 = thermistorValues[4];
