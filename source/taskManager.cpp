@@ -23,7 +23,7 @@ void taskBmsInfo(void *)
         setBMS_OK();
         sendVoltages();
         sendTemperatures();
-        //SControl();
+        SControl();
 
 
         vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(100));
