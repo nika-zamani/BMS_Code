@@ -20,4 +20,17 @@ void sendMainVoltageTempCurrent(uint32_t voltage, uint16_t maxTemp, uint16_t cur
 
 void sendBmsOkTsReadyTsLiveDcdcInfo();
 
+void sendChargingCommands(bool on);
+
+typedef struct
+{
+    uint16_t voltage; // Can use any intx_t uintx_t char bool etc
+    uint16_t current;
+    uint8_t control;
+    uint8_t reserved1;
+    uint8_t reserved2;
+    uint8_t reserved3;
+
+} ChargingCommand; // Must be 64 bits
+
 #endif

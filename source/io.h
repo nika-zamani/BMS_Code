@@ -56,6 +56,8 @@ using namespace BSP;
 #define OK_ID 0x334
 #define MAIN_ID 0x335
 #define AIRS_ID 0x336
+#define CHARGING_ID 0x666
+#define CHARGING_COMMAND_ID 0x1806E5F4
 
 #define CAN_BUS 0
 #define CAN_BAUD_RATE 1000000

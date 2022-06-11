@@ -11,6 +11,8 @@ BMS::BMS()
     input.dcdc_fault = false;
     input.dcdc_temp = 0;
 
+    input.is_charging = false;
+
     output.bms_ok = true;
     output.airs_positive = DIGITAL_LOW;
     output.airs_negative = DIGITAL_LOW;

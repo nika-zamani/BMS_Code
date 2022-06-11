@@ -129,3 +129,14 @@ void sendMainVoltageTempCurrent(uint32_t voltage, uint16_t maxTemp, uint16_t cur
 
     canSend(CAN_BUS, MAIN_ID | CRITICAL_CAN_PRIORITY | VCU_CAN_TARGET, (uint64_t *)&mainVoltageTempCurrentStruct);
 }
+
+void sendChargingCommands(bool on){
+    ChargingCommand chargingCommand;
+    memset(&chargingCommand, 0, sizeof(ChargingCommand));
+
+    chargingCommand.voltage = 3360;
+    chargingCommand.current = 10;
+    chargingCommand.control = !on;
+
+    canSend(CAN_BUS, CHARGING_COMMAND_ID,  (uint64_t *)&chargingCommand);
+}

@@ -107,6 +107,8 @@ void taskDequeueCan(void *pvParameters)
         case AIRS_ID:
             unpackCanAirPrechargeDcdcEnable(&receiveCommand);
             break;
+        case CHARGING_ID:
+            bms.input.is_charging = true;
         default:
             not_found_id();
         }

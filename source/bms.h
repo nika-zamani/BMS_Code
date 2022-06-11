@@ -25,6 +25,8 @@ typedef struct
     uint8_t dcdc_fault;
     uint16_t dcdc_temp;
 
+    uint8_t is_charging;
+
 } input_t;
 
 typedef struct 
