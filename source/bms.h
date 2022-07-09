@@ -27,6 +27,8 @@ typedef struct
 
     uint8_t is_charging;
 
+    uint16_t lowest_volt;
+
 } input_t;
 
 typedef struct 

@@ -56,6 +56,8 @@ using namespace BSP;
 #define OK_ID 0x334
 #define MAIN_ID 0x335
 #define AIRS_ID 0x336
+#define LOWEST_VOLT_ID 0x337
+
 #define CHARGING_ID 0x666
 #define CHARGING_COMMAND_ID 0x1806E5F4
 

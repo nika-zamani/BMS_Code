@@ -9,7 +9,9 @@ void taskBmsInfo(void *)
     TickType_t xLastWakeTime;
     bmsInit();
 
-    uint8_t counter = 0;
+    u_int8_t is_activly_charging = false;
+
+    //uint8_t counter = 0;
     gpio::GPIO &gpio = gpio::GPIO::StaticClass();
 
     // Delay to let boards go into standby
@@ -26,20 +28,37 @@ void taskBmsInfo(void *)
         setBMS_OK();
         sendVoltages();
         sendTemperatures();
-        
-        if (counter == 10 && bms.input.is_charging){
-            SControl();
-            bms.input.ts_ready ? gpio.set(GPIO_AIR_POS_PORT, GPIO_AIR_POS_CH) : gpio.clear(GPIO_AIR_POS_PORT, GPIO_AIR_POS_CH);
-            bms.input.ts_ready ? gpio.set(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH) : gpio.clear(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH);
-            sendChargingCommands(true);   
-            counter = 0;
-        }
-        else
-        {
-            counter +=1;
-        }
 
-
+        // // Charging
+        // if (bms.input.is_charging && bms.input.ts_ready){
+        //     if (is_activly_charging){
+        //         gpio.set(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH);
+        //         gpio.set(GPIO_AIR_POS_PORT, GPIO_AIR_POS_CH);
+        //         gpio.set(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH);
+        //         gpio.clear(GPIO_PRECHARGE_PORT, GPIO_PRECHARGE_CH);
+        //         sendChargingCommands(true);
+        //     }
+        //     else
+        //     {
+        //         gpio.set(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH);
+        //         gpio.set(GPIO_PRECHARGE_PORT, GPIO_PRECHARGE_CH);
+        //         gpio.set(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH);
+        //         pdMS_TO_TICKS(50);
+        //         sendChargingCommands(true);
+        //         vTaskDelay(pdMS_TO_TICKS(5000)); // Precharge for 5 seconds
+        //         is_activly_charging = true;
+        //     }
+        // }
+        // else
+        // {
+        //     sendChargingCommands(false);
+        //     gpio.clear(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH);
+        //     gpio.clear(GPIO_AIR_POS_PORT, GPIO_AIR_POS_CH);
+        //     gpio.clear(GPIO_PRECHARGE_PORT, GPIO_PRECHARGE_CH);
+        //     gpio.clear(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH);
+        //     is_activly_charging = false;
+        // }
+    
         vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(100));
     }
 }
@@ -56,7 +75,7 @@ void taskCanDataCollect(void *)
         readDcdcTemp();
         sendBmsOkTsReadyTsLiveDcdcInfo();
 
-        vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(100));
+        vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(1000));
     }
 }
 

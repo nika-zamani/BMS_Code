@@ -226,10 +226,15 @@ void calculateBMS_OK()
     {
         for (int j = 0; j < 8; j++)
         {
-            if ((bms.input.cell_voltages[i][j] < 28000) | (bms.input.cell_voltages[i][j] > 45000))
+            if ((i == 0 && j == 6) | (i == 2 && j == 3) | (i == 7 && j == 3) | (i == 8 && j == 2)){
+            }
+            else
             {
-                bms.output.bms_ok = false;
-                return;
+                if ((bms.input.cell_voltages[i][j] < 25000) | (bms.input.cell_voltages[i][j] > 45000))
+                {
+                    bms.output.bms_ok = false;
+                    return;
+                }
             }
             if (bms.input.thermistor_values[i][_THERMISTOR_INDEXES[j]] > BATTERY_TEMP_VOLT_LIMIT)
             {
@@ -251,10 +256,31 @@ void measureSendVoltageTempCurrent()
 
 void sendVoltages()
 {
+    // Send all volts
     for (int id = 0; id < SLAVE_COUNT; id++)
     {
         sendVoltage((uint16_t *)&bms.input.cell_voltages[id], id);
     }
+
+    uint16_t lowest_volt = 44000;
+    // Lowest volt
+    for (int i = 0; i < SLAVE_COUNT; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            if ((i == 0 && j == 6) | (i == 2 && j == 3) | (i == 7 && j == 3) | (i == 8 && j == 2)){
+            }
+            else
+            {
+                if (bms.input.cell_voltages[i][j] < lowest_volt)
+                {
+                    lowest_volt = bms.input.cell_voltages[i][j];
+                }
+            }
+        }
+    }
+
+    sendLowestVolt(lowest_volt);
 }
 
 void sendTemperatures()

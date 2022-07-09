@@ -17,6 +17,7 @@ void canSend(uint8_t bus, uint32_t addr, uint64_t *data);
 void sendVoltage(uint16_t cellVoltage[8], int id);
 void sendTemp(uint16_t thermistorValues[8], int id);
 void sendMainVoltageTempCurrent(uint32_t voltage, uint16_t maxTemp, uint16_t current);
+void sendLowestVolt(uint16_t lowest_volt);
 
 void sendBmsOkTsReadyTsLiveDcdcInfo();
 

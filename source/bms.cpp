@@ -13,9 +13,13 @@ BMS::BMS()
 
     input.is_charging = false;
 
+    input.lowest_volt = 0;
+
     output.bms_ok = true;
     output.airs_positive = DIGITAL_LOW;
     output.airs_negative = DIGITAL_LOW;
     output.precharge = DIGITAL_LOW;
     output.dcdc_enable = DIGITAL_LOW;
+
+    
 };

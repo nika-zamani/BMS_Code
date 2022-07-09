@@ -140,3 +140,12 @@ void sendChargingCommands(bool on){
 
     canSend(CAN_BUS, CHARGING_COMMAND_ID,  (uint64_t *)&chargingCommand);
 }
+
+void sendLowestVolt(uint16_t lowest_volt){
+    BmsLowestVolt bmsLowestVolt;
+    memset(&bmsLowestVolt, 0, sizeof(BmsLowestVolt));
+
+    bmsLowestVolt.lowest_volt = lowest_volt;
+
+    canSend(CAN_BUS, LOWEST_VOLT_ID | CRITICAL_CAN_PRIORITY | VCU_CAN_TARGET,  (uint64_t *)&bmsLowestVolt);
+}
