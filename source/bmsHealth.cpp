@@ -50,7 +50,7 @@ uint32_t getSumVoltage()
     uint32_t sumVoltage = 0;
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
-        for (int j = 0; j < 8; j++)
+        for (int j = 0; j < CELL_COUNT; j++)
         {
             sumVoltage += bms.input.cell_voltages[i][j];
         }
@@ -131,7 +131,7 @@ void SControl()
         lowest = 0xFFFF;
 
         // Find lowest voltage out of 8
-        for (int j = 0; j < 8; j++)
+        for (int j = 0; j < CELL_COUNT; j++)
         {
             if (bms.input.cell_voltages[i][j] < lowest){
                 lowest = bms.input.cell_voltages[i][j];
@@ -148,7 +148,7 @@ void SControl()
         DCC_DATA[((SLAVE_COUNT-1-(i+1)) * 6) + 4] = 0;
 
         // Set cells not withing .1 volts to discharge
-        for (int j = 0; j < 8; j++)
+        for (int j = 0; j < CELL_COUNT; j++)
         {
             // Check which ones off by .1 volt
             if ((bms.input.cell_voltages[i][j] - lowest) > DISHARGE_THRESHOLD){
@@ -224,19 +224,26 @@ void calculateBMS_OK()
 {
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
-        for (int j = 0; j < 8; j++)
+        for (int j = 0; j < CELL_COUNT; j++)
         {
             //Ignore these cells for BMS_OK
+<<<<<<< Updated upstream
             if ((i == 0 && j == 5) | (i == 0 && j == 6) | (i == 1 && j == 0) | (i == 1 && j == 1) | (i == 7 && j == 3) | (i == 7 && j == 4) | (i == 7 && j == 5) | (i == 7 && j == 6)){
             }
             else
             {
+=======
+            // if ((i == 0 && j == 5) | (i == 0 && j == 6) | (i == 0 && j == 7) | (i == 1 && j == 0) | (i == 1 && j == 1) | (i == 1 && j == 2) | (i == 6 && j == 3) | (i == 6 && j == 4) | (i == 7 && j == 3) | (i == 7 && j == 4) | (i == 7 && j == 5) | (i == 7 && j == 6) | (i == 9 && j == 1) | (i == 9 && j == 2) | (i == 9 && j == 3)){
+            // }
+            // else
+            // {
+>>>>>>> Stashed changes
                 if ((bms.input.cell_voltages[i][j] < 25000) | (bms.input.cell_voltages[i][j] > 45000))
                 {
                     bms.output.bms_ok = false;
                     return;
                 }
-            }
+            // }
             if (bms.input.thermistor_values[i][_THERMISTOR_INDEXES[j]] > BATTERY_TEMP_VOLT_LIMIT)
             {
                 bms.output.bms_ok = false;
@@ -267,7 +274,7 @@ void sendVoltages()
     // Lowest volt
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
-        for (int j = 0; j < 8; j++)
+        for (int j = 0; j < CELL_COUNT; j++)
         {
             if ((i == 0 && j == 5) | (i == 0 && j == 6) | (i == 1 && j == 0) | (i == 1 && j == 1) | (i == 7 && j == 3) | (i == 7 && j == 4) | (i == 7 && j == 5) | (i == 7 && j == 6)){ 
             }
@@ -312,7 +319,7 @@ void openFuseCheck()
     int vDrop = initResistance * bms.input.current_adc;
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
-        for (int j = 0; j < 8; j++) 
+        for (int j = 0; j < CELL_COUNT; j++) 
         {
             if ((bms.input.cell_voltages[i][j] - vDrop) > vDropThresh) 
             {
