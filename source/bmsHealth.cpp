@@ -276,15 +276,15 @@ void sendVoltages()
     {
         for (int j = 0; j < CELL_COUNT; j++)
         {
-            if ((i == 0 && j == 5) | (i == 0 && j == 6) | (i == 1 && j == 0) | (i == 1 && j == 1) | (i == 7 && j == 3) | (i == 7 && j == 4) | (i == 7 && j == 5) | (i == 7 && j == 6)){ 
-            }
-            else
-            {
+            // if ((i == 0 && j == 5) | (i == 0 && j == 6) | (i == 0 && j == 7) | (i == 1 && j == 0) | (i == 1 && j == 1) | (i == 1 && j == 2) | (i == 6 && j == 3) | (i == 6 && j == 4) | (i == 7 && j == 3) | (i == 7 && j == 4) | (i == 7 && j == 5) | (i == 7 && j == 6) | (i == 9 && j == 1) | (i == 9 && j == 2) | (i == 9 && j == 3)){
+            // }
+            // else
+            // {
                 if (bms.input.cell_voltages[i][j] < lowest_volt)
                 {
                     lowest_volt = bms.input.cell_voltages[i][j];
                 }
-            }
+            // }
         }
     }
 
