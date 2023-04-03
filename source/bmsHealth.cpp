@@ -83,6 +83,24 @@ void getVoltages(uint8_t md)
     {
         memcpy((void *)&bms.input.cell_voltages[i][6], (RETURN_DATA + (i * 6)), 6);
     }
+    // so each return_data takes up 3 spaces of 12 in cell_voltage
+    error = pushCommand(RDCVD, SLAVE_COUNT, RETURN_DATA);
+    for (int i = 0; i < SLAVE_COUNT; i++)
+    {
+        memcpy((void *)&bms.input.cell_voltages[i][9], (RETURN_DATA + (i * 6)), 6);
+    }
+    // so each return_data takes up 3 spaces of 12 in cell_voltage
+    error = pushCommand(RDCVE, SLAVE_COUNT, RETURN_DATA);
+    for (int i = 0; i < SLAVE_COUNT; i++)
+    {
+        memcpy((void *)&bms.input.cell_voltages[i][12], (RETURN_DATA + (i * 6)), 6);
+    }
+    // so each return_data takes up 3 spaces of 12 in cell_voltage
+    error = pushCommand(RDCVF, SLAVE_COUNT, RETURN_DATA);
+    for (int i = 0; i < SLAVE_COUNT; i++)
+    {
+        memcpy((void *)&bms.input.cell_voltages[i][15], (RETURN_DATA + (i * 6)), 6);
+    }
     error = pushCommand(RDCVD, SLAVE_COUNT, RETURN_DATA);
 
     error = pushCommand(RDSTATA, SLAVE_COUNT, RETURN_DATA);
@@ -227,17 +245,10 @@ void calculateBMS_OK()
         for (int j = 0; j < CELL_COUNT; j++)
         {
             //Ignore these cells for BMS_OK
-<<<<<<< Updated upstream
-            if ((i == 0 && j == 5) | (i == 0 && j == 6) | (i == 1 && j == 0) | (i == 1 && j == 1) | (i == 7 && j == 3) | (i == 7 && j == 4) | (i == 7 && j == 5) | (i == 7 && j == 6)){
-            }
-            else
-            {
-=======
             // if ((i == 0 && j == 5) | (i == 0 && j == 6) | (i == 0 && j == 7) | (i == 1 && j == 0) | (i == 1 && j == 1) | (i == 1 && j == 2) | (i == 6 && j == 3) | (i == 6 && j == 4) | (i == 7 && j == 3) | (i == 7 && j == 4) | (i == 7 && j == 5) | (i == 7 && j == 6) | (i == 9 && j == 1) | (i == 9 && j == 2) | (i == 9 && j == 3)){
             // }
             // else
             // {
->>>>>>> Stashed changes
                 if ((bms.input.cell_voltages[i][j] < 25000) | (bms.input.cell_voltages[i][j] > 45000))
                 {
                     bms.output.bms_ok = false;
