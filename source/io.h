@@ -26,27 +26,27 @@ using namespace BSP;
 
 // ADC
 #define ADC_CURRENT_BASE ADC0
-#define ADC_CURRENT_CH 9
+#define ADC_CURRENT_CH 11
 #define ADC_DCDC_TEMP_BASE ADC2
 #define ADC_DCDC_TEMP_CH 7
 
 // GPIO in
-#define GPIO_TS_LIVE_PORT gpio::PortC
-#define GPIO_TS_LIVE_CH 6
-#define GPIO_TS_READY_PORT gpio::PortA
-#define GPIO_TS_READY_CH 2
+#define GPIO_TS_LIVE_PORT gpio::PortD
+#define GPIO_TS_LIVE_CH 0
+#define GPIO_TS_READY_PORT gpio::PortE
+#define GPIO_TS_READY_CH 3
 #define GPIO_DCDC_FAULT_PORT gpio::PortD
 #define GPIO_DCDC_FAULT_CH 1
 
 // GPIO out
 #define GPIO_BMS_OK_PORT gpio::PortD
 #define GPIO_BMS_OK_CH 15
-#define GPIO_AIR_POS_PORT gpio::PortC
-#define GPIO_AIR_POS_CH 15
-#define GPIO_AIR_NEG_PORT gpio::PortC
-#define GPIO_AIR_NEG_CH 14
-#define GPIO_PRECHARGE_PORT gpio::PortB
-#define GPIO_PRECHARGE_CH 13
+#define GPIO_AIR_POS_PORT gpio::PortA
+#define GPIO_AIR_POS_CH 2
+#define GPIO_AIR_NEG_PORT gpio::PortA
+#define GPIO_AIR_NEG_CH 3
+#define GPIO_PRECHARGE_PORT gpio::PortE
+#define GPIO_PRECHARGE_CH 9
 #define GPIO_DCDC_EN_PORT gpio::PortD
 #define GPIO_DCDC_EN_CH 16
 
