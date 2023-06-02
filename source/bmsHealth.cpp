@@ -55,13 +55,21 @@ uint16_t getMaxTemp()
 uint32_t getSumVoltage()
 {
     uint32_t sumVoltage = 0;
+    uint16_t lowest_volt = 44000;
+    uint16_t highest_volt = 0;
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
         for (int j = 0; j < CELL_COUNT; j++)
         {
             sumVoltage += bms.input.cell_voltages[i][j];
+            if (lowest_volt > bms.input.cell_voltages[i][j]) {
+                lowest_volt = bms.input.cell_voltages[i][j]; }
+            if (highest_volt < bms.input.cell_voltages[i][j]) {
+                highest_volt = bms.input.cell_voltages[i][j]; }
         }
     }
+    bms.input.lowest_volt = lowest_volt;
+    bms.input.highest_volt = highest_volt;
     return sumVoltage;
 }
 
@@ -315,7 +323,7 @@ void sendVoltages()
             // }
         }
     }
-
+    
     sendLowestVolt(lowest_volt);
 }
 

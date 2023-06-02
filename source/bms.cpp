@@ -14,6 +14,7 @@ BMS::BMS()
     input.is_charging = false;
 
     input.lowest_volt = 0;
+    input.highest_volt = 0;
 
     output.bms_ok = true;
     output.airs_positive = DIGITAL_LOW;

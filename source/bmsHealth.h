@@ -24,6 +24,8 @@ const uint8_t ERR_CVA = 1, ERR_CVB = 2, ERR_CVC = 4, ERR_CVD = 8, ERR_AUXA = 16,
 
 #define DISHARGE_THRESHOLD VOLTS_TO_BAT_VOLT(.1) //.1
 
+#define CHARGING_THRESHOLD 42030
+
 uint32_t calcTempToVolt(uint16_t temperature);
 uint16_t calcVoltToTemp(uint16_t voltage);
 uint16_t getMaxTemp();
