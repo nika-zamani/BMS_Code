@@ -42,7 +42,7 @@ uint16_t measureCurrent()
     adc::ADC &adc = adc::ADC::StaticClass();
     uint16_t currentADC = adc.read(ADC_CURRENT_BASE, ADC_CURRENT_CH); // 10-11mV per 5A
     //currentADC = ((currentADC * 5) / 0.0105) * 100;                   // (current) * (5A/10.5mV) * (1mV/.001V)
-    return currentADC;
+    return ((currentADC* 5.0) / 4095.0)*1000;
 }
 
 void unpackCanAirPrechargeDcdcEnable(can::CANlight::frame *f)

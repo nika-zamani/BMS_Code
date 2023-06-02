@@ -37,6 +37,21 @@ void BOARD_InitBootPins(void)
 BOARD_InitPins:
 - options: {callFromInitBoot: 'true', coreID: core0, enableClock: 'true'}
 - pin_list:
+  - {pin_num: '20', peripheral: ADC0, signal: 'SE, 11', pin_signal: ADC0_SE11/ACMP0_IN4/EXTAL32/PTC3/FTM0_CH3/CAN0_TX}
+  - {pin_num: '21', peripheral: ADC0, signal: 'SE, 10', pin_signal: ADC0_SE10/ACMP0_IN5/XTAL32/PTC2/FTM0_CH2/CAN0_RX}
+  - {pin_num: '48', peripheral: GPIOA, signal: 'GPIO, 2', pin_signal: ADC1_SE0/PTA2/FTM3_CH0/LPI2C0_SDA/EWM_OUT_b/LPUART0_RX}
+  - {pin_num: '47', peripheral: GPIOA, signal: 'GPIO, 3', pin_signal: ADC1_SE1/PTA3/FTM3_CH1/LPI2C0_SCL/EWM_IN/LPUART0_TX}
+  - {pin_num: '2', peripheral: GPIOD, signal: 'GPIO, 0', pin_signal: ADC2_SE0/PTD0/FTM0_CH2/LPSPI1_SCK/FTM2_CH0/FXIO_D0/TRGMUX_OUT1}
+  - {pin_num: '1', peripheral: GPIOD, signal: 'GPIO, 1', pin_signal: ADC2_SE1/PTD1/FTM0_CH3/LPSPI1_SIN/FTM2_CH1/FXIO_D1/TRGMUX_OUT2}
+  - {pin_num: '15', peripheral: GPIOD, signal: 'GPIO, 15', pin_signal: ACMP2_IN1/PTD15/FTM0_CH0}
+  - {pin_num: '14', peripheral: GPIOD, signal: 'GPIO, 16', pin_signal: ACMP2_IN0/PTD16/FTM0_CH1}
+  - {pin_num: '13', peripheral: GPIOE, signal: 'GPIO, 3', pin_signal: PTE3/FTM0_FLT0/LPUART2_RTS/FTM2_FLT0/TRGMUX_IN6/ACMP2_OUT}
+  - {pin_num: '16', peripheral: GPIOE, signal: 'GPIO, 9', pin_signal: ACMP2_IN2/DAC0_OUT/PTE9/FTM0_CH7/LPUART2_CTS}
+  - {pin_num: '60', peripheral: ADC2, signal: 'SE, 7', pin_signal: ADC2_SE7/PTE0/LPSPI0_SCK/TCLK1/LPI2C1_SDA/FTM1_FLT2}
+  - {pin_num: '3', peripheral: ADC2, signal: 'SE, 13', pin_signal: ADC2_SE13/PTE11/PWT_IN1/LPTMR0_ALT1/FTM2_CH5/FXIO_D5/TRGMUX_OUT5}
+  - {pin_num: '32', peripheral: LPSPI0, signal: SCK, pin_signal: ADC0_SE6/PTB2/FTM1_CH0/LPSPI0_SCK/FTM1_QD_PHB/TRGMUX_IN3}
+  - {pin_num: '31', peripheral: LPSPI0, signal: SIN, pin_signal: ADC0_SE7/PTB3/FTM1_CH1/LPSPI0_SIN/FTM1_QD_PHA/TRGMUX_IN2}
+  - {pin_num: '33', peripheral: LPSPI0, signal: SOUT, pin_signal: ADC0_SE5/ADC1_SE15/PTB1/LPUART0_TX/LPSPI0_SOUT/TCLK0}
   - {pin_num: '5', peripheral: CAN0, signal: TX, pin_signal: PTE5/TCLK2/FTM2_QD_PHA/FTM2_CH3/CAN0_TX/FXIO_D7/EWM_IN}
   - {pin_num: '6', peripheral: CAN0, signal: RX, pin_signal: PTE4/BUSOUT/FTM2_QD_PHB/FTM2_CH2/CAN0_RX/FXIO_D6/EWM_OUT_b}
   - {pin_num: '62', peripheral: JTAG, signal: JTAG_TCLK_SWD_CLK, pin_signal: ACMP0_IN2/PTC4/FTM1_CH0/RTC_CLKOUT/EWM_IN/FTM1_QD_PHB/JTAG_TCLK/SWD_CLK}
@@ -44,22 +59,7 @@ BOARD_InitPins:
   - {pin_num: '58', peripheral: JTAG, signal: TDO, pin_signal: PTA10/FTM1_CH4/LPUART0_TX/FXIO_D0/JTAG_TDO/noetm_Trace_SWO}
   - {pin_num: '63', peripheral: JTAG, signal: TRST, pin_signal: PTA5/TCLK1/JTAG_TRST_b/RESET_b}
   - {pin_num: '64', peripheral: JTAG, signal: JTAG_TMS_SWD_DIO, pin_signal: PTA4/ACMP0_OUT/EWM_OUT_b/JTAG_TMS/SWD_DIO}
-  - {pin_num: '48', peripheral: GPIOA, signal: 'GPIO, 2', pin_signal: ADC1_SE0/PTA2/FTM3_CH0/LPI2C0_SDA/EWM_OUT_b/LPUART0_RX}
-  - {pin_num: '47', peripheral: GPIOA, signal: 'GPIO, 3', pin_signal: ADC1_SE1/PTA3/FTM3_CH1/LPI2C0_SCL/EWM_IN/LPUART0_TX}
-  - {pin_num: '33', peripheral: GPIOB, signal: 'GPIO, 1', pin_signal: ADC0_SE5/ADC1_SE15/PTB1/LPUART0_TX/LPSPI0_SOUT/TCLK0}
-  - {pin_num: '20', peripheral: ADC0, signal: 'SE, 11', pin_signal: ADC0_SE11/ACMP0_IN4/EXTAL32/PTC3/FTM0_CH3/CAN0_TX}
-  - {pin_num: '21', peripheral: ADC0, signal: 'SE, 10', pin_signal: ADC0_SE10/ACMP0_IN5/XTAL32/PTC2/FTM0_CH2/CAN0_RX}
-  - {pin_num: '2', peripheral: GPIOD, signal: 'GPIO, 0', pin_signal: ADC2_SE0/PTD0/FTM0_CH2/LPSPI1_SCK/FTM2_CH0/FXIO_D0/TRGMUX_OUT1}
-  - {pin_num: '13', peripheral: GPIOE, signal: 'GPIO, 3', pin_signal: PTE3/FTM0_FLT0/LPUART2_RTS/FTM2_FLT0/TRGMUX_IN6/ACMP2_OUT}
-  - {pin_num: '16', peripheral: GPIOE, signal: 'GPIO, 9', pin_signal: ACMP2_IN2/DAC0_OUT/PTE9/FTM0_CH7/LPUART2_CTS}
   - {pin_num: '34', peripheral: GPIOB, signal: 'GPIO, 0', pin_signal: ADC0_SE4/ADC1_SE14/PTB0/LPUART0_RX/LPSPI0_PCS0/LPTMR0_ALT3/PWT_IN3}
-  - {pin_num: '32', peripheral: LPSPI0, signal: SCK, pin_signal: ADC0_SE6/PTB2/FTM1_CH0/LPSPI0_SCK/FTM1_QD_PHB/TRGMUX_IN3}
-  - {pin_num: '31', peripheral: LPSPI0, signal: SIN, pin_signal: ADC0_SE7/PTB3/FTM1_CH1/LPSPI0_SIN/FTM1_QD_PHA/TRGMUX_IN2}
-  - {pin_num: '1', peripheral: GPIOD, signal: 'GPIO, 1', pin_signal: ADC2_SE1/PTD1/FTM0_CH3/LPSPI1_SIN/FTM2_CH1/FXIO_D1/TRGMUX_OUT2}
-  - {pin_num: '15', peripheral: GPIOD, signal: 'GPIO, 15', pin_signal: ACMP2_IN1/PTD15/FTM0_CH0}
-  - {pin_num: '14', peripheral: GPIOD, signal: 'GPIO, 16', pin_signal: ACMP2_IN0/PTD16/FTM0_CH1}
-  - {pin_num: '60', peripheral: ADC2, signal: 'SE, 7', pin_signal: ADC2_SE7/PTE0/LPSPI0_SCK/TCLK1/LPI2C1_SDA/FTM1_FLT2}
-  - {pin_num: '3', peripheral: ADC2, signal: 'SE, 13', pin_signal: ADC2_SE13/PTE11/PWT_IN1/LPTMR0_ALT1/FTM2_CH5/FXIO_D5/TRGMUX_OUT5}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -101,8 +101,8 @@ void BOARD_InitPins(void)
     /* PORTB0 (pin 34) is configured as PTB0 */
     PORT_SetPinMux(PORTB, 0U, kPORT_MuxAsGpio);
 
-    /* PORTB1 (pin 33) is configured as PTB1 */
-    PORT_SetPinMux(PORTB, 1U, kPORT_MuxAsGpio);
+    /* PORTB1 (pin 33) is configured as LPSPI0_SOUT */
+    PORT_SetPinMux(PORTB, 1U, kPORT_MuxAlt3);
 
     /* PORTB2 (pin 32) is configured as LPSPI0_SCK */
     PORT_SetPinMux(PORTB, 2U, kPORT_MuxAlt3);

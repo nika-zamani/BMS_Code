@@ -1,7 +1,7 @@
 #include "bmsHealth.h"
 
 uint8_t RETURN_DATA[6 * SLAVE_COUNT];
-uint8_t _THERMISTOR_INDEXES[8] = {0, 3, 4, 6, 7, 9, 10, 13};
+uint8_t _THERMISTOR_INDEXES[8] = {0, 3, 4, 6, 7, 9, 10, 13}; // change, prob not necessary
 uint8_t SCONTROL_DATA[6 * SLAVE_COUNT];
 uint8_t DCC_DATA[6 * SLAVE_COUNT];
 const uint8_t _DCP = 0; // discharge not permited
@@ -11,34 +11,41 @@ extern BMS bms;
 uint32_t calcTempToVolt(uint16_t temperature)
 {
     // 9*(10^-5)*(x^4)-3*(10^-2)*(x^3)+9*(10^-1)*(x^2)+262*x+8266
-    uint32_t v1 = (.00009 * temperature * temperature * temperature * temperature) 
-                  - (.03 * temperature * temperature * temperature) 
-                  + (.9 * temperature * temperature) 
-                  + (262 * temperature) 
-                  + 8266;
+    uint32_t v1 = (-0.000003932 * temperature * temperature * temperature * temperature) 
+                  + (0.01103 * temperature * temperature * temperature) 
+                  - (1.2945 * temperature * temperature) 
+                  - (161.979 * temperature) 
+                  + 22992.502;
     return v1;
 }
 
 uint16_t calcVoltToTemp(uint16_t voltage)
 {
-    float temp = -81.3 
-                 + (0.0147 * voltage)
-                 + (-0.000000755 * voltage * voltage)
-                 + (1.67 * pow(10, -11) * voltage * voltage * voltage);
+    // float temp = -81.3 
+    //              + (0.0147 * voltage)
+    //              + (-0.000000755 * voltage * voltage)
+    //              + (1.67 * pow(10, -11) * voltage * voltage * voltage);
 
-    return temp * 100;
+    float temp = 156.91
+                 + (-0.013422 * voltage)
+                 + (0.0000002955 * voltage * voltage)
+                 + (0.00000000001498 * voltage * voltage * voltage)
+                 + (-0.000000000000000666 * voltage * voltage * voltage * voltage);
+
+    return temp;
 }
 
 uint16_t getMaxTemp()
 {
-    uint16_t tempMax = 0;
+    uint16_t tempMax = 0; 
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
-        for (int j = 0; j < 8; j++)
+        tempMax = bms.input.thermistor_values[i][0];
+        for (int j = 0; j < 14; j++)
         {
-            if (tempMax < bms.input.thermistor_values[i][_THERMISTOR_INDEXES[j]])
+            if (tempMax > bms.input.thermistor_values[i][j])
             {
-                tempMax = bms.input.thermistor_values[i][_THERMISTOR_INDEXES[j]];
+                tempMax = bms.input.thermistor_values[i][j];
             }
         }
     }
@@ -69,7 +76,7 @@ void getVoltages(uint8_t md)
     error = pushCommand(RDCVA, SLAVE_COUNT, RETURN_DATA);
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
-        memcpy((void *)&bms.input.cell_voltages[i], (RETURN_DATA + (i * 6)), 6);
+        memcpy((void *)&bms.input.cell_voltages[i][0], (RETURN_DATA + (i * 6)), 6);
     }
     // return_data is array size 6 of uint8_t and each cell_voltage is array size of 12 of uint16_t
     error = pushCommand(RDCVB, SLAVE_COUNT, RETURN_DATA);
@@ -99,7 +106,7 @@ void getVoltages(uint8_t md)
     error = pushCommand(RDCVF, SLAVE_COUNT, RETURN_DATA);
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
-        memcpy((void *)&bms.input.cell_voltages[i][15], (RETURN_DATA + (i * 6)), 6);
+        memcpy((void *)&bms.input.cell_voltages[i][15], (RETURN_DATA + (i * 6)), 2);
     }
     error = pushCommand(RDCVD, SLAVE_COUNT, RETURN_DATA);
 
@@ -108,20 +115,20 @@ void getVoltages(uint8_t md)
 
 void SControl()
 {
-    if (!bms.output.bms_ok){
-        pushCommand(RDCFGA, SLAVE_COUNT, DCC_DATA);
+    // if (!bms.output.bms_ok){
+    //     pushCommand(RDCFGA, SLAVE_COUNT, DCC_DATA);
 
-        for (int i = 0; i < SLAVE_COUNT; i++)
-        {
-            // Clear DCC values 
-            DCC_DATA[(i * 6) + 4] = 0;
-        }
+    //     for (int i = 0; i < SLAVE_COUNT; i++)
+    //     {
+    //         // Clear DCC values 
+    //         DCC_DATA[(i * 6) + 4] = 0;
+    //     }
 
-        // Push DCC changes
-        pushCommand(WRCFGA, SLAVE_COUNT, DCC_DATA);
+    //     // Push DCC changes
+    //     pushCommand(WRCFGA, SLAVE_COUNT, DCC_DATA);
 
-        return;
-    }
+    //     return;
+    // }
 
     int error = 0;
     memset(DCC_DATA, 0, sizeof(DCC_DATA));
@@ -144,7 +151,7 @@ void SControl()
     error = pushCommand(RDCFGA, SLAVE_COUNT, DCC_DATA);
 
     u_int16_t lowest = 0;
-    for (int i = 0; i < SLAVE_COUNT; i=i+2)
+    for (int i = 0; i < SLAVE_COUNT; i++/*i=i+2*/)
     {
         lowest = 0xFFFF;
 
@@ -155,9 +162,9 @@ void SControl()
                 lowest = bms.input.cell_voltages[i][j];
             }
 
-            if (bms.input.cell_voltages[i+1][j] < lowest){
-                lowest = bms.input.cell_voltages[i+1][j];
-            }
+            // if (bms.input.cell_voltages[i+1][j] < lowest){
+            //     lowest = bms.input.cell_voltages[i+1][j];
+            // }
            
         }
 
@@ -175,17 +182,23 @@ void SControl()
                 DCC_DATA[((SLAVE_COUNT-1-i) * 6) + 4] |= (1 << j);
             }
             // Check which ones off by .1 volt
-            if ((bms.input.cell_voltages[i+1][j] - lowest) > DISHARGE_THRESHOLD){
-                // If so discharge
-                uint8_t tempaa = ((SLAVE_COUNT-1-(i+1)) * 6) + 4;
-                DCC_DATA[((SLAVE_COUNT-1-(i+1)) * 6) + 4] |= (1 << j);
-            }
+            // if ((bms.input.cell_voltages[i+1][j] - lowest) > DISHARGE_THRESHOLD){
+            //     // If so discharge
+            //     uint8_t tempaa = ((SLAVE_COUNT-1-(i+1)) * 6) + 4;
+            //     DCC_DATA[((SLAVE_COUNT-1-(i+1)) * 6) + 4] |= (1 << j);
+            // }
         }
         
     }
-    
+
     // Push DCC changes
+    DCC_DATA[0] |= 0xF8;
+    DCC_DATA[6] |= 0xF8;
+    DCC_DATA[12] |= 0xF8;
+    DCC_DATA[18] |= 0xF8;
+    DCC_DATA[24] |= 0xF8;
     error = pushCommand(WRCFGA, SLAVE_COUNT, DCC_DATA);
+    // error = pushCommand(RDCFGA, SLAVE_COUNT, DCC_DATA);
     
     
     // // "Start S Control Pulsing and Poll Status"
@@ -222,12 +235,11 @@ void getTempuratures(uint8_t md)
 
     for (int j = 0; j < 8; j++)
     {
-
         muxSet(0, j);
         muxSet(1, j);
 
-        error = pushCommand(ADCVAX, SLAVE_COUNT, RETURN_DATA, md);
-        vTaskDelay(50);
+        error = pushCommand(ADAX, SLAVE_COUNT, RETURN_DATA, md, 0);
+        vTaskDelay(100);
         error = pushCommand(RDAUXA, SLAVE_COUNT, RETURN_DATA);
 
         for (int i = 0; i < SLAVE_COUNT; i++)
@@ -255,10 +267,14 @@ void calculateBMS_OK()
                     return;
                 }
             // }
-            if (bms.input.thermistor_values[i][_THERMISTOR_INDEXES[j]] > BATTERY_TEMP_VOLT_LIMIT)
-            {
-                bms.output.bms_ok = false;
-                return;
+            if ((i == 1 && j == 9) | (j >= 14)) {
+            }
+            else {
+                if (bms.input.thermistor_values[i][j] < BATTERY_TEMP_VOLT_LIMIT)
+                {
+                    bms.output.bms_ok = false;
+                    return;
+                }
             }
         }
     }
@@ -279,6 +295,7 @@ void sendVoltages()
     for (int id = 0; id < SLAVE_COUNT; id++)
     {
         sendVoltage((uint16_t *)&bms.input.cell_voltages[id], id);
+        vTaskDelay(pdMS_TO_TICKS(1));
     }
 
     uint16_t lowest_volt = 44000;
@@ -306,10 +323,10 @@ void sendTemperatures()
 {
     for (int id = 0; id < SLAVE_COUNT; id++)
     {
-        uint16_t _THERMISTOR_VALUES_PER[8];
-        for (int j = 0; j < 8; j++)
+        uint16_t _THERMISTOR_VALUES_PER[14];
+        for (int j = 0; j < 14; j++)
         {
-            _THERMISTOR_VALUES_PER[j] = bms.input.thermistor_values[id][_THERMISTOR_INDEXES[j]];
+            _THERMISTOR_VALUES_PER[j] = bms.input.thermistor_values[id][j];
         }
         vTaskDelay(pdMS_TO_TICKS(1));
         sendTemp(_THERMISTOR_VALUES_PER, id);

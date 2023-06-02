@@ -11,6 +11,8 @@ int main(void)
     
     taskInit();
 
+    gpio::GPIO::clear(ltccsport, ltccspin);
+
     vTaskStartScheduler();
 
     return 0;
