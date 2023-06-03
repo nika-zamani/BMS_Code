@@ -34,47 +34,47 @@ void taskBmsInfo(void *)
         // // Discharching
         //SControl();
 
-        // Charging
-        if (!charged) {
-            if (bms.input.is_charging && bms.input.ts_ready){
-                if (is_actively_charging){
-                    gpio.set(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH);
-                    gpio.set(GPIO_AIR_POS_PORT, GPIO_AIR_POS_CH);
-                    gpio.set(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH);
-                    gpio.clear(GPIO_PRECHARGE_PORT, GPIO_PRECHARGE_CH);
-                    sendChargingCommands(true);
-                }
-                else
-                {
-                    gpio.set(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH);
-                    gpio.set(GPIO_PRECHARGE_PORT, GPIO_PRECHARGE_CH);
-                    gpio.set(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH);
-                    pdMS_TO_TICKS(50);
-                    sendChargingCommands(true);
-                    vTaskDelay(pdMS_TO_TICKS(5000)); // Precharge for 5 seconds
-                    is_actively_charging = true;
-                }
-            }
-            else
-            {
-                sendChargingCommands(false);
-                gpio.clear(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH);
-                gpio.clear(GPIO_AIR_POS_PORT, GPIO_AIR_POS_CH);
-                gpio.clear(GPIO_PRECHARGE_PORT, GPIO_PRECHARGE_CH);
-                gpio.clear(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH);
-                is_actively_charging = false;
-            }
-            charged = (bms.input.highest_volt >= CHARGING_THRESHOLD) ? 1 : 0;
-        }
-        else {
-            charged = 1;
-            sendChargingCommands(false);
-            gpio.clear(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH);
-            gpio.clear(GPIO_AIR_POS_PORT, GPIO_AIR_POS_CH);
-            gpio.clear(GPIO_PRECHARGE_PORT, GPIO_PRECHARGE_CH);
-            gpio.clear(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH);
-            is_actively_charging = false;
-        }
+        // // Charging
+        // if (!charged) {
+        //     if (bms.input.is_charging && bms.input.ts_ready){
+        //         if (is_actively_charging){
+        //             gpio.set(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH);
+        //             gpio.set(GPIO_AIR_POS_PORT, GPIO_AIR_POS_CH);
+        //             gpio.set(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH);
+        //             gpio.clear(GPIO_PRECHARGE_PORT, GPIO_PRECHARGE_CH);
+        //             sendChargingCommands(true);
+        //         }
+        //         else
+        //         {
+        //             gpio.set(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH);
+        //             gpio.set(GPIO_PRECHARGE_PORT, GPIO_PRECHARGE_CH);
+        //             gpio.set(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH);
+        //             pdMS_TO_TICKS(50);
+        //             sendChargingCommands(true);
+        //             vTaskDelay(pdMS_TO_TICKS(5000)); // Precharge for 5 seconds
+        //             is_actively_charging = true;
+        //         }
+        //     }
+        //     else
+        //     {
+        //         sendChargingCommands(false);
+        //         gpio.clear(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH);
+        //         gpio.clear(GPIO_AIR_POS_PORT, GPIO_AIR_POS_CH);
+        //         gpio.clear(GPIO_PRECHARGE_PORT, GPIO_PRECHARGE_CH);
+        //         gpio.clear(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH);
+        //         is_actively_charging = false;
+        //     }
+        //     charged = (bms.input.highest_volt >= CHARGING_THRESHOLD) ? 1 : 0;
+        // }
+        // else {
+        //     charged = 1;
+        //     sendChargingCommands(false);
+        //     gpio.clear(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH);
+        //     gpio.clear(GPIO_AIR_POS_PORT, GPIO_AIR_POS_CH);
+        //     gpio.clear(GPIO_PRECHARGE_PORT, GPIO_PRECHARGE_CH);
+        //     gpio.clear(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH);
+        //     is_actively_charging = false;
+        // }
     
         vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(100));
     }

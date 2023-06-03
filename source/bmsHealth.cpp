@@ -43,9 +43,13 @@ uint16_t getMaxTemp()
         tempMax = bms.input.thermistor_values[i][0];
         for (int j = 0; j < 14; j++)
         {
-            if (tempMax > bms.input.thermistor_values[i][j])
-            {
-                tempMax = bms.input.thermistor_values[i][j];
+            if ((i == 1 && j == 9) | (j >= 14)) {
+            }
+            else {
+                if (tempMax < bms.input.thermistor_values[i][j])
+                {
+                    tempMax = bms.input.thermistor_values[i][j];
+                }
             }
         }
     }
@@ -269,7 +273,7 @@ void calculateBMS_OK()
             // }
             // else
             // {
-                if ((bms.input.cell_voltages[i][j] < 25000) | (bms.input.cell_voltages[i][j] > 45000))
+                if ((bms.input.cell_voltages[i][j] < 22000) | (bms.input.cell_voltages[i][j] > 45000))
                 {
                     bms.output.bms_ok = false;
                     return;
