@@ -10,7 +10,7 @@ void taskBmsInfo(void *)
     bmsInit();
 
     u_int8_t is_actively_charging = false;
-    static uint8_t charged = (bms.input.highest_volt >= CHARGING_THRESHOLD) ? 1 : 0;
+    
 
     //uint8_t counter = 0;
     gpio::GPIO &gpio = gpio::GPIO::StaticClass();
@@ -18,6 +18,8 @@ void taskBmsInfo(void *)
     // Delay to let boards go into standby
     vTaskDelay(pdMS_TO_TICKS(2000));
 
+    static uint8_t charged=0;
+    
     for (;;)
     {
         xLastWakeTime = xTaskGetTickCount();
@@ -33,10 +35,14 @@ void taskBmsInfo(void *)
 
         // // Discharching
         //SControl();
+        
 
         // // Charging
         // if (!charged) {
-        //     if (bms.input.is_charging && bms.input.ts_ready){
+        //     charged = (bms.input.highest_volt >= CHARGING_THRESHOLD) ? 1 : 0;
+        // }
+        // if (bms.input.is_charging) {
+        //     if (!charged && bms.input.ts_ready){
         //         if (is_actively_charging){
         //             gpio.set(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH);
         //             gpio.set(GPIO_AIR_POS_PORT, GPIO_AIR_POS_CH);
@@ -64,16 +70,6 @@ void taskBmsInfo(void *)
         //         gpio.clear(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH);
         //         is_actively_charging = false;
         //     }
-        //     charged = (bms.input.highest_volt >= CHARGING_THRESHOLD) ? 1 : 0;
-        // }
-        // else {
-        //     charged = 1;
-        //     sendChargingCommands(false);
-        //     gpio.clear(GPIO_AIR_NEG_PORT, GPIO_AIR_NEG_CH);
-        //     gpio.clear(GPIO_AIR_POS_PORT, GPIO_AIR_POS_CH);
-        //     gpio.clear(GPIO_PRECHARGE_PORT, GPIO_PRECHARGE_CH);
-        //     gpio.clear(GPIO_DCDC_EN_PORT, GPIO_DCDC_EN_CH);
-        //     is_actively_charging = false;
         // }
     
         vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(100));

@@ -1,7 +1,6 @@
 #include "bmsHealth.h"
 
 uint8_t RETURN_DATA[6 * SLAVE_COUNT];
-uint8_t _THERMISTOR_INDEXES[8] = {0, 3, 4, 6, 7, 9, 10, 13}; // change, prob not necessary
 uint8_t SCONTROL_DATA[6 * SLAVE_COUNT];
 uint8_t DCC_DATA[6 * SLAVE_COUNT];
 const uint8_t _DCP = 0; // discharge not permited
@@ -19,20 +18,48 @@ uint32_t calcTempToVolt(uint16_t temperature)
     return v1;
 }
 
-uint16_t calcVoltToTemp(uint16_t voltage)
+uint16_t calcVoltToTemp1(uint16_t voltage)
 {
-    // float temp = -81.3 
-    //              + (0.0147 * voltage)
-    //              + (-0.000000755 * voltage * voltage)
-    //              + (1.67 * pow(10, -11) * voltage * voltage * voltage);
-
     float temp = 156.91
-                 + (-0.013422 * voltage)
-                 + (0.0000002955 * voltage * voltage)
-                 + (0.00000000001498 * voltage * voltage * voltage)
-                 + (-0.000000000000000666 * voltage * voltage * voltage * voltage);
+                 + (-0.01188 * voltage)
+                 + (0.0000002315 * voltage * voltage)
+                 + (0.000000000010389 * voltage * voltage * voltage)
+                 + (-0.000000000000000409 * voltage * voltage * voltage * voltage);
 
-    return temp;
+    return temp * 1000;
+}
+
+uint16_t calcVoltToTemp45(uint16_t voltage)
+{
+    float temp = 156.91
+                 + (-0.01169 * voltage)
+                 + (0.0000002241 * voltage * voltage)
+                 + (0.00000000000989 * voltage * voltage * voltage)
+                 + (-0.000000000000000383 * voltage * voltage * voltage * voltage);
+
+    return temp * 1000;
+}
+
+uint16_t calcVoltToTemp2(uint16_t voltage)
+{
+    float temp = 156.91
+                 + (-0.01308 * voltage)
+                 + (0.000000281 * voltage * voltage)
+                 + (0.0000000000139 * voltage * voltage * voltage)
+                 + (-0.000000000000000601 * voltage * voltage * voltage * voltage);
+
+    return temp * 1000;
+}
+
+uint16_t calcVoltToTemp3(uint16_t voltage)
+{
+    float temp = 156.91
+                 + (-0.01208 * voltage)
+                 + (0.0000002393 * voltage * voltage)
+                 + (0.00000000001092 * voltage * voltage * voltage)
+                 + (-0.000000000000000437 * voltage * voltage * voltage * voltage);
+
+    return temp * 1000;
 }
 
 uint16_t getMaxTemp()
@@ -40,15 +67,39 @@ uint16_t getMaxTemp()
     uint16_t tempMax = 0; 
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
-        tempMax = bms.input.thermistor_values[i][0];
+        if (i == 0) {
+            tempMax = calcVoltToTemp1(bms.input.thermistor_values[i][0]) - THERMISTOR_CALIBRATION_1;
+        }
+        else if (i ==3 || i ==4) {
+            tempMax = calcVoltToTemp45(bms.input.thermistor_values[i][0]) - THERMISTOR_CALIBRATION_45;
+        }
+        else if (i == 1) {
+            tempMax = calcVoltToTemp2(bms.input.thermistor_values[i][0]) - THERMISTOR_CALIBRATION_2;
+        }
+        else {
+            tempMax = calcVoltToTemp3(bms.input.thermistor_values[i][0]) - THERMISTOR_CALIBRATION_3;
+        }
+        bms.input.thermistor_temps[i][0] = tempMax;
         for (int j = 0; j < 14; j++)
         {
+            if (i == 0) {
+                bms.input.thermistor_temps[i][j] = calcVoltToTemp1(bms.input.thermistor_values[i][j]) - THERMISTOR_CALIBRATION_1;
+            }
+            else if (i ==3 || i ==4) {
+                bms.input.thermistor_temps[i][j] = calcVoltToTemp45(bms.input.thermistor_values[i][j]) - THERMISTOR_CALIBRATION_45;
+            }
+            else if (i == 1) {
+                bms.input.thermistor_temps[i][j] = calcVoltToTemp2(bms.input.thermistor_values[i][j]) - THERMISTOR_CALIBRATION_2;
+            }
+            else {
+                bms.input.thermistor_temps[i][j] = calcVoltToTemp3(bms.input.thermistor_values[i][j]) - THERMISTOR_CALIBRATION_3;
+            }
             if ((i == 1 && j == 9) | (j >= 14)) {
             }
             else {
-                if (tempMax < bms.input.thermistor_values[i][j])
+                if (tempMax < bms.input.thermistor_temps[i][j])
                 {
-                    tempMax = bms.input.thermistor_values[i][j];
+                    tempMax = bms.input.thermistor_temps[i][j];
                 }
             }
         }
@@ -264,6 +315,8 @@ void getTempuratures(uint8_t md)
 
 void calculateBMS_OK()
 {
+    static uint64_t bms_start_time = xTaskGetTickCount();
+    uint8_t bms_flag = true;
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
         for (int j = 0; j < CELL_COUNT; j++)
@@ -273,30 +326,36 @@ void calculateBMS_OK()
             // }
             // else
             // {
-                if ((bms.input.cell_voltages[i][j] < 22000) | (bms.input.cell_voltages[i][j] > 45000))
+                if ((bms.input.cell_voltages[i][j] < BATTERY_VOLT_LIMIT_LOWER) | (bms.input.cell_voltages[i][j] > BATTERY_VOLT_LIMIT_HIGHER))
                 {
-                    bms.output.bms_ok = false;
-                    return;
+                    bms_flag = false;
+                    break;
                 }
             // }
             if ((i == 1 && j == 9) | (j >= 14)) {
             }
             else {
-                if (bms.input.thermistor_values[i][j] < BATTERY_TEMP_VOLT_LIMIT)
+                if (bms.input.thermistor_temps[i][j] > BATTERY_TEMP_LIMIT)
                 {
-                    bms.output.bms_ok = false;
-                    return;
+                    bms_flag = false;
+                    break;
                 }
             }
         }
     }
-    bms.output.bms_ok = true;
+    if (bms_flag) {
+        bms_start_time = xTaskGetTickCount();
+        bms.output.bms_ok = true;
+    }
+    else if (xTaskGetTickCount() - bms_start_time > ERROR_WAIT_TIME) {
+        bms.output.bms_ok = false;
+    }
 }
 
 void measureSendVoltageTempCurrent()
 {
     bms.input.sum_voltage = getSumVoltage();
-    bms.input.max_temp = calcVoltToTemp(getMaxTemp());
+    bms.input.max_temp = getMaxTemp();
     bms.input.current_adc = measureCurrent();
     sendMainVoltageTempCurrent(bms.input.sum_voltage, bms.input.max_temp, bms.input.current_adc);
 }
@@ -338,7 +397,7 @@ void sendTemperatures()
         uint16_t _THERMISTOR_VALUES_PER[14];
         for (int j = 0; j < 14; j++)
         {
-            _THERMISTOR_VALUES_PER[j] = bms.input.thermistor_values[id][j];
+            _THERMISTOR_VALUES_PER[j] = bms.input.thermistor_temps[id][j];
         }
         vTaskDelay(pdMS_TO_TICKS(1));
         sendTemp(_THERMISTOR_VALUES_PER, id);
