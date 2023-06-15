@@ -321,18 +321,12 @@ void calculateBMS_OK()
     {
         for (int j = 0; j < CELL_COUNT; j++)
         {
-            //Ignore these cells for BMS_OK
-            // if ((i == 0 && j == 5) | (i == 0 && j == 6) | (i == 0 && j == 7) | (i == 1 && j == 0) | (i == 1 && j == 1) | (i == 1 && j == 2) | (i == 6 && j == 3) | (i == 6 && j == 4) | (i == 7 && j == 3) | (i == 7 && j == 4) | (i == 7 && j == 5) | (i == 7 && j == 6) | (i == 9 && j == 1) | (i == 9 && j == 2) | (i == 9 && j == 3)){
-            // }
-            // else
-            // {
                 if ((bms.input.cell_voltages[i][j] < BATTERY_VOLT_LIMIT_LOWER) | (bms.input.cell_voltages[i][j] > BATTERY_VOLT_LIMIT_HIGHER))
                 {
                     bms_flag = false;
                     break;
                 }
-            // }
-            if ((i == 1 && j == 9) | (j >= 14)) {
+            if ((i == 1 && j == 9) | (i == 4 && j == 2) | (j >= 14)) {
             }
             else {
                 if (bms.input.thermistor_temps[i][j] > BATTERY_TEMP_LIMIT)
@@ -375,15 +369,10 @@ void sendVoltages()
     {
         for (int j = 0; j < CELL_COUNT; j++)
         {
-            // if ((i == 0 && j == 5) | (i == 0 && j == 6) | (i == 0 && j == 7) | (i == 1 && j == 0) | (i == 1 && j == 1) | (i == 1 && j == 2) | (i == 6 && j == 3) | (i == 6 && j == 4) | (i == 7 && j == 3) | (i == 7 && j == 4) | (i == 7 && j == 5) | (i == 7 && j == 6) | (i == 9 && j == 1) | (i == 9 && j == 2) | (i == 9 && j == 3)){
-            // }
-            // else
-            // {
                 if (bms.input.cell_voltages[i][j] < lowest_volt)
                 {
                     lowest_volt = bms.input.cell_voltages[i][j];
                 }
-            // }
         }
     }
     
