@@ -62,7 +62,7 @@ void canSend(uint8_t bus, uint32_t address, uint64_t *data)
     //}
 }
 
-void sendVoltage(uint16_t cellVoltage[16], int id)
+void sendVoltage(uint16_t cellVoltage[CELL_COUNT], int id)
 {
     BmsVoltageStruct voltageCanstruct0;
     BmsVoltageStruct voltageCanstruct1;
@@ -98,7 +98,7 @@ void sendVoltage(uint16_t cellVoltage[16], int id)
     canSend(CAN_BUS, (VOLTAGE_ID + (4 * id) + 3) | NO_TARGET | MEDIUM_CAN_PRIORITY, (uint64_t *)&voltageCanstruct3);
 }
 
-void sendTemp(uint16_t thermistorValues[14], int id)
+void sendTemp(uint16_t thermistorValues[THERMISTOR_COUNT], int id)
 {
 
     BmsTempStruct temperatureCanstruct0;
@@ -164,8 +164,8 @@ void sendChargingCommands(bool on){
     memset(&chargingCommand, 0, sizeof(ChargingCommand));
 
     // flipped bytes for correct sending order
-    chargingCommand.voltage = 0x200D; // 336.0 V;
-    chargingCommand.current = 0x1900; // 2.5 A;
+    chargingCommand.voltage = 0x200D; // 336.0 V = 0x0D20 => send 0x200D;
+    chargingCommand.current = 0x1D00; // 2.9 A;
     chargingCommand.control = !on;
 
     canSend(CAN_BUS, CHARGING_COMMAND_ID,  (uint64_t *)&chargingCommand);

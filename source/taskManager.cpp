@@ -38,6 +38,7 @@ void taskBmsInfo(void *)
         
 
         // // Charging
+        // // Cut off charging at given cell voltage
         // if (!charged) {
         //     charged = (bms.input.highest_volt >= CHARGING_THRESHOLD) ? 1 : 0;
         // }
