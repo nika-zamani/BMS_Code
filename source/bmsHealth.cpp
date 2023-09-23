@@ -3,6 +3,7 @@
 uint8_t RETURN_DATA[6 * SLAVE_COUNT];
 uint8_t SCONTROL_DATA[6 * SLAVE_COUNT];
 uint8_t DCC_DATA[6 * SLAVE_COUNT];
+const uint16_t CALIBRATED_REF_VOLTAGES[28800, 26000, 28200, 29600, 30000]
 const uint8_t _DCP = 0; // discharge not permited
 
 extern BMS bms;
@@ -28,9 +29,9 @@ uint16_t calcVoltToTemp(uint16_t voltage)
     return temp * 1000;
 }
 
-uint16_t calcVoltToResistance(uint16_t voltage)
+uint16_t calcVoltToResistance(uint16_t voltage, uint16_t refVoltage)
 {
-    resistance = (REFERENCE_VOLTAGE - voltage) / voltage * DIVIDER_RESISTANCE;
+    resistance = ((refVoltage - voltage) / voltage) * DIVIDER_RESISTANCE;
     return resistance
 }
 
@@ -39,11 +40,11 @@ uint16_t getMaxTemp()
     uint16_t tempMax = 0; 
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
-        tempMax = calcVoltToResistance(bms.input.thermistor_values[i][0]);
+        tempMax = calcVoltToResistance(bms.input.thermistor_values[i][0], CALIBRATED_REF_VOLTAGES[i]);
         bms.input.thermistor_resistances[i][0] = tempMax;
         for (int j = 0; j < THERMISTOR_COUNT; j++)
         {
-            bms.input.thermistor_resistances[i][j] = calcVoltToResistance(bms.input.thermistor_values[i][j]);
+            bms.input.thermistor_resistances[i][j] = calcVoltToResistance(bms.input.thermistor_values[i][j], CALIBRATED_REF_VOLTAGES[i]);
             if (j >= THERMISTOR_COUNT) {
             }
             else {
