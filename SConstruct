@@ -5,7 +5,7 @@ BSP_PATH = '../MKELibrary/'
 
 CAN_STRUCT_PATH = '../CanMessageStructs'
 
-GNU_PATH = '../GNU_Toolchain/gcc-arm-none-eabi/bin/'
+GNU_PATH = '../gcc-arm-none-eabi/bin/'
 
 compileTarget = 'bms'
 
