@@ -4,7 +4,7 @@ import os
 BSP_PATH = '../MKELibrary/'
 
 
-GNU_PATH = "/mnt/c/users/seppl/documents/cp_racing/gcc-arm-none-eabi-10.3-2021.10/bin/"
+GNU_PATH = '../GNU_Toolchain/gcc-arm-none-eabi/bin/'
 
 compileTarget = 'bms'
 
