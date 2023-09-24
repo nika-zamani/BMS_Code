@@ -31,8 +31,8 @@ uint16_t calcVoltToTemp(uint16_t voltage)
 
 uint16_t calcVoltToResistance(uint16_t voltage, uint16_t refVoltage)
 {
-    resistance = ((-voltage)*DIVIDER_RESISTANCE)/(voltage-refvoltage);
-    return resistance
+    int resistance = ((-voltage)*DIVIDER_RESISTANCE)/(voltage-refVoltage);
+    return resistance;
 }
 
 uint16_t getMaxTemp()
