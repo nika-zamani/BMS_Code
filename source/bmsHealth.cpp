@@ -3,7 +3,7 @@
 uint8_t RETURN_DATA[6 * SLAVE_COUNT];
 uint8_t SCONTROL_DATA[6 * SLAVE_COUNT];
 uint8_t DCC_DATA[6 * SLAVE_COUNT];
-const uint16_t CALIBRATED_REF_VOLTAGES[28800, 26000, 28200, 29600, 30000]
+const uint16_t CALIBRATED_REF_VOLTAGES[5] = [28800, 26000, 28200, 29600, 30000];
 const uint8_t _DCP = 0; // discharge not permited
 
 extern BMS bms;
