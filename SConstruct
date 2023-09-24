@@ -3,6 +3,7 @@
 import os
 BSP_PATH = '../MKELibrary/'
 
+CAN_STRUCT_PATH = '../CanMessageStructs'
 
 GNU_PATH = '../GNU_Toolchain/gcc-arm-none-eabi/bin/'
 
@@ -50,7 +51,7 @@ includes = [
     'source',
     'source/test',
     'board',
-    'CanMessageStructs',
+    CAN_STRUCT_PATH,
     BSP_PATH+'CMSIS',
     BSP_PATH+'drivers',
     BSP_PATH+'utilities',
