@@ -15,7 +15,7 @@ typedef struct
 
     uint16_t cell_voltages[SLAVE_COUNT][CELL_COUNT];
     uint16_t thermistor_values[SLAVE_COUNT][16];
-    uint16_t thermistor_temps[SLAVE_COUNT][16];
+    uint16_t thermistor_resistances[SLAVE_COUNT][16];
 
     uint16_t current_adc;
     uint16_t max_temp;

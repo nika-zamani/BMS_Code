@@ -3,6 +3,7 @@
 uint8_t RETURN_DATA[6 * SLAVE_COUNT];
 uint8_t SCONTROL_DATA[6 * SLAVE_COUNT];
 uint8_t DCC_DATA[6 * SLAVE_COUNT];
+const uint16_t CALIBRATED_REF_VOLTAGES[5] = {28800, 29600, 28200, 26000, 30000};
 const uint8_t _DCP = 0; // discharge not permited
 
 extern BMS bms;
@@ -28,22 +29,28 @@ uint16_t calcVoltToTemp(uint16_t voltage)
     return temp * 1000;
 }
 
+uint16_t calcVoltToResistance(uint16_t voltage, uint16_t refVoltage)
+{
+    int resistance = ((-voltage)*DIVIDER_RESISTANCE)/(voltage-refVoltage);
+    return resistance;
+}
+
 uint16_t getMaxTemp()
 {
     uint16_t tempMax = 0; 
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
-        tempMax = calcVoltToTemp(bms.input.thermistor_values[i][0]) - THERMISTOR_CALIBRATION;
-        bms.input.thermistor_temps[i][0] = tempMax;
+        tempMax = calcVoltToResistance(bms.input.thermistor_values[i][0], CALIBRATED_REF_VOLTAGES[i]);
+        bms.input.thermistor_resistances[i][0] = tempMax;
         for (int j = 0; j < THERMISTOR_COUNT; j++)
         {
-            bms.input.thermistor_temps[i][j] = calcVoltToTemp(bms.input.thermistor_values[i][j]) - THERMISTOR_CALIBRATION;
+            bms.input.thermistor_resistances[i][j] = calcVoltToResistance(bms.input.thermistor_values[i][j], CALIBRATED_REF_VOLTAGES[i]);
             if (j >= THERMISTOR_COUNT) {
             }
             else {
-                if (tempMax < bms.input.thermistor_temps[i][j])
+                if (tempMax > bms.input.thermistor_resistances[i][j])
                 {
-                    tempMax = bms.input.thermistor_temps[i][j];
+                    tempMax = bms.input.thermistor_resistances[i][j];
                 }
             }
         }
@@ -273,10 +280,10 @@ void calculateBMS_OK()
                     bms_flag = false;
                     break;
                 }
-            if (j >= THERMISTOR_COUNT) {
+            if (j >= THERMISTOR_COUNT || (i == 1 && j == 9)) {
             }
             else {
-                if (bms.input.thermistor_values[i][j] < calcTempToVolt(BATTERY_TEMP_LIMIT))
+                if (bms.input.thermistor_resistances[i][j] < THERMISTOR_RESISTANCE_LIMIT)
                 {
                     bms_flag = false;
                     break;
@@ -333,7 +340,7 @@ void sendTemperatures()
         uint16_t _THERMISTOR_VALUES_PER[THERMISTOR_COUNT];
         for (int j = 0; j < THERMISTOR_COUNT; j++)
         {
-            _THERMISTOR_VALUES_PER[j] = bms.input.thermistor_temps[id][j];
+            _THERMISTOR_VALUES_PER[j] = bms.input.thermistor_resistances[id][j];
         }
         vTaskDelay(pdMS_TO_TICKS(1));
         sendTemp(_THERMISTOR_VALUES_PER, id);
