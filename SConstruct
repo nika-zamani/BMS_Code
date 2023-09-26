@@ -3,8 +3,9 @@
 import os
 BSP_PATH = '../MKELibrary/'
 
+CAN_STRUCT_PATH = '../CanMessageStructs'
 
-GNU_PATH = "/mnt/c/users/seppl/documents/cp_racing/gcc-arm-none-eabi-10.3-2021.10/bin/"
+GNU_PATH = SConscript(BSP_PATH + 'config.txt')
 
 compileTarget = 'bms'
 
@@ -50,7 +51,7 @@ includes = [
     'source',
     'source/test',
     'board',
-    'CanMessageStructs',
+    CAN_STRUCT_PATH,
     BSP_PATH+'CMSIS',
     BSP_PATH+'drivers',
     BSP_PATH+'utilities',
