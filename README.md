@@ -1,6 +1,6 @@
 # BMS
 
-LTC6811 + MKE18F512 forever
+LTC6813 + MKE18F512 forever
 
 ## hello
 
