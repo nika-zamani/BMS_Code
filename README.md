@@ -2,6 +2,19 @@
 
 LTC6813 + MKE18F512 forever
 
+### File Structure
+
+- "path_to_Github"/
+
+  - Github/
+
+    - MKELibrary/
+  
+    - CanMessageStructs/
+  
+    - BMS_Code (Any repo being worked on)
+
+
 ## hello
 
 the structure is as follows:
