@@ -45,7 +45,7 @@ uint16_t getMaxTemp()
         for (int j = 0; j < THERMISTOR_COUNT; j++)
         {
             bms.input.thermistor_resistances[i][j] = calcVoltToResistance(bms.input.thermistor_values[i][j], CALIBRATED_REF_VOLTAGES[i]);
-            if (j > 7 && i == 3) {
+            if (j >= THERMISTOR_COUNT||j > 7 && i == 3) {
             }
             else {
                 if (tempMax > bms.input.thermistor_resistances[i][j])
@@ -280,7 +280,7 @@ void calculateBMS_OK()
                     bms_flag = false;
                     break;
                 }
-            if (j >= THERMISTOR_COUNT || (i == 1 && j == 9)) {
+            if (j >= THERMISTOR_COUNT||(j > 7 && i == 3) || (i == 1 && j == 9)||(i==4 && j==2)) {
             }
             else {
                 if (bms.input.thermistor_resistances[i][j] < THERMISTOR_RESISTANCE_LIMIT)
