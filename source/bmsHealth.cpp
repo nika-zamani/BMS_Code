@@ -291,7 +291,7 @@ void calculateBMS_OK()
             }
         }
     }
-    if (bms_flag) {
+    if (bms_flag && bms.output.bms_ok) {
         bms_start_time = xTaskGetTickCount();
         bms.output.bms_ok = true;
     }
