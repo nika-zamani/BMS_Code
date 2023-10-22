@@ -26,7 +26,7 @@ const uint8_t ERR_CVA = 1, ERR_CVB = 2, ERR_CVC = 4, ERR_CVD = 8, ERR_AUXA = 16,
 
 #define REFERENCE_VOLTAGE 30000
 #define DIVIDER_RESISTANCE 4700
-#define THERMISTOR_RESISTANCE_LIMIT 3011
+#define THERMISTOR_RESISTANCE_LIMIT 2224
 // https://www.semitec-global.com/uploads/2022/01/P9-JT-Thermistor.pdf
 
 #define DISHARGE_THRESHOLD VOLTS_TO_BAT_VOLT(.01) //.1
