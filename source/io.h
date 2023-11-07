@@ -73,4 +73,9 @@ void not_found_id();
 void taskDequeueCan(void *pvParameters);
 void setBMS_OK();
 
+uint32_t idle_cnt = 0;
+uint32_t tick_cnt = 0;
+uint32_t i = 0;            //I was not sure the best place to instantiate these ones !!
+
+
 #endif

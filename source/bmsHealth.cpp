@@ -36,12 +36,10 @@ uint16_t calcVoltToResistance(uint16_t voltage, uint16_t refVoltage)
 }
 
 uint16_t getMaxTemp()
-{
+{   
     uint16_t tempMax = 0; 
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
-        tempMax = calcVoltToResistance(bms.input.thermistor_values[i][0], CALIBRATED_REF_VOLTAGES[i]);
-        bms.input.thermistor_resistances[i][0] = tempMax;
         for (int j = 0; j < THERMISTOR_COUNT; j++)
         {
             bms.input.thermistor_resistances[i][j] = calcVoltToResistance(bms.input.thermistor_values[i][j], CALIBRATED_REF_VOLTAGES[i]);
@@ -148,8 +146,8 @@ void SControl()
     //     return;
     // }
 
-    int error = 0;
-    memset(DCC_DATA, 0, sizeof(DCC_DATA));
+    int error = 0;     
+    memset(DCC_DATA, 0, sizeof(DCC_DATA));    
 
     uint8_t discharge_channels[SLAVE_COUNT];
 
@@ -355,6 +353,7 @@ void bmsInit()
         confdat[6 * i] = 0b001111100;
     pushCommand(WRCFGA, SLAVE_COUNT, confdat);
 }
+
 
 void openFuseCheck()
 {

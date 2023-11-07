@@ -67,6 +67,19 @@ extern "C"
 
     void vApplicationTickHook(void)
     {
+        if (tick_cnt >= 10000) {
+			uint32_t chip_util = (idle_cnt * 100)/ tick_cnt;
+			bms.output.utils[i] = chip_util;
+			if(i < 50) {
+				i += 1; }
+			else {
+				i = 0;
+			}
+			tick_cnt = 0; //reset tick
+			idle_cnt = 0; }//reset idle tick  
+		else {
+			tick_cnt +=1 ; }//count tick 
+
 #if mainCHECK_INTERRUPT_STACK == 1
         extern unsigned long _pvHeapStart[];
 

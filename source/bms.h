@@ -41,6 +41,8 @@ typedef struct
     uint8_t airs_negative;
     uint8_t precharge;
     uint8_t dcdc_enable;
+    uint32_t utils[50];
+
 
 } output_t;
 

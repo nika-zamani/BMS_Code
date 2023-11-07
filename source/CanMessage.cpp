@@ -179,3 +179,5 @@ void sendLowestVolt(uint16_t lowest_volt){
 
     canSend(CAN_BUS, LOWEST_VOLT_ID | CRITICAL_CAN_PRIORITY | VCU_CAN_TARGET,  (uint64_t *)&bmsLowestVolt);
 }
+
+//To do: Make CAN send function for chip util

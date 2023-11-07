@@ -109,6 +109,14 @@ void taskMainVoltageTempCurrent(void *)
     }
 }
 
+void idle_task(void *) {
+	for (;;) {
+		idle_cnt += 1;
+		vTaskDelay(1);
+	}
+}
+
+
 void taskInit()
 {
     
@@ -120,5 +128,5 @@ void taskInit()
 
 
     xTaskCreate(taskMainVoltageTempCurrent, "taskMainVoltageTempCurrent", STACK_SIZE*2, NULL, configMAX_PRIORITIES - 1, NULL);
-    
+    xTaskCreate(idle_task, "idle_task", STACK_SIZE,NULL, 1 ,NULL);
 }
