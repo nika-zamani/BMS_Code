@@ -31,7 +31,7 @@ uint16_t calcVoltToTemp(uint16_t voltage)
 
 uint16_t calcVoltToResistance(uint16_t voltage, uint16_t refVoltage)
 {
-    int resistance = ((-voltage)*DIVIDER_RESISTANCE)/(voltage-refVoltage);
+    uint16_t resistance = ((-voltage)*DIVIDER_RESISTANCE)/(voltage-refVoltage);
     return resistance;
 }
 
