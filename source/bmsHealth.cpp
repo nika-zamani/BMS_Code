@@ -37,7 +37,8 @@ uint16_t calcVoltToResistance(uint16_t voltage, uint16_t refVoltage)
 
 uint16_t getMaxTemp()
 {   
-    uint16_t tempMax = 0; 
+    uint16_t tempMax = calcVoltToResistance(bms.input.thermistor_values[0][0], CALIBRATED_REF_VOLTAGES[0]);
+    bms.input.thermistor_resistances[0][0] = tempMax; 
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
         for (int j = 0; j < THERMISTOR_COUNT; j++)
