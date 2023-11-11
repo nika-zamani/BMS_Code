@@ -35,7 +35,7 @@ uint16_t calcVoltToResistance(uint16_t voltage, uint16_t refVoltage)
     return resistance;
 }
 
-uint16_t getMaxTemp()
+uint16_t getMaxTemp() //This function finds the lowest thermistor resistance (which represents max temp) and updates thermistor resistance array
 {
     uint16_t tempMax = calcVoltToResistance(bms.input.thermistor_values[0][0], CALIBRATED_REF_VOLTAGES[0]);
     bms.input.thermistor_resistances[0][0] = tempMax; 
@@ -44,6 +44,7 @@ uint16_t getMaxTemp()
         for (int j = 0; j < THERMISTOR_COUNT; j++)
         {
             bms.input.thermistor_resistances[i][j] = calcVoltToResistance(bms.input.thermistor_values[i][j], CALIBRATED_REF_VOLTAGES[i]);
+            //this line updates the array of the thermistor resistances
             if ((j >= THERMISTOR_COUNT)||(j > 7 && i == 3)) {
             }
             else {
@@ -268,8 +269,8 @@ void getTempuratures(uint8_t md)
 
 void calculateBMS_OK()
 {
-    static uint64_t bms_start_time = xTaskGetTickCount();
-    uint8_t bms_flag = true;
+    static uint64_t bms_start_time = xTaskGetTickCount(); //static, so only read once
+    uint8_t bms_flag = true; 
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
         for (int j = 0; j < CELL_COUNT; j++)
@@ -291,7 +292,7 @@ void calculateBMS_OK()
         }
     }
     if (bms_flag) {
-        bms_start_time = xTaskGetTickCount();
+        bms_start_time = xTaskGetTickCount(); //update BMS start time
         bms.output.bms_ok = true;
     }
     else if (xTaskGetTickCount() - bms_start_time > ERROR_WAIT_TIME) {
