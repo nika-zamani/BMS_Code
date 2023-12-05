@@ -34,22 +34,22 @@ uint16_t calcVoltToTemp(uint16_t voltage)
 # input voltage output resistance
 uint16_t calcVoltToResistance(uint16_t voltage, uint16_t refVoltage)
 {
-    int resistance = ((-voltage)*DIVIDER_RESISTANCE)/(voltage-refVoltage);
+    uint16_t resistance = ((-voltage)*DIVIDER_RESISTANCE)/(voltage-refVoltage);
     return resistance;
 }
 
 # iterate through BMS thermistor values and convert to resistance to find and return max temp
 uint16_t getMaxTemp()
-{
-    uint16_t tempMax = 0; 
+
+    uint16_t tempMax = calcVoltToResistance(bms.input.thermistor_values[0][0], CALIBRATED_REF_VOLTAGES[0]);
+    bms.input.thermistor_resistances[0][0] = tempMax; 
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
-        tempMax = calcVoltToResistance(bms.input.thermistor_values[i][0], CALIBRATED_REF_VOLTAGES[i]);
-        bms.input.thermistor_resistances[i][0] = tempMax;
         for (int j = 0; j < THERMISTOR_COUNT; j++)
         {
             bms.input.thermistor_resistances[i][j] = calcVoltToResistance(bms.input.thermistor_values[i][j], CALIBRATED_REF_VOLTAGES[i]);
-            if (j >= THERMISTOR_COUNT||j > 7 && i == 3) {
+            //this line updates the array of the thermistor resistances
+            if ((j >= THERMISTOR_COUNT)||(j > 7 && i == 3)) {
             }
             else {
                 if (tempMax > bms.input.thermistor_resistances[i][j])
@@ -278,8 +278,8 @@ void getTempuratures(uint8_t md)
 # check cell voltages & thermistor resistances from BMS. Flag true if everything is OK, flag false if voltage or thermistor out of limit
 void calculateBMS_OK()
 {
-    static uint64_t bms_start_time = xTaskGetTickCount();
-    uint8_t bms_flag = true;
+    static uint64_t bms_start_time = xTaskGetTickCount(); //static, so only read once
+    uint8_t bms_flag = true; 
     for (int i = 0; i < SLAVE_COUNT; i++)
     {
         for (int j = 0; j < CELL_COUNT; j++)
@@ -301,7 +301,7 @@ void calculateBMS_OK()
         }
     }
     if (bms_flag) {
-        bms_start_time = xTaskGetTickCount();
+        bms_start_time = xTaskGetTickCount(); //update BMS start time
         bms.output.bms_ok = true;
     }
     else if (xTaskGetTickCount() - bms_start_time > ERROR_WAIT_TIME) {
