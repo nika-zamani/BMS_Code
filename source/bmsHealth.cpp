@@ -8,6 +8,7 @@ const uint8_t _DCP = 0; // discharge not permited
 
 extern BMS bms;
 
+# input temperature output voltage 
 uint32_t calcTempToVolt(uint16_t temperature)
 {
     uint32_t v1 = (-0.0000040337 * temperature * temperature * temperature * temperature) 
@@ -18,6 +19,7 @@ uint32_t calcTempToVolt(uint16_t temperature)
     return v1;
 }
 
+# input voltage output temperature 
 uint16_t calcVoltToTemp(uint16_t voltage)
 {
     float temp = 156.91
@@ -29,12 +31,14 @@ uint16_t calcVoltToTemp(uint16_t voltage)
     return temp * 1000;
 }
 
+# input voltage output resistance
 uint16_t calcVoltToResistance(uint16_t voltage, uint16_t refVoltage)
 {
     int resistance = ((-voltage)*DIVIDER_RESISTANCE)/(voltage-refVoltage);
     return resistance;
 }
 
+# iterate through BMS thermistor values and convert to resistance to find and return max temp
 uint16_t getMaxTemp()
 {
     uint16_t tempMax = 0; 
@@ -58,6 +62,7 @@ uint16_t getMaxTemp()
     return tempMax;
 }
 
+# iterate through BMS cell voltages and calcaute the sum, highest and lowest values
 uint32_t getSumVoltage()
 {
     uint32_t sumVoltage = 0;
@@ -245,6 +250,9 @@ void SControl()
     // error = pushCommand(RDSCTRL, SLAVE_COUNT, RETURN_DATA);
 }
 
+
+# Read temperature data from multiplexer. Set multiplexer channels, initiate 
+# commands to retrieve temperature readings from multiple slave devices, and store both raw and processed data.
 void getTempuratures(uint8_t md)
 {
     int error = 0;
@@ -267,6 +275,7 @@ void getTempuratures(uint8_t md)
     }
 }
 
+# check cell voltages & thermistor resistances from BMS. Flag true if everything is OK, flag false if voltage or thermistor out of limit
 void calculateBMS_OK()
 {
     static uint64_t bms_start_time = xTaskGetTickCount();
@@ -300,6 +309,7 @@ void calculateBMS_OK()
     }
 }
 
+# calcuate predefined functions from BMS data
 void measureSendVoltageTempCurrent()
 {
     bms.input.sum_voltage = getSumVoltage();
@@ -308,6 +318,8 @@ void measureSendVoltageTempCurrent()
     sendMainVoltageTempCurrent(bms.input.sum_voltage, bms.input.max_temp, bms.input.current_adc);
 }
 
+# Transmits individual cell voltages from BMS for each slave unit with brief delay. 
+# Identify lowest recorded voltage across all cells and send 
 void sendVoltages()
 {
     // Send all volts
@@ -333,6 +345,7 @@ void sendVoltages()
     sendLowestVolt(lowest_volt);
 }
 
+# transmits resistance values of multiple thermistors after a brief delay between each
 void sendTemperatures()
 {
     for (int id = 0; id < SLAVE_COUNT; id++)
@@ -347,6 +360,7 @@ void sendTemperatures()
     }
 }
 
+# initialize configuration settings for multiple slave units in BMS
 void bmsInit()
 {
     uint8_t confdat[6 * SLAVE_COUNT];
@@ -356,6 +370,8 @@ void bmsInit()
     pushCommand(WRCFGA, SLAVE_COUNT, confdat);
 }
 
+# Calculate voltage drop across a resistance for each cell in BMS
+# Identify potential open fuses if the difference surpasses a predefined threshold, prompting a specific action when an open fuse is detected
 void openFuseCheck()
 {
     int vDrop = initResistance * bms.input.current_adc;
